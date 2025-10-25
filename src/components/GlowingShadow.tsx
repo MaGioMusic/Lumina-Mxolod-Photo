@@ -35,6 +35,7 @@ export function GlowingShadow({ children, className, contentClassName, style }: 
           --animation-speed: 4s;
           --interaction-speed: 0.55s;
           --glow-rotate-unit: 1deg;
+          --brand-glow: #F59E0B; /* Amber / carrot (site accent) */
           position: relative;
           display: block;
           width: 100%;
@@ -47,22 +48,21 @@ export function GlowingShadow({ children, className, contentClassName, style }: 
         .glow-content { position: relative; border-radius: calc(var(--card-radius) * 0.98); padding: 0; background: transparent; z-index: 2; }
         .glow-content:before {
           content: ""; position: absolute; inset: calc(-1 * var(--border-width)); border-radius: inherit; box-shadow: 0 0 20px black; mix-blend-mode: color-burn; z-index: -1;
-          background: hsl(0deg 0% 16%) radial-gradient(
+          background: radial-gradient(
             30% 30% at calc(var(--bg-x) * 1%) calc(var(--bg-y) * 1%),
-            hsl(calc(var(--hue) * var(--hue-speed) * 1deg) 100% 90%) calc(0% * var(--bg-size)),
-            hsl(calc(var(--hue) * var(--hue-speed) * 1deg) 100% 80%) calc(20% * var(--bg-size)),
-            hsl(calc(var(--hue) * var(--hue-speed) * 1deg) 100% 60%) calc(40% * var(--bg-size)),
+            rgba(245, 158, 11, 0.55) 0%,
+            rgba(245, 158, 11, 0.35) calc(35% * var(--bg-size)),
+            rgba(245, 158, 11, 0.20) calc(60% * var(--bg-size)),
             transparent 100%
           );
-          animation: hue-animation var(--animation-speed) linear infinite, rotate-bg var(--animation-speed) linear infinite;
+          animation: rotate-bg var(--animation-speed) linear infinite;
           transition: --bg-size var(--interaction-speed) ease;
         }
 
         .glow { --glow-translate-y: 0; position: absolute; width: 28px; height: 28px; animation: rotate var(--animation-speed) linear infinite; transform: rotateZ(calc(var(--rotate) * var(--glow-rotate-unit))); transform-origin: center; border-radius: calc(var(--glow-radius) * 1px); inset: -6px auto auto -6px; z-index: 1; }
         .glow:after {
           content: ""; position: relative; display: block; filter: blur(calc(var(--glow-blur) * 1px)); width: 110%; height: 110%; left: -5%; top: -5%;
-          background: hsl(calc(var(--hue) * var(--hue-speed) * 1deg) 100% 60%); border-radius: calc(var(--glow-radius) * 1px);
-          animation: hue-animation var(--animation-speed) linear infinite;
+          background: rgba(245, 158, 11, 0.65); border-radius: calc(var(--glow-radius) * 1px);
           transform: scaleY(calc(var(--glow-scale) / 1.3)) scaleX(calc(var(--glow-scale) * 0.8)) translateY(calc(var(--glow-translate-y) * 1%));
           opacity: var(--glow-opacity);
         }
@@ -79,7 +79,7 @@ export function GlowingShadow({ children, className, contentClassName, style }: 
           100% { --bg-x: 0; --bg-y: 0; }
         }
         @keyframes rotate { from { --rotate: -70; --glow-translate-y: -65; } 50% { --glow-translate-y: -65; } to { --rotate: calc(360 - 70); --glow-translate-y: -65; } }
-        @keyframes hue-animation { 0% { --hue: 0; } 100% { --hue: 360; } }
+        /* hue-animation removed; fixed brand color used */
       `}</style>
 
       <div className={cn("glow-container", className)} style={style}>
