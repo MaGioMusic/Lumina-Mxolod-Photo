@@ -4,7 +4,7 @@ import { useMemo, useState, Suspense } from 'react';
 import { CaretLeft, CaretRight, Calendar as CalendarIcon } from '@phosphor-icons/react';
 import dynamic from 'next/dynamic';
 
-const GlassCalendar = dynamic(() => import('@/components/GlassCalendar'), { ssr: false });
+const MiniCalendarGlass = dynamic(() => import('@/components/DayPickerGlass').then(m => m.MiniCalendarGlass), { ssr: false });
 
 type EventItem = {
   id: string;
@@ -129,8 +129,8 @@ export default function AgentCalendar() {
       <div className="col-span-1">
         <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm mb-4">
           <div className="flex items-center gap-2 font-medium mb-3"><CalendarIcon className="w-4 h-4" />Mini calendar</div>
-          <Suspense fallback={<div className="h-[240px] rounded-2xl bg-gray-50" />}>
-            <GlassCalendar className="max-w-full" />
+          <Suspense fallback={<div className="h-[280px] rounded-2xl bg-gray-50" />}>
+            <MiniCalendarGlass className="max-w-full" mode="single" />
           </Suspense>
         </div>
         <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
