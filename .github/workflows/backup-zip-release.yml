@@ -1,0 +1,34 @@
+name: Periodic ZIP Release
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 3 * * 0' # weekly at 03:00 UTC on Sundays
+
+jobs:
+  zip-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create ZIP snapshot (exclude .git)
+        run: |
+          SNAP=lumina-estate-full-snapshot-$(date +"%Y-%m-%d").zip
+          zip -r "$SNAP" . -x "./.git/*" || true
+          echo "SNAP=$SNAP" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v-backup-${{ github.run_id }}
+          name: Automated Backup ${{ github.run_id }}
+          body: |
+            Automated weekly backup snapshot. Contents mirror repository tree excluding .git.
+          files: ${{ env.SNAP }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+

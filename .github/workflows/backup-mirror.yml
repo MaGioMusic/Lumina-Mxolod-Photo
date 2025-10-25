@@ -1,0 +1,34 @@
+name: Mirror to Backup Repo
+
+on:
+  push:
+    branches:
+      - "main"
+      - "*"
+    tags:
+      - "*"
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 2 * * *' # daily at 02:00 UTC
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push mirror to backup remote
+        env:
+          BACKUP_TOKEN: ${{ secrets.BACKUP_TOKEN }}
+        run: |
+          if [ -z "$BACKUP_TOKEN" ]; then
+            echo "ERROR: BACKUP_TOKEN repo secret is not set" >&2
+            exit 1
+          fi
+          git remote add backup https://x-access-token:${BACKUP_TOKEN}@github.com/MaGioMusic/lumina-estate-site-backup-2025-10-25.git || true
+          git push --mirror backup
+
+
