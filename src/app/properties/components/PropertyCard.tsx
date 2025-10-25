@@ -9,6 +9,7 @@ import { Bed, Bath, Maximize2, Heart, GitCompare } from 'lucide-react';
 import PropertyImageCarousel from './PropertyImageCarousel';
 import { getPropertyImages } from '@/lib/samplePropertyImages';
 import { useCompare } from '@/contexts/CompareContext';
+import GlowingShadow from '@/components/GlowingShadow';
 
 interface PropertyCardProps {
   id: string;
@@ -124,7 +125,7 @@ export default function PropertyCard({
   const shouldApplyHoverEffects = isHydrated && isHovered;
   const shouldApplyClickEffects = isHydrated;
 
-  return (
+  const cardInner = (
     <div className={isNew ? 'new-property-gradient-border' : ''}>
       <div 
         id={`property-${id}`}
@@ -286,4 +287,10 @@ export default function PropertyCard({
       </div>
     </div>
   );
+
+  return isNew ? (
+    <GlowingShadow className="w-full" contentClassName="w-full">
+      {cardInner}
+    </GlowingShadow>
+  ) : cardInner;
 } 
