@@ -79,16 +79,21 @@ export default function AIChatComponent() {
   const toolArgsRef = useRef<Map<string, { name?: string; argsText: string }>>(new Map());
   const [searchResults, setSearchResults] = useState<MockProperty[]>([]);
   const [lastSearchSummary, setLastSearchSummary] = useState<string>('');
+  const userVoiceBufRef = useRef<string>('');
+
+  const matchesNavigateTrigger = (raw: string | undefined | null): boolean => {
+    if (!raw) return false;
+    const m = raw.toLowerCase();
+    const triggers = [
+      'properties', 'property', 'listings', 'go to properties', 'open properties',
+      'უძრავი', 'უძრავი ქონება', 'ქონება', 'განცხადებები', 'ბინების გვერდზე', 'ბინები', 'სახლები', 'გავიდეთ უძრავზე', 'გადადი უძრავი', 'მაჩვენე უძრავი'
+    ];
+    return triggers.some(t => m.includes(t));
+  };
 
   // Fallback: keyword-based navigation when function-calling doesn't trigger
   useEffect(() => {
-    if (!message) return;
-    const m = message.toLowerCase();
-    const triggers = [
-      'properties', 'property', 'listings', 'go to properties', 'open properties',
-      'უძრავი', 'ქონება', 'უძრავი ქონება', 'განცხადებები', 'ბინები', 'სახლები'
-    ];
-    if (triggers.some(t => m.includes(t))) {
+    if (matchesNavigateTrigger(message)) {
       try { window.sessionStorage.setItem('lumina_ai_autostart', isOpen ? '1' : '0'); } catch {}
       router.push('/properties');
     }
