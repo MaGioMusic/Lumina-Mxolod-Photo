@@ -80,6 +80,20 @@ export default function AIChatComponent() {
   const [searchResults, setSearchResults] = useState<MockProperty[]>([]);
   const [lastSearchSummary, setLastSearchSummary] = useState<string>('');
 
+  // Fallback: keyword-based navigation when function-calling doesn't trigger
+  useEffect(() => {
+    if (!message) return;
+    const m = message.toLowerCase();
+    const triggers = [
+      'properties', 'property', 'listings', 'go to properties', 'open properties',
+      'უძრავი', 'ქონება', 'უძრავი ქონება', 'განცხადებები', 'ბინები', 'სახლები'
+    ];
+    if (triggers.some(t => m.includes(t))) {
+      try { window.sessionStorage.setItem('lumina_ai_autostart', isOpen ? '1' : '0'); } catch {}
+      router.push('/properties');
+    }
+  }, [message, isOpen, router]);
+
   const runPropertySearch = (rawArgs: any): MockProperty[] => {
     try {
       const args = typeof rawArgs === 'string' ? JSON.parse(rawArgs) : (rawArgs || {});
