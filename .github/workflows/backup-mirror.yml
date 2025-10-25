@@ -13,6 +13,7 @@ on:
 
 jobs:
   mirror:
+    if: ${{ github.repository == 'MaGioMusic/Luminia-Estate-Motiff-Edition-Private' && secrets.BACKUP_TOKEN != '' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -24,10 +25,8 @@ jobs:
         env:
           BACKUP_TOKEN: ${{ secrets.BACKUP_TOKEN }}
         run: |
-          if [ -z "$BACKUP_TOKEN" ]; then
-            echo "ERROR: BACKUP_TOKEN repo secret is not set" >&2
-            exit 1
-          fi
+          # Secret is guaranteed present by job-level if; keep a safety check
+          if [ -z "$BACKUP_TOKEN" ]; then echo "BACKUP_TOKEN not set; skipping"; exit 0; fi
           git remote add backup https://x-access-token:${BACKUP_TOKEN}@github.com/MaGioMusic/lumina-estate-site-backup-2025-10-25.git || true
           git push --mirror backup
 
