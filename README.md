@@ -1,3 +1,67 @@
+# Lumina Estate — Backup (2025-10-25)
+
+Private backup repository for the Lumina Estate site. This repo mirrors the codebase and includes documentation to help anyone set up, run, and restore.
+
+—
+
+## სწრაფი ახსნა (KA)
+- პროექტი: Next.js (App Router) + TypeScript (strict) + Tailwind v4
+- გაშვება: Node 18+, `npm install`, `npm run dev`
+- კონფიგი: `.env.local` შექმენი `.env.example`-ის მიხედვით (საიდუმლოები რეპოში არ უნდა იდოს)
+- ხმა/AI: OpenAI Realtime (WebRTC), `/api/realtime/token` გასცემს ეპემერულ session-ს
+- i18n: ka/en/ru (`next-intl`), SEO-friendly პრეფიქსებით
+
+—
+
+## Quickstart (EN)
+1) Prerequisites
+   - Node.js 18+
+   - npm (v9+)
+2) Install
+```bash
+npm install
+```
+3) Environment
+Create `.env.local` based on `.env.example` with at least:
+```
+OPENAI_API_KEY=...
+DEFAULT_VOICE_LANG=ka
+NEXT_PUBLIC_VOICE_DEFAULT=1
+NEXT_PUBLIC_FC_DEFAULT=1
+VOICE_MODEL=gpt-4o-realtime-preview-2024-12-17
+```
+4) Dev
+```bash
+npm run dev
+```
+5) Lint
+```bash
+npm run lint
+```
+
+## Project Structure
+- `src/app/` — Next.js App Router pages/routes
+- `src/components/` — Reusable UI components
+- `src/lib/` — Utils/config
+- `src/hooks/` — Custom hooks
+- `public/images/` — Assets (optimized via Next Image where applicable)
+
+## Internationalization
+- `next-intl` with locales: `ka` (default), `en`, `ru`
+- SEO URLs: `/ka/...`, `/en/...`, `/ru/...`
+
+## AI Voice & Tools
+- Realtime Voice (OpenAI) via WebRTC + DataChannel
+- Server issues ephemeral token at `/api/realtime/token`
+- Tooling examples: `open_page`, `set_filters`, `set_view`, `navigate_to_property`, `open_first_property`
+
+## Backup & Restore
+See `BACKUP.md` for the mirror strategy and full snapshot instructions (ZIP release).
+
+## Security Notes
+- Never commit secrets (`.env*`) — use `.env.example` + GitHub Secrets
+- Consider branch protection on `main` (PR + review)
+
 # Lumina Estate - Real Estate Platform
 
 ## 🏠 Overview
