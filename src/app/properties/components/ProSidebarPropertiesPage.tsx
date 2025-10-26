@@ -246,7 +246,7 @@ const ProSidebarPropertiesPage: React.FC = () => {
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
           {/* Applied Filters (compact) */}
-          <div className="sticky top-16 z-10 p-2 border-b border-gray-200 bg-white/70 backdrop-blur relative">
+          <div className="sticky top-16 z-10 p-2 border-b border-gray-200 bg-white/70 dark:bg-gray-900/60 backdrop-blur relative">
             <AppliedFiltersChips 
               searchQuery={searchQuery}
               filters={filters}
