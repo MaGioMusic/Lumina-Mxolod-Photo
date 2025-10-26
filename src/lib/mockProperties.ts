@@ -17,6 +17,8 @@ export interface MockProperty {
 
 let cached: MockProperty[] | null = null;
 
+import { PROPERTY_IMAGES, pickPropertyImages } from './propertyImages';
+
 export function getMockProperties(count: number = 100): MockProperty[] {
   if (cached && cached.length === count) return cached;
 
@@ -37,10 +39,11 @@ export function getMockProperties(count: number = 100): MockProperty[] {
       status = i % 4 === 0 ? 'for-rent' : 'for-sale';
     }
 
-    const imgIdx = ((i * 7 + 3) % 15) + 1; // disperse selection across 15 images to reduce repetition
+    const imgIdx = ((i * 7 + 3) % PROPERTY_IMAGES.length); // disperse across full curated set
     return {
       id: i + 1,
-      image: `/images/properties/property-${imgIdx}.jpg`,
+      image: PROPERTY_IMAGES[imgIdx],
+      images: pickPropertyImages(i, 4),
       price: basePrice,
       address: districtKey,
       bedrooms: bedroomCount,
