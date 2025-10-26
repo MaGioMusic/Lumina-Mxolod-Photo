@@ -40,6 +40,7 @@ interface Property {
   area: number;
   floor?: number;
   image: string;
+  images?: string[];
   type: string;
 }
 
@@ -352,6 +353,7 @@ export default function PropertiesGrid({
             key={property.id}
             id={property.id.toString()}
             image={property.image}
+            images={property.images}
             price={`$${property.price.toLocaleString()}`}
             address={`${t('tbilisi')}, ${t(property.address)}`}
             title={`${property.type} in ${t(property.address)}`}

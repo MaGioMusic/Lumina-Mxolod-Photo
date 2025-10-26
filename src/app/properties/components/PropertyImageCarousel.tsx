@@ -23,6 +23,8 @@ export default function PropertyImageCarousel({
   const [isHovered, setIsHovered] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
 
   // Fix hydration issue
   useEffect(() => {
@@ -43,14 +45,28 @@ export default function PropertyImageCarousel({
     });
   }, []);
 
-  // Preload images for better performance
+  // Observe visibility to limit preloading when offscreen
   useEffect(() => {
-    images.forEach((src, index) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver((entries) => {
+      setInView(entries[0]?.isIntersecting ?? false);
+    }, { rootMargin: '200px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  // Preload only current and next when in view
+  useEffect(() => {
+    if (!inView) return;
+    const targets = [currentIndex, (currentIndex + 1) % images.length];
+    targets.forEach((idx) => {
+      const src = images[idx];
       const img = new Image();
-      img.onload = () => handleImageLoad(index);
+      img.onload = () => handleImageLoad(idx);
       img.src = src;
     });
-  }, [images, handleImageLoad]);
+  }, [images, handleImageLoad, currentIndex, inView]);
 
   // Navigation functions
   const goToNext = useCallback(() => {
@@ -152,6 +168,7 @@ export default function PropertyImageCarousel({
 
   return (
     <div 
+      ref={containerRef}
       className={`relative h-40 group overflow-hidden cursor-pointer ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
