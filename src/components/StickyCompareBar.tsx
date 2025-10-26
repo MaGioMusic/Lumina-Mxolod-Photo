@@ -30,6 +30,17 @@ export default function StickyCompareBar() {
   const [collapsed, setCollapsed] = useState(false);
   const [pinned, setPinned] = useState(false);
 
+  // When collapsed and not pinned, reduce main bottom padding
+  useEffect(() => {
+    const pillCls = 'has-compare-pill';
+    if (ids.length > 0 && collapsed && !pinned) {
+      document.documentElement.classList.add(pillCls);
+    } else {
+      document.documentElement.classList.remove(pillCls);
+    }
+    return () => document.documentElement.classList.remove(pillCls);
+  }, [ids.length, collapsed, pinned]);
+
   useEffect(() => {
     let last = window.scrollY;
     const onScroll = () => {

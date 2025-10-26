@@ -143,6 +143,9 @@ html.dark {
   :root.has-compare-bar main { padding-bottom: 120px; }
 }
 
+/* Smaller reserve when compare bar is collapsed to pill */
+:root.has-compare-pill main { padding-bottom: 36px; }
+
 /* Custom Slider Styles */
 .slider-track {
   position: relative;
