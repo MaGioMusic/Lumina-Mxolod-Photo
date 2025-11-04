@@ -98,12 +98,36 @@ export default function PropertiesGrid({
   const sortBy = searchParams.get('sort') || 'price';
   // Prefer URL 'location', fallback to prop searchQuery
   const locationParam = (searchParams.get('location') || injectedFilters.location || searchQuery || '').toString();
+  // URL-driven overrides for filters (so navigation with query applies filters even on first load)
+  const minParam = Number(searchParams.get('minPrice') || 'NaN');
+  const maxParam = Number(searchParams.get('maxPrice') || 'NaN');
+  const roomsParam = searchParams.get('rooms');
+  const statusParam = (searchParams.get('status') || '').toString().toLowerCase();
+  const propTypeParam = (searchParams.get('property_type') || '').toString().toLowerCase();
 
   // Normalize location to match internal district keys
   const districtKeys = ['vake', 'mtatsminda', 'saburtalo', 'isani', 'gldani'];
   const normalize = (s: string) => s.toLowerCase().trim();
   const normalizedInput = normalize(locationParam);
   let normalizedLocationKey: string | null = null;
+  // Manual aliases for KA/RU to district keys (fallback if translations mismatch)
+  const districtAliasMap: Record<string, string> = {
+    // Georgian
+    'ვაკე': 'vake',
+    'მთაწმინდა': 'mtatsminda',
+    'საბურთალო': 'saburtalo',
+    'ისანი': 'isani',
+    'გლდანი': 'gldani',
+    // Russian (common forms)
+    'ваке': 'vake',
+    'мтацминда': 'mtatsminda',
+    'сабуртало': 'saburtalo',
+    'исани': 'isani',
+    'глдани': 'gldani',
+  };
+  if (districtAliasMap[normalizedInput]) {
+    normalizedLocationKey = districtAliasMap[normalizedInput];
+  }
   for (const key of districtKeys) {
     const localized = normalize(t(key));
     if (normalizedInput === key || normalizedInput === localized || localized.includes(normalizedInput) || key.includes(normalizedInput)) {
@@ -114,13 +138,29 @@ export default function PropertiesGrid({
   
   // Filter and sort properties first
   // Merge injected filters (partial) over incoming props filters
+  // Build URL-based overrides (only if present)
+  const urlOverrides: Partial<FiltersState> = {};
+  if (Number.isFinite(minParam) || Number.isFinite(maxParam)) {
+    urlOverrides.priceRange = [
+      Number.isFinite(minParam) ? Number(minParam) : filters.priceRange[0],
+      Number.isFinite(maxParam) ? Number(maxParam) : filters.priceRange[1],
+    ];
+  }
+  if (roomsParam && /^\d+$/.test(roomsParam)) {
+    const r = Number(roomsParam);
+    urlOverrides.bedrooms = [r >= 5 ? '5+' : String(r)];
+  }
+  if (propTypeParam && ['apartment','house','villa','studio','penthouse'].includes(propTypeParam)) {
+    urlOverrides.propertyTypes = [propTypeParam];
+  }
+
   const effectiveFilters: FiltersState = {
     ...filters,
     priceRange: [
-      injectedFilters.priceRange?.[0] ?? filters.priceRange[0],
-      injectedFilters.priceRange?.[1] ?? filters.priceRange[1],
+      urlOverrides.priceRange?.[0] ?? injectedFilters.priceRange?.[0] ?? filters.priceRange[0],
+      urlOverrides.priceRange?.[1] ?? injectedFilters.priceRange?.[1] ?? filters.priceRange[1],
     ],
-    bedrooms: injectedFilters.bedrooms ?? filters.bedrooms,
+    bedrooms: urlOverrides.bedrooms ?? injectedFilters.bedrooms ?? filters.bedrooms,
     bathrooms: injectedFilters.bathrooms ?? filters.bathrooms,
     propertyTypes: injectedFilters.propertyTypes ?? filters.propertyTypes,
     transactionType: injectedFilters.transactionType ?? filters.transactionType,
@@ -145,6 +185,11 @@ export default function PropertiesGrid({
           const translatedAddress = `${t('tbilisi')}, ${t(property.address)}`.toLowerCase();
           if (!translatedAddress.includes(normalizedInput)) return false;
         }
+      }
+
+      // Status filter via URL (for-sale / for-rent)
+      if (statusParam === 'for-sale' || statusParam === 'for-rent') {
+        if (property.status !== statusParam) return false;
       }
       
       // Price filter

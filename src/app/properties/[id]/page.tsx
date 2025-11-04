@@ -6,8 +6,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowLeft, MapPin, Phone, Mail } from 'lucide-react';
 import PropertyImageCarousel from '../components/PropertyImageCarousel';
 import SinglePropertyMap from '../components/SinglePropertyMap';
-import dynamic from 'next/dynamic';
-const SinglePropertyGoogleMap = dynamic(() => import('../components/SinglePropertyGoogleMap'), { ssr: false });
 import { getPropertyImages } from '@/lib/samplePropertyImages';
 import { ResponsiveContainer, AreaChart, Area, Tooltip, XAxis } from 'recharts';
 import PropertySnapshotEmitter from '../components/PropertySnapshotEmitter';
@@ -220,23 +218,13 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('location') ?? 'Location'}</h3>
               <div className="h-80 rounded-lg overflow-hidden">
-                {(process.env.NEXT_PUBLIC_MAPS_PROVIDER === 'google') ? (
-                  <SinglePropertyGoogleMap
-                    coordinates={data.coordinates}
-                    propertyTitle={data.title}
-                    propertyPrice={`$${data.price.toLocaleString()}`}
-                    propertyAddress={data.location}
-                    propertyImage={data.images[0]}
-                  />
-                ) : (
-                  <SinglePropertyMap
-                    coordinates={data.coordinates}
-                    propertyTitle={data.title}
-                    propertyPrice={`$${data.price.toLocaleString()}`}
-                    propertyAddress={data.location}
-                    propertyImage={data.images[0]}
-                  />
-                )}
+                <SinglePropertyMap
+                  coordinates={data.coordinates}
+                  propertyTitle={data.title}
+                  propertyPrice={`$${data.price.toLocaleString()}`}
+                  propertyAddress={data.location}
+                  propertyImage={data.images[0]}
+                />
               </div>
             </div>
 

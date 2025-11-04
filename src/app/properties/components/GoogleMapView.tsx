@@ -27,7 +27,7 @@ export default function GoogleMapView({ properties, center, zoom = 12, onPropert
   const markersRef = useRef<Array<google.maps.marker.AdvancedMarkerElement | google.maps.Marker>>([]);
   const router = useRouter();
 
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyDy3CyUuZv27r4JDA2xjFD9iZU0MQP6Ikg';
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
   const mapId = process.env.NEXT_PUBLIC_GOOGLE_MAP_ID || '';
 
   const initialCenter = useMemo(() => {

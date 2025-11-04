@@ -25,15 +25,13 @@ interface FiltersState {
 }
 
 import PropertyDetailsMap from './PropertyDetailsMap';
-import dynamic from 'next/dynamic';
-const GoogleMapView = dynamic(() => import('./GoogleMapView'), { ssr: false });
 
 const ProSidebarPropertiesPage: React.FC = () => {
   const searchParams = useSearchParams();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [currentView, setCurrentView] = useState<'grid' | 'map'>(
-    (typeof window !== 'undefined' && (new URL(window.location.href)).searchParams.get('view') === 'map') ? 'map' : 'grid'
-  );
+  // Hydration-safe default: always start with 'grid' on first render.
+  // Then, after mount, sync from URL/localStorage/effects.
+  const [currentView, setCurrentView] = useState<'grid' | 'map'>('grid');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [highlightedPropertyId, setHighlightedPropertyId] = useState<number | null>(null);
   const [filters, setFilters] = useState<FiltersState>({
@@ -92,26 +90,7 @@ const ProSidebarPropertiesPage: React.FC = () => {
     });
   }, [allProperties, debouncedFilters, debouncedQuery]);
 
-  // Deterministic coordinates per district and id (for Google Map mock pins)
-  const googleMapProps = useMemo(() => {
-    const districtToCenter: Record<string, { lat: number; lng: number }> = {
-      vake: { lat: 41.7151, lng: 44.7661 },
-      mtatsminda: { lat: 41.7006, lng: 44.7930 },
-      saburtalo: { lat: 41.7296, lng: 44.7489 },
-      isani: { lat: 41.7442, lng: 44.8275 },
-      gldani: { lat: 41.7884, lng: 44.8122 },
-    };
-    return filteredProperties.map((p) => {
-      const center = districtToCenter[p.address] || { lat: 41.7151, lng: 44.7661 };
-      // small deterministic offset based on id to avoid exact overlap
-      const dx = ((p.id % 7) - 3) * 0.0015;
-      const dy = ((p.id % 5) - 2) * 0.0015;
-      return {
-        id: p.id,
-        coordinates: [center.lat + dy, center.lng + dx] as [number, number],
-      };
-    });
-  }, [filteredProperties]);
+  // (Google map props გამორთულია დროებით — ვიყენებთ PropertyDetailsMap-ს)
 
   // Initialize from URL query params (location, type, minPrice, maxPrice)
   useEffect(() => {
@@ -168,6 +147,32 @@ const ProSidebarPropertiesPage: React.FC = () => {
     return () => window.removeEventListener('lumina:view:set', onAiView as any);
   }, []);
 
+  // On mount: თუ URL-ში view არ წერია, ამოიკითხე localStorage და გამოიყენე
+  useEffect(() => {
+    try {
+      const u = new URL(window.location.href);
+      const qpView = (u.searchParams.get('view') || '').toLowerCase();
+      if (!qpView) {
+        const saved = window.localStorage.getItem('lumina_view');
+        if (saved === 'map' || saved === 'grid') {
+          setCurrentView(saved as 'map' | 'grid');
+          u.searchParams.set('view', saved);
+          window.history.replaceState(null, '', u.toString());
+        }
+      }
+    } catch {}
+  }, []);
+
+  // Persist current view both in localStorage and URL-ში
+  useEffect(() => {
+    try {
+      window.localStorage.setItem('lumina_view', currentView);
+      const u = new URL(window.location.href);
+      u.searchParams.set('view', currentView);
+      window.history.replaceState(null, '', u.toString());
+    } catch {}
+  }, [currentView]);
+
   // Inline handler now passed directly where needed
 
   const handleToggleCollapse = () => {
@@ -214,6 +219,34 @@ const ProSidebarPropertiesPage: React.FC = () => {
       quality: [],
     });
   }, []);
+
+  // When switching to Map view, reset filters/search and clean URL filter params
+  useEffect(() => {
+    if (currentView !== 'map') return;
+    try {
+      // Clear local UI state
+      setSearchQuery('');
+      setFilters({
+        priceRange: [0, 1000000],
+        bedrooms: [],
+        bathrooms: [],
+        propertyTypes: [],
+        transactionType: '',
+        constructionStatus: '',
+        floor: '',
+        furniture: '',
+        area: [0, 10000],
+        amenities: [],
+        dateAdded: [null, null],
+        quality: [],
+      });
+      // Clean URL query of filter params, keep view=map
+      const u = new URL(window.location.href);
+      ['location','minPrice','maxPrice','rooms','status','property_type','sort'].forEach((k) => u.searchParams.delete(k));
+      u.searchParams.set('view', 'map');
+      window.history.replaceState(null, '', u.toString());
+    } catch {}
+  }, [currentView]);
 
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -268,15 +301,7 @@ const ProSidebarPropertiesPage: React.FC = () => {
               </div>
             ) : (
               <div className="h-[calc(100vh-6rem)]">
-                {(process.env.NEXT_PUBLIC_MAPS_PROVIDER === 'google') ? (
-                  <GoogleMapView
-                    properties={googleMapProps}
-                    zoom={12}
-                    onPropertyHighlight={(id) => setHighlightedPropertyId(Number(id))}
-                  />
-                ) : (
-                  <PropertyDetailsMap filters={filters} searchQuery={searchQuery} />
-                )}
+                <PropertyDetailsMap filters={filters} searchQuery={searchQuery} />
               </div>
             )}
           </div>

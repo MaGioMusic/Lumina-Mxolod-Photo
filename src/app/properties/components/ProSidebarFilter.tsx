@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
+import { Sidebar, Menu, SubMenu } from 'react-pro-sidebar';
 import { useTheme } from '@/contexts/ThemeContext';
 import ToggleSwitch from './ToggleSwitch';
 import BeautifulRangeSlider from './BeautifulRangeSlider';
@@ -195,12 +195,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
     high: 'text-red-500'
   };
 
-  const intensityBgColors = {
-    none: 'bg-gray-100',
-    low: 'bg-green-50',
-    medium: 'bg-yellow-50',
-    high: 'bg-red-50'
-  };
+  
 
   return (
     <div className="h-full" style={{ backgroundColor: colors.background }}>
@@ -215,6 +210,10 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
           boxShadow: colors.shadow,
           height: '100%',
           color: colors.text,
+          '.ps-sidebar-container': {
+            transition: 'width 150ms ease, min-width 150ms ease',
+            willChange: 'width',
+          },
           // Force override react-pro-sidebar styles
           // '.ps-sidebar-container': {
           //   backgroundColor: `${colors.background} !important`,
@@ -232,7 +231,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
         }}
       >
         {/* Enhanced Header */}
-        <div className={`p-4 border-b transition-all duration-300`} style={{
+        <div className={`p-4 border-b transition-colors duration-150`} style={{
           borderColor: colors.border,
           backgroundColor: colors.background,
           color: colors.text
@@ -274,9 +273,9 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
               {/* Toggle button */}
               <button
                 onClick={onToggleCollapse}
-                className="p-2 text-gray-600 hover:text-primary-600 hover:bg-cream-100 rounded-lg transition-all duration-300 transform hover:scale-105"
+                className="p-2 text-gray-600 hover:text-primary-600 hover:bg-cream-100 rounded-lg transition-colors transition-transform duration-150 transform-gpu will-change-transform hover:scale-105"
               >
-                <svg className={`w-5 h-5 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`w-5 h-5 transition-transform duration-150 transform-gpu ${isCollapsed ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
@@ -756,7 +755,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
           /* Expanded Menu with new filters */
           <Menu
             menuItemStyles={{
-              button: ({ level, active, disabled }) => {
+              button: ({ level }) => {
                 // Level 0 = main menu items, Level 1+ = submenu items
                 if (level === 0) {
                   return {

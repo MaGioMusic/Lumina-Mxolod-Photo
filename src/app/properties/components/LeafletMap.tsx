@@ -53,39 +53,87 @@ export default function LeafletMap({
 }: LeafletMapProps) {
   const mapRef = useRef<L.Map | null>(null);
   const [layer, setLayer] = useState<'osm' | 'sat'>('osm');
+  const isDev = process.env.NODE_ENV === 'development';
+
+  // Custom tooltip styles (card-like bubble)
+  const tooltipStyles = `
+    .leaflet-tooltip.lumina-tooltip { background: transparent; border: none; box-shadow: none; padding: 0; }
+    /* Bubble card */
+    .lumina-card {
+      position: relative;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.96);
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+      animation: luminaPop 160ms ease-out, luminaPulse 2200ms ease-in-out infinite;
+      transform-origin: bottom center;
+    }
+    /* Small pointer tail */
+    .lumina-card::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      width: 14px; height: 14px;
+      background: rgba(255,255,255,0.96);
+      border-left: 1px solid #e5e7eb;
+      border-bottom: 1px solid #e5e7eb;
+      transform: translateX(-50%) rotate(45deg);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      border-bottom-left-radius: 4px;
+    }
+    @keyframes luminaPop { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+    @keyframes luminaPulse {
+      0% { box-shadow: 0 10px 24px rgba(240, 131, 54, 0.00), 0 2px 8px rgba(0,0,0,0.08); }
+      50% { box-shadow: 0 12px 28px rgba(240, 131, 54, 0.22), 0 3px 10px rgba(0,0,0,0.10); }
+      100% { box-shadow: 0 10px 24px rgba(240, 131, 54, 0.00), 0 2px 8px rgba(0,0,0,0.08); }
+    }
+  `;
+
+  // Fit bounds to current properties whenever the set changes
+  useEffect(() => {
+    try {
+      const map = mapRef.current;
+      if (!map || !properties || properties.length === 0) return;
+      const bounds = L.latLngBounds(properties.map((p) => L.latLng(p.coordinates[0], p.coordinates[1])));
+      if (!bounds.isValid()) return;
+      map.fitBounds(bounds.pad(0.15));
+      const b = map.getBounds();
+      onBoundsChange({ north: b.getNorth(), south: b.getSouth(), east: b.getEast(), west: b.getWest() });
+    } catch {}
+  }, [properties?.length]);
 
   const PropertyPin = ({ property }: { property: Property }) => {
     const isHovered = hoveredPropertyId === property.id;
     const isSelected = selectedPropertyId === property.id.toString();
     
     const createCustomIcon = (isHovered: boolean, isSelected: boolean) => {
-      const size = isHovered || isSelected ? 36 : 26;
-      const gradientStart = '#F08336'; // Lumina orange
-      const gradientEnd = '#e0743a';   // deeper orange
+      const size = isHovered || isSelected ? 38 : 26;
+      const base = '#F08336'; // Lumina orange
+      const base2 = '#ff9b5b';
 
       const svgIcon = `
         <svg width="${size}" height="${size}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <linearGradient id="pinGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="${gradientStart}"/>
-              <stop offset="100%" stop-color="${gradientEnd}"/>
-            </linearGradient>
-            <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <filter id="mkShadow" x="-50%" y="-50%" width="200%" height="200%">
               <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.25)"/>
             </filter>
             <style>
-              @keyframes pinPulse { 0%{ transform: scale(1); opacity: .35 } 70%{ transform: scale(1.8); opacity: 0 } 100%{ opacity: 0 } }
-              .pulse { transform-origin: 12px 12px; animation: pinPulse 2s ease-out infinite; fill: ${gradientStart}; opacity: .25; }
+              @keyframes ripple { 0% { r: 4; opacity: .35 } 80% { r: 11; opacity: 0 } 100% { opacity: 0 } }
+              .ring { fill: none; stroke: ${base}; stroke-width: 2; opacity: .35; transform-origin: 12px 12px; }
+              .ring1 { animation: ripple 1.8s ease-out infinite; }
+              .ring2 { animation: ripple 1.8s ease-out .3s infinite; }
+              .ring3 { animation: ripple 1.8s ease-out .6s infinite; }
             </style>
           </defs>
-          <!-- pulsing ring -->
-          <circle class="pulse" cx="12" cy="12" r="10" />
-          <g filter="url(#shadow)">
-            <circle cx="12" cy="12" r="10" fill="url(#pinGrad)" stroke="white" stroke-width="2"/>
-            <!-- glossy highlight -->
-            <circle cx="7.5" cy="7.5" r="2" fill="rgba(255,255,255,0.75)"/>
-            <!-- house icon -->
-            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="#ffffff"/>
+          <!-- expanding rings -->
+          <circle class="ring ring1" cx="12" cy="12" r="4" />
+          <circle class="ring ring2" cx="12" cy="12" r="4" />
+          <circle class="ring ring3" cx="12" cy="12" r="4" />
+          <!-- center dot -->
+          <g filter="url(#mkShadow)">
+            <circle cx="12" cy="12" r="6" fill="${base}" stroke="white" stroke-width="2"/>
+            <circle cx="12" cy="12" r="2.2" fill="${base2}"/>
           </g>
         </svg>
       `;
@@ -108,17 +156,25 @@ export default function LeafletMap({
           click: () => onPropertySelect(property),
         }}
       >
-        <Tooltip direction="top" offset={[0, -14]} opacity={1}>
-          <div className="flex items-center gap-3">
-            <img
-              src={property.image}
-              alt={property.title}
-              className="w-16 h-12 object-cover rounded-md flex-shrink-0"
-            />
-            <div className="text-sm font-medium text-gray-900">
-              <div className="font-semibold">{property.title}</div>
-              <div className="text-primary-600 font-bold">{property.price}</div>
-              <div className="text-gray-600">{property.location}</div>
+        <Tooltip className="lumina-tooltip" direction="top" offset={[0, -18]} opacity={1}>
+          <div className="lumina-card p-3 min-w-[220px] max-w-[280px]">
+            <div className="flex items-start gap-3">
+              <img
+                src={property.image}
+                alt={property.title}
+                className="w-20 h-16 object-cover rounded-md flex-shrink-0"
+              />
+              <div className="flex-1 min-w-0">
+                <div className="text-[13px] font-semibold text-gray-900 leading-snug line-clamp-2">
+                  {property.title}
+                </div>
+                <div className="text-[13px] font-bold text-[#F08336] mt-1">
+                  {property.price}
+                </div>
+                <div className="text-[12px] text-gray-600 truncate">
+                  {property.location}
+                </div>
+              </div>
             </div>
           </div>
         </Tooltip>
@@ -127,6 +183,8 @@ export default function LeafletMap({
   };
 
   return (
+    <>
+      <style jsx global>{tooltipStyles}</style>
     <MapContainer
       center={[41.7151, 44.7661]}
       zoom={12}
@@ -134,7 +192,7 @@ export default function LeafletMap({
       style={{ height: '100%', width: '100%' }}
       ref={mapRef}
       whenReady={() => {
-        console.log('Map is ready, setting up event listeners...');
+        if (isDev) console.log('Map is ready, setting up event listeners...');
         
         // Add a small delay to ensure map is fully loaded
         setTimeout(() => {
@@ -143,7 +201,7 @@ export default function LeafletMap({
             
             const updateBounds = () => {
               const bounds = mapInstance.getBounds();
-              console.log('Map bounds changed:', {
+              if (isDev) console.log('Map bounds changed:', {
                 north: bounds.getNorth(),
                 south: bounds.getSouth(),
                 east: bounds.getEast(),
@@ -162,14 +220,16 @@ export default function LeafletMap({
             mapInstance.on('moveend', updateBounds);
             mapInstance.on('zoomend', updateBounds);
             
-            // Initial bounds update
-            updateBounds();
-            
-            console.log('Event listeners added successfully');
-          }
-        }, 500);
-      }}
-    >
+          // Initial bounds update
+          updateBounds();
+          
+            if (isDev) console.log('Event listeners added successfully');
+        }
+      }, 500);
+    }}
+  >
+      {/* Auto-fit bounds to current properties when list changes */}
+      {/* markers rendered below */}
       {layer === 'osm' ? (
         <TileLayer
           key="osm"
@@ -202,5 +262,6 @@ export default function LeafletMap({
         </div>
       </div>
     </MapContainer>
+    </>
   );
-} 
+}

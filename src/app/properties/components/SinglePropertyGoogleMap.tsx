@@ -27,7 +27,7 @@ const DEFAULT_CATEGORIES = [
 ];
 
 export default function SinglePropertyGoogleMap({ coordinates, propertyTitle, propertyPrice, propertyAddress, propertyImage }: SinglePropertyGoogleMapProps) {
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyDy3CyUuZv27r4JDA2xjFD9iZU0MQP6Ikg';
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
   const mapId = process.env.NEXT_PUBLIC_GOOGLE_MAP_ID || '';
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
@@ -91,7 +91,19 @@ export default function SinglePropertyGoogleMap({ coordinates, propertyTitle, pr
             for (const r of results) {
               if (!r.geometry?.location) continue;
               const m = new google.maps.Marker({ map, position: r.geometry.location, title: r.name });
-              const iw = new google.maps.InfoWindow({ content: `<div style="font-weight:600;margin-bottom:4px">${r.name ?? ''}</div><div style="font-size:12px;color:#4b5563">${r.vicinity ?? ''}</div>` });
+              // Build safe content via textContent to avoid HTML injection
+              const container = document.createElement('div');
+              const titleEl = document.createElement('div');
+              titleEl.style.fontWeight = '600';
+              titleEl.style.marginBottom = '4px';
+              titleEl.textContent = r.name ?? '';
+              const subEl = document.createElement('div');
+              subEl.style.fontSize = '12px';
+              subEl.style.color = '#4b5563';
+              subEl.textContent = r.vicinity ?? '';
+              container.appendChild(titleEl);
+              container.appendChild(subEl);
+              const iw = new google.maps.InfoWindow({ content: container });
               m.addListener('click', () => iw.open({ map, anchor: m }));
               ms.push(m);
             }
@@ -133,7 +145,19 @@ export default function SinglePropertyGoogleMap({ coordinates, propertyTitle, pr
           for (const r of results) {
             if (!r.geometry?.location) continue;
             const m = new google.maps.Marker({ map, position: r.geometry.location, title: r.name });
-            const iw = new google.maps.InfoWindow({ content: `<div style="font-weight:600;margin-bottom:4px">${r.name ?? ''}</div><div style="font-size:12px;color:#4b5563">${r.vicinity ?? ''}</div>` });
+            // Build safe content via textContent to avoid HTML injection
+            const container = document.createElement('div');
+            const titleEl = document.createElement('div');
+            titleEl.style.fontWeight = '600';
+            titleEl.style.marginBottom = '4px';
+            titleEl.textContent = r.name ?? '';
+            const subEl = document.createElement('div');
+            subEl.style.fontSize = '12px';
+            subEl.style.color = '#4b5563';
+            subEl.textContent = r.vicinity ?? '';
+            container.appendChild(titleEl);
+            container.appendChild(subEl);
+            const iw = new google.maps.InfoWindow({ content: container });
             m.addListener('click', () => iw.open({ map, anchor: m }));
             ms.push(m);
           }

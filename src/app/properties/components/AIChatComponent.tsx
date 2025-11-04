@@ -799,6 +799,30 @@ export default function AIChatComponent() {
             if (fnName === 'search_properties') {
               const results = runPropertySearch(argsText);
               setSearchResults(results);
+              // Navigate to /properties with query so fresh page applies filters
+              try {
+                const argsObj = JSON.parse(argsText || '{}');
+                const u = new URL('/properties', window.location.origin);
+                const loc = (argsObj.district || argsObj.location || argsObj.q || '').toString();
+                if (loc) u.searchParams.set('location', loc);
+                const min = Number(argsObj.priceMin ?? argsObj.min_price ?? argsObj.minPrice ?? argsObj.price_min);
+                const max = Number(argsObj.priceMax ?? argsObj.max_price ?? argsObj.maxPrice ?? argsObj.price_max);
+                if (Number.isFinite(min)) u.searchParams.set('minPrice', String(min));
+                if (Number.isFinite(max)) u.searchParams.set('maxPrice', String(max));
+                const roomsVal = Number(argsObj.rooms ?? argsObj.bedrooms);
+                if (Number.isFinite(roomsVal)) u.searchParams.set('rooms', String(roomsVal >= 5 ? 5 : roomsVal));
+                // Optional status/property_type
+                try {
+                  const st = (argsObj.status || '').toString().toLowerCase();
+                  if (st === 'for-sale' || st === 'for-rent') u.searchParams.set('status', st);
+                } catch {}
+                try {
+                  const pt = (argsObj.property_type || argsObj.propertyType || argsObj.type || '').toString().toLowerCase();
+                  if (['apartment','house','villa','studio','penthouse'].includes(pt)) u.searchParams.set('property_type', pt);
+                } catch {}
+                try { window.sessionStorage.setItem('lumina_ai_autostart', isOpen ? '1' : '0'); } catch {}
+                router.push(u.pathname + u.search);
+              } catch {}
               try {
                 const argsObj = JSON.parse(argsText || '{}');
                 const summaryParts: string[] = [];
@@ -823,22 +847,51 @@ export default function AIChatComponent() {
               try {
                 const argsObj = JSON.parse(argsText || '{}');
                 const detail: any = {};
+                // Accept multiple keys for location/district
                 if (typeof argsObj.q === 'string') detail.location = argsObj.q;
+                if (typeof argsObj.location === 'string') detail.location = argsObj.location;
                 if (typeof argsObj.district === 'string') detail.location = argsObj.district;
-                const min = Number(argsObj.priceMin);
-                const max = Number(argsObj.priceMax);
+                // Accept multiple keys for price range
+                const min = Number(argsObj.priceMin ?? argsObj.min_price ?? argsObj.minPrice ?? argsObj.price_min);
+                const max = Number(argsObj.priceMax ?? argsObj.max_price ?? argsObj.maxPrice ?? argsObj.price_max);
                 if (Number.isFinite(min) || Number.isFinite(max)) {
                   detail.priceRange = [Number.isFinite(min) ? min : 0, Number.isFinite(max) ? max : 999999999];
                 }
-                if (Number.isFinite(argsObj.rooms)) {
-                  const r = Number(argsObj.rooms);
+                // Accept rooms/bedrooms
+                const roomsVal = Number(argsObj.rooms ?? argsObj.bedrooms);
+                if (Number.isFinite(roomsVal)) {
+                  const r = Number(roomsVal);
                   detail.bedrooms = [r >= 5 ? '5+' : String(r)];
                 }
                 // Dispatch CustomEvent consumed by PropertiesGrid
                 try { window.dispatchEvent(new CustomEvent('lumina:filters:set', { detail })); } catch {}
-                // Navigate to properties listing
+                // Navigate to properties with URL query so fresh page picks filters
                 try { window.sessionStorage.setItem('lumina_ai_autostart', isOpen ? '1' : '0'); } catch {}
-                router.push('/properties');
+                try {
+                  const u = new URL('/properties', window.location.origin);
+                  if (detail.location) u.searchParams.set('location', String(detail.location));
+                  if (detail.priceRange) {
+                    const [lo, hi] = detail.priceRange;
+                    if (Number.isFinite(lo)) u.searchParams.set('minPrice', String(lo));
+                    if (Number.isFinite(hi)) u.searchParams.set('maxPrice', String(hi));
+                  }
+                  if (detail.bedrooms && detail.bedrooms[0]) {
+                    const bv = detail.bedrooms[0] === '5+' ? '5' : String(detail.bedrooms[0]);
+                    if (bv) u.searchParams.set('rooms', String(bv));
+                  }
+                  // Optional status/property_type
+                  try {
+                    const st = (argsObj.status || '').toString().toLowerCase();
+                    if (st === 'for-sale' || st === 'for-rent') u.searchParams.set('status', st);
+                  } catch {}
+                  try {
+                    const pt = (argsObj.property_type || argsObj.propertyType || argsObj.type || '').toString().toLowerCase();
+                    if (['apartment','house','villa','studio','penthouse'].includes(pt)) u.searchParams.set('property_type', pt);
+                  } catch {}
+                  router.push(u.pathname + u.search);
+                } catch {
+                  router.push('/properties');
+                }
                 sendToolResult(msg.call_id, { ok: true, applied: detail });
               } catch {
                 sendToolResult(msg.call_id, { ok: false, error: 'bad_args' });
@@ -884,6 +937,28 @@ export default function AIChatComponent() {
             if (name === 'search_properties') {
               const results = runPropertySearch(argsText);
               setSearchResults(results);
+              try {
+                const argsObj = JSON.parse(argsText || '{}');
+                const u = new URL('/properties', window.location.origin);
+                const loc = (argsObj.district || argsObj.location || argsObj.q || '').toString();
+                if (loc) u.searchParams.set('location', loc);
+                const min = Number(argsObj.priceMin ?? argsObj.min_price ?? argsObj.minPrice ?? argsObj.price_min);
+                const max = Number(argsObj.priceMax ?? argsObj.max_price ?? argsObj.maxPrice ?? argsObj.price_max);
+                if (Number.isFinite(min)) u.searchParams.set('minPrice', String(min));
+                if (Number.isFinite(max)) u.searchParams.set('maxPrice', String(max));
+                const roomsVal = Number(argsObj.rooms ?? argsObj.bedrooms);
+                if (Number.isFinite(roomsVal)) u.searchParams.set('rooms', String(roomsVal >= 5 ? 5 : roomsVal));
+                // Optional status/property_type
+                try {
+                  const st = (argsObj.status || '').toString().toLowerCase();
+                  if (st === 'for-sale' || st === 'for-rent') u.searchParams.set('status', st);
+                } catch {}
+                try {
+                  const pt = (argsObj.property_type || argsObj.propertyType || argsObj.type || '').toString().toLowerCase();
+                  if (['apartment','house','villa','studio','penthouse'].includes(pt)) u.searchParams.set('property_type', pt);
+                } catch {}
+                window.location.href = u.pathname + u.search;
+              } catch {}
               sendToolResult(msg.call_id, { ok: true, count: results.length, results });
             } else if (name === 'open_page') {
               try {
@@ -899,18 +974,44 @@ export default function AIChatComponent() {
                 const argsObj = JSON.parse(argsText || '{}');
                 const detail: any = {};
                 if (typeof argsObj.q === 'string') detail.location = argsObj.q;
+                if (typeof argsObj.location === 'string') detail.location = argsObj.location;
                 if (typeof argsObj.district === 'string') detail.location = argsObj.district;
-                const min = Number(argsObj.priceMin);
-                const max = Number(argsObj.priceMax);
+                const min = Number(argsObj.priceMin ?? argsObj.min_price ?? argsObj.minPrice ?? argsObj.price_min);
+                const max = Number(argsObj.priceMax ?? argsObj.max_price ?? argsObj.maxPrice ?? argsObj.price_max);
                 if (Number.isFinite(min) || Number.isFinite(max)) {
                   detail.priceRange = [Number.isFinite(min) ? min : 0, Number.isFinite(max) ? max : 999999999];
                 }
-                if (Number.isFinite(argsObj.rooms)) {
-                  const r = Number(argsObj.rooms);
+                const roomsVal = Number(argsObj.rooms ?? argsObj.bedrooms);
+                if (Number.isFinite(roomsVal)) {
+                  const r = Number(roomsVal);
                   detail.bedrooms = [r >= 5 ? '5+' : String(r)];
                 }
                 try { window.dispatchEvent(new CustomEvent('lumina:filters:set', { detail })); } catch {}
-                window.location.href = '/properties';
+                try {
+                  const u = new URL('/properties', window.location.origin);
+                  if (detail.location) u.searchParams.set('location', String(detail.location));
+                  if (detail.priceRange) {
+                    const [lo, hi] = detail.priceRange;
+                    if (Number.isFinite(lo)) u.searchParams.set('minPrice', String(lo));
+                    if (Number.isFinite(hi)) u.searchParams.set('maxPrice', String(hi));
+                  }
+                  if (detail.bedrooms && detail.bedrooms[0]) {
+                    const bv = detail.bedrooms[0] === '5+' ? '5' : String(detail.bedrooms[0]);
+                    if (bv) u.searchParams.set('rooms', String(bv));
+                  }
+                  // Optional status/property_type
+                  try {
+                    const st = (argsObj.status || '').toString().toLowerCase();
+                    if (st === 'for-sale' || st === 'for-rent') u.searchParams.set('status', st);
+                  } catch {}
+                  try {
+                    const pt = (argsObj.property_type || argsObj.propertyType || argsObj.type || '').toString().toLowerCase();
+                    if (['apartment','house','villa','studio','penthouse'].includes(pt)) u.searchParams.set('property_type', pt);
+                  } catch {}
+                  window.location.href = u.pathname + u.search;
+                } catch {
+                  window.location.href = '/properties';
+                }
                 sendToolResult(msg.call_id, { ok: true, applied: detail });
               } catch { sendToolResult(msg.call_id, { ok: false, error: 'bad_args' }); }
             }
