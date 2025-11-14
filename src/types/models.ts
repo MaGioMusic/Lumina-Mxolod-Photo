@@ -7,7 +7,16 @@ const jsonValueSchema = z.unknown();
 
 export const userRoleSchema = z.enum(['guest', 'client', 'agent', 'investor', 'admin']);
 export const currencyTypeSchema = z.enum(['GEL', 'USD', 'EUR', 'RUB']);
-export const propertyTypeSchema = z.enum(['apartment', 'house', 'villa', 'commercial', 'land', 'office']);
+export const propertyTypeSchema = z.enum([
+  'apartment',
+  'house',
+  'villa',
+  'studio',
+  'penthouse',
+  'commercial',
+  'land',
+  'office',
+]);
 export const transactionTypeSchema = z.enum(['sale', 'rent', 'lease']);
 export const propertyConditionSchema = z.enum(['new', 'excellent', 'good', 'needs_renovation']);
 export const furnishedTypeSchema = z.enum(['furnished', 'partially_furnished', 'unfurnished']);
@@ -102,6 +111,12 @@ export const userSchema = z.object({
 });
 export type User = z.infer<typeof userSchema>;
 
+export const publicUserSchema = userSchema.omit({
+  passwordHash: true,
+  emailVerificationToken: true,
+});
+export type PublicUser = z.infer<typeof publicUserSchema>;
+
 export const agentSchema = z.object({
   id: uuidSchema,
   userId: uuidSchema,
@@ -120,6 +135,12 @@ export const agentSchema = z.object({
   updatedAt: timestampSchema,
 });
 export type Agent = z.infer<typeof agentSchema>;
+
+export const publicAgentSchema = agentSchema.omit({
+  commissionRate: true,
+  verificationDate: true,
+});
+export type PublicAgent = z.infer<typeof publicAgentSchema>;
 
 export const favoriteSchema = z.object({
   id: uuidSchema,

@@ -1,6 +1,6 @@
 import type { Image } from '@/types/models';
 import { prisma } from '@/lib/prisma';
-import { NotFoundError } from './errors';
+import { ForbiddenError, NotFoundError } from './errors';
 import { mapImage } from './mappers';
 
 export async function listImages(propertyId: string): Promise<Image[]> {
@@ -18,9 +18,22 @@ export interface CreateImageInput {
   sortOrder?: number;
 }
 
-export async function createImage(input: CreateImageInput): Promise<Image> {
-  const property = await prisma.property.findUnique({ where: { id: input.propertyId }, select: { id: true } });
+export async function createImage(
+  input: CreateImageInput,
+  actor: { userId: string; agentId?: string | null; isAdmin?: boolean } = { userId: 'anonymous' },
+): Promise<Image> {
+  const property = await prisma.property.findUnique({
+    where: { id: input.propertyId },
+    select: { id: true, agentId: true },
+  });
   if (!property) throw new NotFoundError('Property not found');
+
+  if (!actor.isAdmin) {
+    const canManage = property.agentId && actor.agentId && property.agentId === actor.agentId;
+    if (!canManage) {
+      throw new ForbiddenError('You are not allowed to modify images for this property');
+    }
+  }
 
   const record = await prisma.image.create({
     data: {
@@ -38,19 +51,56 @@ export interface UpdateImageInput {
   sortOrder?: number;
 }
 
-export async function updateImage(id: string, updates: UpdateImageInput): Promise<Image> {
-  const record = await prisma.image.update({
+export async function updateImage(
+  id: string,
+  updates: UpdateImageInput,
+  actor: { userId: string; agentId?: string | null; isAdmin?: boolean } = { userId: 'anonymous' },
+): Promise<Image> {
+  const record = await prisma.image.findUnique({ where: { id } });
+  if (!record) throw new NotFoundError('Image not found');
+
+  const property = await prisma.property.findUnique({
+    where: { id: record.propertyId },
+    select: { agentId: true },
+  });
+  if (!property) throw new NotFoundError('Property not found');
+
+  if (!actor.isAdmin) {
+    const canManage = property.agentId && actor.agentId && property.agentId === actor.agentId;
+    if (!canManage) {
+      throw new ForbiddenError('You are not allowed to modify images for this property');
+    }
+  }
+
+  const updated = await prisma.image.update({
     where: { id },
     data: {
       alt: updates.alt ?? null,
       sortOrder: updates.sortOrder ?? undefined,
     },
   });
-  return mapImage(record);
+  return mapImage(updated);
 }
 
-export async function deleteImage(id: string): Promise<void> {
-  const exists = await prisma.image.findUnique({ where: { id } });
-  if (!exists) throw new NotFoundError('Image not found');
-  await prisma.image.delete({ where: { id } });
+export async function deleteImage(
+  id: string,
+  actor: { userId: string; agentId?: string | null; isAdmin?: boolean } = { userId: 'anonymous' },
+): Promise<void> {
+  const existing = await prisma.image.findUnique({ where: { id } });
+  if (!existing) throw new NotFoundError('Image not found');
+
+  const property = await prisma.property.findUnique({
+    where: { id: existing.propertyId },
+    select: { agentId: true },
+  });
+  if (!property) throw new NotFoundError('Property not found');
+
+  if (!actor.isAdmin) {
+    const canManage = property.agentId && actor.agentId && property.agentId === actor.agentId;
+    if (!canManage) {
+      throw new ForbiddenError('You are not allowed to delete images for this property');
+    }
+  }
+
+  await prisma.image.delete({ where: { id: existing.id } });
 }

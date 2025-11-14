@@ -3,8 +3,8 @@ import { z } from 'zod';
 import { ListingStatus } from '@prisma/client';
 import { createListing, listListings } from '@/lib/repo';
 import { currencyTypeSchema, listingStatusSchema } from '@/types/models';
-import { errorResponse, jsonResponse, requireUser } from '../utils';
-import { prisma } from '@/lib/prisma';
+import { errorResponse, jsonResponse } from '../utils';
+import { requireUser, resolveActorContext } from '@/lib/auth/server';
 
 const listQuerySchema = z.object({
   propertyId: z.string().uuid().optional(),
@@ -59,26 +59,24 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const user = requireUser(request, ['client', 'agent', 'investor', 'admin']);
+    const user = requireUser(request, ['agent', 'admin']);
+    const actor = await resolveActorContext(user);
     const body = await request.json();
     const payload = createBodySchema.parse(body);
 
-    let agentId: string | null = null;
-    if (user.role === 'agent') {
-      const agent = await prisma.agent.findUnique({ where: { userId: user.id }, select: { id: true } });
-      agentId = agent?.id ?? null;
-    }
-
-    const listing = await createListing({
-      propertyId: payload.propertyId,
-      userId: user.id,
-      agentId,
-      price: payload.price,
-      currency: payload.currency,
-      status: payload.status,
-      expiryDate: payload.expiryDate ? new Date(payload.expiryDate) : null,
-      notes: payload.notes ?? null,
-    });
+    const listing = await createListing(
+      {
+        propertyId: payload.propertyId,
+        userId: user.id,
+        agentId: actor.agentId ?? undefined,
+        price: payload.price,
+        currency: payload.currency,
+        status: payload.status,
+        expiryDate: payload.expiryDate ? new Date(payload.expiryDate) : null,
+        notes: payload.notes ?? null,
+      },
+      actor,
+    );
 
     return jsonResponse(listing, { status: 201 });
   } catch (error) {

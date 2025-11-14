@@ -2,7 +2,8 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { appointmentTypeSchema } from '@/types/models';
 import { createAppointment } from '@/lib/repo';
-import { errorResponse, jsonResponse, requireUser } from '../utils';
+import { errorResponse, jsonResponse } from '../utils';
+import { requireUser } from '@/lib/auth/server';
 
 const bodySchema = z.object({
   propertyId: z.string().uuid(),

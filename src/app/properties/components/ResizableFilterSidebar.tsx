@@ -70,8 +70,12 @@ export default function ResizableFilterSidebar({ onFiltersChange }: ResizableFil
   const propertyTypes = [
     { id: 'apartment', label: 'ბინა', icon: Building },
     { id: 'house', label: 'სახლი', icon: Home },
+    { id: 'villa', label: 'ვილა', icon: Home },
+    { id: 'studio', label: 'სტუდიო', icon: Building2 },
+    { id: 'penthouse', label: 'პენთჰაუსი', icon: Building2 },
     { id: 'commercial', label: 'კომერციული', icon: Building2 },
-    { id: 'land', label: 'მიწა', icon: Warehouse }
+    { id: 'land', label: 'მიწა', icon: Warehouse },
+    { id: 'office', label: 'ოფისი', icon: Building2 }
   ];
 
   const amenities = [

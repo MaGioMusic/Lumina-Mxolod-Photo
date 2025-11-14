@@ -1,7 +1,8 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { createInquiry } from '@/lib/repo';
-import { errorResponse, jsonResponse, getOptionalUser } from '../utils';
+import { errorResponse, jsonResponse } from '../utils';
+import { getCurrentUser as getOptionalUser } from '@/lib/auth/server';
 
 const bodySchema = z.object({
   propertyId: z.string().uuid(),

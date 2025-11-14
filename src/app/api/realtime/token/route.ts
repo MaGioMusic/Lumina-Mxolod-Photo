@@ -1,8 +1,43 @@
 import { NextRequest } from 'next/server';
+import { ensureRealtimeAccess } from '@/lib/auth/devGuard';
+import { enforceRateLimit } from '@/lib/security/rateLimiter';
+import { HttpError } from '@/lib/repo/errors';
 
 // Create a short-lived Realtime session token for the browser (ephemeral)
 // This endpoint must run server-side with OPENAI_API_KEY set in the environment.
 export async function GET(req: NextRequest) {
+  try {
+    const access = ensureRealtimeAccess(req);
+    enforceRateLimit(access.rateLimitKey, {
+      limit: 10,
+      windowMs: 60_000,
+      feature: 'realtime token request',
+    });
+  } catch (error) {
+    if (error instanceof HttpError) {
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: error.code,
+            message: error.message,
+          },
+        }),
+        { status: error.status, headers: { 'content-type': 'application/json' } },
+      );
+    }
+
+    console.error('Realtime guard failure', error);
+    return new Response(
+      JSON.stringify({
+        error: {
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to authorize realtime access',
+        },
+      }),
+      { status: 500, headers: { 'content-type': 'application/json' } },
+    );
+  }
+
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     return new Response(
@@ -361,10 +396,22 @@ export async function GET(req: NextRequest) {
       });
       if (!res2.ok) {
         const text2 = await res2.text();
-        return new Response(
-          JSON.stringify({ error: 'Failed to create session', detail: text, retry_detail: text2 }),
-          { status: 500, headers: { 'content-type': 'application/json' } }
-        );
+        const payload: Record<string, unknown> = {
+          error: {
+            code: 'REALTIME_UPSTREAM_FAILURE',
+            message: 'Failed to create session',
+          },
+        };
+        if (process.env.NODE_ENV !== 'production') {
+          (payload.error as Record<string, unknown>).detail = {
+            upstream: text,
+            retry: text2,
+          };
+        }
+        return new Response(JSON.stringify(payload), {
+          status: 500,
+          headers: { 'content-type': 'application/json' },
+        });
       }
       const data2 = await res2.json();
       return new Response(JSON.stringify(data2), {
@@ -379,10 +426,32 @@ export async function GET(req: NextRequest) {
       headers: { 'content-type': 'application/json' },
     });
   } catch (err: unknown) {
-    return new Response(
-      JSON.stringify({ error: 'Unexpected error creating session', detail: String(err) }),
-      { status: 500, headers: { 'content-type': 'application/json' } }
-    );
+    if (err instanceof HttpError) {
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: err.code,
+            message: err.message,
+          },
+        }),
+        { status: err.status, headers: { 'content-type': 'application/json' } },
+      );
+    }
+
+    console.error('Unexpected realtime token error', err);
+    const payload: Record<string, unknown> = {
+      error: {
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Unexpected error creating session',
+      },
+    };
+    if (process.env.NODE_ENV !== 'production') {
+      (payload.error as Record<string, unknown>).detail = String(err);
+    }
+    return new Response(JSON.stringify(payload), {
+      status: 500,
+      headers: { 'content-type': 'application/json' },
+    });
   }
 }
 

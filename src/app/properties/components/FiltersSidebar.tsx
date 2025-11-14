@@ -127,7 +127,11 @@ const FiltersSidebar: React.FC<FiltersSidebarProps> = memo(({
     { value: 'apartment', label: t('apartment'), icon: Buildings },
     { value: 'house', label: t('house'), icon: House },
     { value: 'villa', label: t('villa'), icon: House },
-    { value: 'commercial', label: t('commercial'), icon: BuildingOffice }
+    { value: 'studio', label: t('studio'), icon: Buildings },
+    { value: 'penthouse', label: t('penthouse'), icon: Buildings },
+    { value: 'commercial', label: t('commercial'), icon: BuildingOffice },
+    { value: 'land', label: t('land'), icon: BuildingOffice },
+    { value: 'office', label: t('office'), icon: BuildingOffice }
   ];
 
   const transactionTypes = [

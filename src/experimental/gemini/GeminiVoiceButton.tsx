@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Microphone } from '@phosphor-icons/react';
 
@@ -26,7 +27,6 @@ export function GeminiVoiceButton({ locale = 'ka-GE', onTranscript, onResponse }
     }
   }, []);
 
-  // Load API key (client-side only for dev/testing): NEXT_PUBLIC_ or sessionStorage fallback
   useEffect(() => {
     try {
       const fromEnv = (process as any)?.env?.NEXT_PUBLIC_GEMINI_API_KEY as string | undefined;
@@ -37,9 +37,9 @@ export function GeminiVoiceButton({ locale = 'ka-GE', onTranscript, onResponse }
 
   const georgianVoice = useMemo(() => {
     if (!voices.length) return undefined;
-    const exact = voices.find(v => (v.lang || '').toLowerCase().startsWith('ka'));
+    const exact = voices.find((voice) => (voice.lang || '').toLowerCase().startsWith('ka'));
     if (exact) return exact;
-    const generic = voices.find(v => (v.lang || '').toLowerCase().includes('ka'));
+    const generic = voices.find((voice) => (voice.lang || '').toLowerCase().includes('ka'));
     return generic;
   }, [voices]);
 
@@ -55,24 +55,24 @@ export function GeminiVoiceButton({ locale = 'ka-GE', onTranscript, onResponse }
   const speak = (text: string) => {
     try {
       if (!('speechSynthesis' in window)) return;
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = locale;
-      if (georgianVoice) u.voice = georgianVoice;
-      u.rate = 1;
-      u.pitch = 1;
-      u.onstart = () => setSpeaking(true);
-      u.onend = () => setSpeaking(false);
-      u.onerror = () => setSpeaking(false);
-      utteranceRef.current = u;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = locale;
+      if (georgianVoice) utterance.voice = georgianVoice;
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      utterance.onstart = () => setSpeaking(true);
+      utterance.onend = () => setSpeaking(false);
+      utterance.onerror = () => setSpeaking(false);
+      utteranceRef.current = utterance;
       window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(u);
-    } catch (e: any) {
+      window.speechSynthesis.speak(utterance);
+    } catch {
       setSpeaking(false);
     }
   };
 
-  const handleClick = async (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleClick = async (event: React.MouseEvent) => {
+    event.stopPropagation();
     setError(null);
     if (listening) {
       try { (recognitionRef.current as any)?.stop?.(); } catch {}
@@ -80,22 +80,22 @@ export function GeminiVoiceButton({ locale = 'ka-GE', onTranscript, onResponse }
       return;
     }
 
-    const Rec: any = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!Rec) {
-      const typed = prompt('მიუთითე კითხვა ტექსტურად (ბრაუზერი არ მხარს უჭერს SpeechRecognition)');
+    const RecognitionCtor: any = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!RecognitionCtor) {
+      const typed = window.prompt('მიუთითე კითხვა ტექსტურად (SpeechRecognition მიუწვდომელია)');
       if (typed && typed.trim()) await askGemini(typed.trim());
       return;
     }
 
-    const recognition = new (Rec as any)();
+    const recognition = new RecognitionCtor();
     recognition.lang = locale;
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
     recognitionRef.current = recognition;
 
-    recognition.onresult = async (event: any) => {
+    recognition.onresult = async (ev: any) => {
       try {
-        const transcript: string = event.results?.[0]?.[0]?.transcript || '';
+        const transcript: string = ev.results?.[0]?.[0]?.transcript || '';
         if (transcript) {
           onTranscript?.(transcript);
           await askGemini(transcript);
@@ -112,7 +112,7 @@ export function GeminiVoiceButton({ locale = 'ka-GE', onTranscript, onResponse }
     try {
       setListening(true);
       recognition.start();
-    } catch (err: any) {
+    } catch {
       setError('Recorder start failed');
       setListening(false);
     }
@@ -120,7 +120,6 @@ export function GeminiVoiceButton({ locale = 'ka-GE', onTranscript, onResponse }
 
   async function askGemini(text: string) {
     try {
-      // Ensure we have an API key; prompt once if missing
       if (!apiKeyRef.current) {
         const entered = typeof window !== 'undefined' ? window.prompt('ჩაწერე Gemini API key (დროებით, მხოლოდ ტესტისთვის):') : '';
         if (entered && entered.trim()) {
@@ -129,13 +128,16 @@ export function GeminiVoiceButton({ locale = 'ka-GE', onTranscript, onResponse }
         }
       }
 
-      const res = await fetch('/api/gemini/generate', {
+      const response = await fetch('/api/gemini/generate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...(apiKeyRef.current ? { 'x-gemini-api-key': apiKeyRef.current } : {}) },
-        body: JSON.stringify({ text, ...(apiKeyRef.current ? { apiKey: apiKeyRef.current } : {}) })
+        headers: {
+          'Content-Type': 'application/json',
+          ...(apiKeyRef.current ? { 'x-gemini-api-key': apiKeyRef.current } : {}),
+        },
+        body: JSON.stringify({ text, ...(apiKeyRef.current ? { apiKey: apiKeyRef.current } : {}) }),
       });
-      const data = await res.json();
-      if (!res.ok) {
+      const data = await response.json();
+      if (!response.ok) {
         const msg = data?.detail?.error?.message || data?.error || 'Gemini error';
         setError(msg);
         speak('სამწუხაროდ, მოხდა შეცდომა.');
@@ -144,7 +146,7 @@ export function GeminiVoiceButton({ locale = 'ka-GE', onTranscript, onResponse }
       const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
       onResponse?.(reply);
       if (reply) speak(reply);
-    } catch (e: any) {
+    } catch {
       setError('ქსელის შეცდომა');
       speak('ქსელის შეცდომა.');
     }
@@ -152,7 +154,12 @@ export function GeminiVoiceButton({ locale = 'ka-GE', onTranscript, onResponse }
 
   return (
     <div>
-      <button type="button" onClick={handleClick} aria-label={listening ? 'ხმის შეწყვეტა' : 'ხმის ჩართვა'} title={listening ? 'ხმის შეწყვეტა' : 'ხმის ჩართვა'}>
+      <button
+        type="button"
+        onClick={handleClick}
+        aria-label={listening ? 'ხმის შეწყვეტა' : 'ხმის ჩართვა'}
+        title={listening ? 'ხმის შეწყვეტა' : 'ხმის ჩართვა'}
+      >
         <div className="voice-mic" aria-hidden="true">
           <div className="echo">
             <span></span>
@@ -162,9 +169,7 @@ export function GeminiVoiceButton({ locale = 'ka-GE', onTranscript, onResponse }
           <Microphone className="mic" size={16} weight="fill" />
         </div>
       </button>
-      {error && (
-        <div className="text-[10px] text-red-600 mt-1 max-w-[180px]">{error}</div>
-      )}
+      {error && <div className="text-[10px] text-red-600 mt-1 max-w-[180px]">{error}</div>}
     </div>
   );
 }

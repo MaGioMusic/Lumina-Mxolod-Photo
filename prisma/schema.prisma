@@ -26,6 +26,8 @@ enum PropertyType {
   apartment
   house
   villa
+  studio
+  penthouse
   commercial
   land
   office

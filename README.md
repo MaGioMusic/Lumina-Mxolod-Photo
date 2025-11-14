@@ -29,7 +29,9 @@ DEFAULT_VOICE_LANG=ka
 NEXT_PUBLIC_VOICE_DEFAULT=1
 NEXT_PUBLIC_FC_DEFAULT=1
 VOICE_MODEL=gpt-4o-realtime-preview-2024-12-17
+NEXT_PUBLIC_ENABLE_GEMINI=0
 ```
+`NEXT_PUBLIC_ENABLE_GEMINI` უნდა დარჩეს `0`-ზე production გარემოში. თუ საჭიროა Gemini-ის ექსპერიმენტული ხმა (GA-ს შემდეგ), მიიღებ შესაბამის მოდულს `src/experimental/gemini/**` დირექტორიიდან და ამ ფლაგის `1`-ზე გადართვა ჩატვირთავს მას client bundle-ში.
 4) Dev
 ```bash
 npm run dev
@@ -54,6 +56,7 @@ npm run lint
 - Realtime Voice (OpenAI) via WebRTC + DataChannel
 - Server issues ephemeral token at `/api/realtime/token`
 - Tooling examples: `open_page`, `set_filters`, `set_view`, `navigate_to_property`, `open_first_property`
+- Gemini voice integration არის **experimental**: კოდი ინახება `src/experimental/gemini/` დირექტორიაში და default-ად არ იტვირთება. მის გასააქტიურებლად საჭიროა `NEXT_PUBLIC_ENABLE_GEMINI=1` + შესაბამისი proxy/API key-ები (`docs/gemini-toggle-notes.md` იხილე ინსტრუქციებისთვის).
 
 ## Backup & Restore
 See `BACKUP.md` for the mirror strategy and full snapshot instructions (ZIP release).

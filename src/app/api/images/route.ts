@@ -1,7 +1,8 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { createImage, listImages } from '@/lib/repo';
-import { errorResponse, jsonResponse, requireUser } from '../utils';
+import { errorResponse, jsonResponse } from '../utils';
+import { requireUser, resolveActorContext } from '@/lib/auth/server';
 
 const listQuerySchema = z.object({
   propertyId: z.string().uuid(),
@@ -39,10 +40,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    requireUser(request, ['agent', 'admin', 'client']);
+    const user = requireUser(request, ['agent', 'admin']);
+    const actor = await resolveActorContext(user);
     const body = await request.json();
     const payload = createBodySchema.parse(body);
-    const image = await createImage(payload);
+    const image = await createImage(payload, actor);
     return jsonResponse(image, { status: 201 });
   } catch (error) {
     return errorResponse(error);

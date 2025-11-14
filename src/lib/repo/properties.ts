@@ -1,7 +1,7 @@
 import { Prisma, PropertyStatus, PropertyType, TransactionType } from '@prisma/client';
-import type { Property, PropertyAnalytics, Agent } from '@/types/models';
+import type { Property, PropertyAnalytics, PublicAgent } from '@/types/models';
 import { prisma } from '@/lib/prisma';
-import { mapAgent, mapProperty, mapPropertyAnalytics } from './mappers';
+import { mapProperty, mapPropertyAnalytics, mapPublicAgent } from './mappers';
 
 export type PropertySortKey = 'createdAt' | 'price' | 'views';
 
@@ -101,7 +101,7 @@ export async function listProperties(params: PropertyListParams = {}): Promise<P
 
 export interface PropertyDetailResult {
   property: Property;
-  agent: Agent | null;
+  agent: PublicAgent | null;
   analytics: PropertyAnalytics | null;
 }
 
@@ -119,7 +119,7 @@ export async function getPropertyDetail(id: string): Promise<PropertyDetailResul
   if (!record) return null;
 
   const property = mapProperty(record);
-  const agent = record.agent ? mapAgent(record.agent) : null;
+  const agent = record.agent ? mapPublicAgent(record.agent) : null;
   const analytics = record.analytics && record.analytics.length > 0 ? mapPropertyAnalytics(record.analytics[0]) : null;
 
   return { property, agent, analytics };

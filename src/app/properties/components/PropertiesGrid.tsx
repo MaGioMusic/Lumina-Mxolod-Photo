@@ -247,30 +247,37 @@ export default function PropertiesGrid({
     amenities: injectedFilters.amenities ?? filters.amenities,
   };
 
+  // Stable scalar keys for effect dependencies (არ ვაყენებთ მთლიან ობიექტს/მასივებს, რომ უსასრულო რერენდერები არ მივიღოთ)
+  const [minPrice, maxPrice] = effectiveFilters.priceRange;
+  const bedroomsKey = effectiveFilters.bedrooms.join(',');
+  const propertyTypeKey = effectiveFilters.propertyTypes[0] ?? '';
+  const transactionTypeKey = effectiveFilters.transactionType;
+
   useEffect(() => {
     const controller = new AbortController();
     const params = new URLSearchParams();
     params.set('page', '1');
-    params.set('pageSize', '200');
+    // এক გვერდზე მაქსიმუმ 60 ობიექტს ვითხოვთ — ეს ემთხვევა API-ის Zod ლიმიტს (max 60)
+    params.set('pageSize', '60');
 
     if (searchQuery.trim()) {
       params.set('search', searchQuery.trim());
     }
 
-    const [minPrice, maxPrice] = effectiveFilters.priceRange;
     if (minPrice > 0) params.set('priceMin', Math.round(minPrice).toString());
     if (maxPrice < 1_000_000) params.set('priceMax', Math.round(maxPrice).toString());
 
-    if (effectiveFilters.propertyTypes.length > 0) {
-      params.set('propertyType', effectiveFilters.propertyTypes[0]);
+    if (propertyTypeKey) {
+      params.set('propertyType', propertyTypeKey);
     }
 
-    if (effectiveFilters.transactionType) {
-      params.set('transactionType', effectiveFilters.transactionType === 'for-rent' ? 'rent' : 'sale');
+    if (transactionTypeKey) {
+      params.set('transactionType', transactionTypeKey === 'for-rent' ? 'rent' : 'sale');
     }
 
-    if (effectiveFilters.bedrooms.length > 0) {
-      const last = effectiveFilters.bedrooms[effectiveFilters.bedrooms.length - 1];
+    if (bedroomsKey) {
+      const parts = bedroomsKey.split(',');
+      const last = parts[parts.length - 1];
       const parsed = last === '5+' ? 5 : parseInt(last, 10);
       if (!Number.isNaN(parsed)) params.set('bedrooms', parsed.toString());
     }
@@ -298,7 +305,7 @@ export default function PropertiesGrid({
       .finally(() => setIsFetching(false));
 
     return () => controller.abort();
-  }, [searchQuery, effectiveFilters.priceRange, effectiveFilters.propertyTypes, effectiveFilters.transactionType, effectiveFilters.bedrooms]);
+  }, [searchQuery, minPrice, maxPrice, propertyTypeKey, transactionTypeKey, bedroomsKey]);
 
   const propertiesDataset = apiProperties ?? fallbackProperties;
 

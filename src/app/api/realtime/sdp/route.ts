@@ -1,8 +1,18 @@
 import { NextRequest } from 'next/server';
+import { ensureRealtimeAccess } from '@/lib/auth/devGuard';
+import { enforceRateLimit } from '@/lib/security/rateLimiter';
+import { HttpError } from '@/lib/repo/errors';
 
 // Server-side proxy for SDP exchange to avoid browser CORS/network blocks
 export async function POST(req: NextRequest) {
   try {
+    const access = ensureRealtimeAccess(req);
+    enforceRateLimit(`${access.rateLimitKey}:sdp`, {
+      limit: 15,
+      windowMs: 60_000,
+      feature: 'realtime SDP exchange',
+    });
+
     const model = req.headers.get('x-model') || 'gpt-realtime';
     const ephemeral = req.headers.get('x-ephemeral-token');
     if (!ephemeral) {
@@ -52,7 +62,15 @@ export async function POST(req: NextRequest) {
     }
     if (!res) {
       return new Response(
-        JSON.stringify({ error: 'SDP exchange failed', detail: 'Upstream timeout or gateway error' }),
+        JSON.stringify({
+          error: {
+            code: 'SDP_UPSTREAM_FAILURE',
+            message: 'SDP exchange failed',
+            ...(process.env.NODE_ENV !== 'production'
+              ? { detail: 'Upstream timeout or gateway error' }
+              : {}),
+          },
+        }),
         { status: 504, headers: { 'content-type': 'application/json' } }
       );
     }
@@ -60,7 +78,13 @@ export async function POST(req: NextRequest) {
     if (!res.ok) {
       const text = await res.text();
       return new Response(
-        JSON.stringify({ error: 'SDP exchange failed', detail: text }),
+        JSON.stringify({
+          error: {
+            code: 'SDP_UPSTREAM_FAILURE',
+            message: 'SDP exchange failed',
+            ...(process.env.NODE_ENV !== 'production' ? { detail: text } : {}),
+          },
+        }),
         { status: 502, headers: { 'content-type': 'application/json' } }
       );
     }
@@ -71,11 +95,29 @@ export async function POST(req: NextRequest) {
       headers: { 'content-type': 'application/sdp' },
     });
   } catch (err: unknown) {
+    if (err instanceof HttpError) {
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: err.code,
+            message: err.message,
+          },
+        }),
+        { status: err.status, headers: { 'content-type': 'application/json' } },
+      );
+    }
+
+    console.error('Unexpected SDP proxy error', err);
     return new Response(
-      JSON.stringify({ error: 'Unexpected error during SDP proxy', detail: String(err) }),
+      JSON.stringify({
+        error: {
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Unexpected error during SDP proxy',
+          ...(process.env.NODE_ENV !== 'production' ? { detail: String(err) } : {}),
+        },
+      }),
       { status: 500, headers: { 'content-type': 'application/json' } }
     );
   }
 }
-
 

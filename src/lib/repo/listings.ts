@@ -1,7 +1,7 @@
 import { ListingStatus, Prisma } from '@prisma/client';
 import type { Listing } from '@/types/models';
 import { prisma } from '@/lib/prisma';
-import { NotFoundError } from './errors';
+import { ForbiddenError, NotFoundError } from './errors';
 import { mapListing } from './mappers';
 
 export interface ListListingsParams {
@@ -63,14 +63,30 @@ export interface CreateListingInput {
   notes?: string | null;
 }
 
-export async function createListing(input: CreateListingInput): Promise<Listing> {
-  const property = await prisma.property.findUnique({ where: { id: input.propertyId }, select: { agentId: true } });
+export async function createListing(
+  input: CreateListingInput,
+  actor: { userId: string; agentId?: string | null; isAdmin?: boolean } = { userId: 'anonymous' },
+): Promise<Listing> {
+  const property = await prisma.property.findUnique({
+    where: { id: input.propertyId },
+    select: { agentId: true },
+  });
   if (!property) throw new NotFoundError('Property not found');
+
+  const isPrivileged = Boolean(actor.isAdmin);
+  if (!isPrivileged) {
+    const canManage = property.agentId && actor.agentId && property.agentId === actor.agentId;
+    if (!canManage) {
+      throw new ForbiddenError('You are not allowed to create listings for this property');
+    }
+  }
+
+  const resolvedAgentId = isPrivileged ? input.agentId ?? property.agentId : property.agentId;
 
   const record = await prisma.listing.create({
     data: {
       propertyId: input.propertyId,
-      agentId: input.agentId ?? property.agentId,
+      agentId: resolvedAgentId ?? null,
       userId: input.userId,
       price: new Prisma.Decimal(input.price),
       currency: input.currency,

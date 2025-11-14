@@ -16,6 +16,9 @@ import {
   searchHistorySchema,
   transactionSchema,
   userPreferenceSchema,
+  publicAgentSchema,
+  publicUserSchema,
+  userSchema,
 } from '@/types/models';
 
 const toDecimalString = (value: Prisma.Decimal | string | number | null | undefined) => {
@@ -53,7 +56,7 @@ export const mapListing = (record: Prisma.ListingGetPayload<Record<string, never
     notes: record.notes ?? null,
   });
 
-export const mapAgent = (record: Prisma.AgentGetPayload<{ }>) =>
+export const mapAgent = (record: Prisma.AgentGetPayload<Record<string, never>>) =>
   agentSchema.parse({
     id: record.id,
     userId: record.userId,
@@ -265,3 +268,34 @@ export const mapOrganizationMembership = (
     createdAt: toISOString(record.createdAt),
     updatedAt: toISOString(record.updatedAt),
   });
+
+export const mapPublicUser = (record: Prisma.UserGetPayload<Record<string, never>>) => {
+  const user = userSchema.parse({
+    id: record.id,
+    email: record.email,
+    firstName: record.firstName,
+    lastName: record.lastName,
+    avatar: record.avatar ?? null,
+    role: record.role,
+    phone: record.phone ?? null,
+    createdAt: toISOString(record.createdAt),
+    lastLogin: toISOString(record.lastLogin),
+    isActive: record.isActive,
+    passwordHash: record.passwordHash,
+    emailVerificationToken: record.emailVerificationToken ?? null,
+    isEmailVerified: record.isEmailVerified,
+    updatedAt: toISOString(record.updatedAt),
+  });
+  const safe = { ...user };
+  delete (safe as Partial<typeof safe>).passwordHash;
+  delete (safe as Partial<typeof safe>).emailVerificationToken;
+  return publicUserSchema.parse(safe);
+};
+
+export const mapPublicAgent = (record: Prisma.AgentGetPayload<Record<string, never>>) => {
+  const agent = mapAgent(record);
+  const safe = { ...agent };
+  delete (safe as Partial<typeof safe>).commissionRate;
+  delete (safe as Partial<typeof safe>).verificationDate;
+  return publicAgentSchema.parse(safe);
+};

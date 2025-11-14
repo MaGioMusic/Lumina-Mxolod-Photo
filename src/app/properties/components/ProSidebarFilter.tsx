@@ -152,7 +152,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
     });
   };
 
-  const propertyTypes = ['Apartment', 'House', 'Villa', 'Commercial', 'Land'];
+  const propertyTypes = ['Apartment', 'House', 'Villa', 'Studio', 'Penthouse', 'Commercial', 'Land', 'Office'];
   const amenitiesList = ['Parking', 'Balcony', 'Garden', 'Pool', 'Gym', 'Security', 'Elevator', 'Furnished'];
   const qualityLevels = ['Premium', 'Standard'];
 
