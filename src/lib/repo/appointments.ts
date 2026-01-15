@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, type AppointmentType } from '@prisma/client';
 import type { Appointment } from '@/types/models';
 import { prisma } from '@/lib/prisma';
 import { ConflictError, NotFoundError } from './errors';
@@ -8,7 +8,7 @@ export interface CreateAppointmentInput {
   userId: string;
   propertyId: string;
   scheduledDate: Date;
-  type: Prisma.AppointmentType;
+  type: AppointmentType;
   notes?: string | null;
   meetingLocation?: string | null;
 }

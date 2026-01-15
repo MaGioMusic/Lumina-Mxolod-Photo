@@ -1,7 +1,7 @@
 'use client';
 
 import type { ProfileNotification } from '@/types/profile';
-import { Bell, Check, Clock, Info } from '@phosphor-icons/react';
+import { Bell, Check } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
 export function NotificationsPanel({ notifications }: { notifications: ProfileNotification[] }) {

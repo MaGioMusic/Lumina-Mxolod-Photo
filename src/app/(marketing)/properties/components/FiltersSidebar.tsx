@@ -1,7 +1,6 @@
 'use client';
 
 import React, { memo } from 'react';
-import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 // Phosphor Icons imports - using correct icon names
 import { 

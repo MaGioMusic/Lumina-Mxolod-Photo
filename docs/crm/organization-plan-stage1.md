@@ -170,4 +170,3 @@ enum MembershipStatus { pending active suspended left }
 4. API/Services დიზაინი (Stage 4).
 5. ტესტებისა და DevOps გეგმები (Stage 5–6).
 
-

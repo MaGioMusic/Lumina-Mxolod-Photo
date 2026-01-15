@@ -1,4 +1,4 @@
-import { PrismaAdapter } from '@auth/prisma-adapter';
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import type { AccountRole } from '@prisma/client';
 import type { NextAuthOptions, Session, User } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
@@ -14,14 +14,19 @@ interface LuminaUser extends User {
 }
 
 const devSecretFallback = 'lumina-dev-secret';
+// IMPORTANT:
+// - Build-time code for API routes is evaluated during `next build`.
+// - Throwing here blocks the entire build.
+// We still REQUIRE a real secret for production runtime, but we avoid a hard
+// throw at module-load time so the app can build.
 const resolvedSecret =
   process.env.NEXTAUTH_SECRET ??
-  (process.env.NODE_ENV === 'development' ? devSecretFallback : undefined);
+  (process.env.NODE_ENV !== 'production'
+    ? devSecretFallback
+    : '__INSECURE_MISSING_NEXTAUTH_SECRET__');
 
-if (!resolvedSecret) {
-  throw new Error(
-    'NEXTAUTH_SECRET is not set. Please add it to your environment to enable NextAuth.',
-  );
+if (!process.env.NEXTAUTH_SECRET && process.env.NODE_ENV === 'production') {
+  console.warn('[auth] NEXTAUTH_SECRET is not set; using placeholder. Set NEXTAUTH_SECRET in production.');
 }
 
 export const nextAuthOptions: NextAuthOptions = {

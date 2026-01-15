@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { z } from 'zod';
 import { ChatLauncherButton } from './chatLauncherButton';
-import { ChatWindow } from './chatWindow';
+import { HybridChatPanel } from './hybridChatPanel';
+import type { ChatMessage } from './ChatMessageComponent';
 import { usePropertySearch } from '@/hooks/ai/usePropertySearch';
-import { useRealtimeVoiceSession } from '@/hooks/ai/useRealtimeVoiceSession';
 import { runtimeFlags } from '@/lib/flags';
 import { useGeminiLiveSession } from '@/hooks/ai/useGeminiLiveSession';
 
@@ -14,49 +14,40 @@ const ChatMessageSchema = z.object({
   message: z.string().min(1, 'Message cannot be empty').max(500, 'Message too long'),
 });
 
+type PersistedChatMessage = ChatMessage & {
+  modality?: 'text' | 'voice';
+};
+
 export default function AIChatComponent() {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const chatRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(false);
+  const [messages, setMessages] = useState<PersistedChatMessage[]>([]);
+  const [chatSummary, setChatSummary] = useState('');
+  const hydratedFromDbRef = useRef(false);
+  const persistedMessageIdsRef = useRef<Set<string>>(new Set());
+  const lastSavedTranscriptRef = useRef<string>('');
+  const assistantDraftIdRef = useRef<string | null>(null);
+  const assistantFlushTimerRef = useRef<number | null>(null);
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const [voiceSupported, setVoiceSupported] = useState(false);
-
-  // Provider selection: URL override ?voice_provider=gemini|openai
-  // Using useState to properly handle SSR vs client-side hydration
-  const [voiceProvider, setVoiceProvider] = useState<'gemini' | 'openai'>('openai');
-  const [providerReady, setProviderReady] = useState(false);
-  const isGeminiProvider = voiceProvider === 'gemini';
 
   // Voice feature flag: default from env, URL can disable with ?voice=0
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const showInlineResults = searchParams.get('show') === '1';
   const voiceDefaultOn = runtimeFlags.voiceDefaultOn;
   const isVoiceEnabled = searchParams.get('voice') === '0' ? false : voiceDefaultOn;
-  const isClientVadEnabled = searchParams.get('clientvad') === '1';
-  // Realtime mode toggle: A = server VAD only; B = manual (VAD off + client-side VAD)
-  const rtMode = (searchParams.get('rtmode') || 'a').toLowerCase();
-  const isModeB = rtMode === 'b';
-  const useClientVad = isModeB || isClientVadEnabled;
-  const isModeA = !isModeB;
   // Function-calling: default from env, URL can disable with ?fc=0
   const fcDefaultOn = runtimeFlags.functionCallingDefaultOn;
   const isFunctionCallingEnabled = searchParams.get('fc') === '0' ? false : fcDefaultOn;
-  // NEW: Force WebSocket mode instead of WebRTC (?ws=1)
 
-  const {
-    searchResults,
-    lastSearchSummary,
-    handleFunctionCall,
-  } = usePropertySearch({ isChatOpen: isOpen });
+  const { handleFunctionCall } = usePropertySearch({ isChatOpen: isOpen });
 
   const [lastTranscript, setLastTranscript] = useState('');
-  // Important: gate voice behind providerReady to avoid SSR/hydration race
-  // that can accidentally start OpenAI before Gemini provider is resolved.
-  const safeVoiceEnabled = isVoiceEnabled && providerReady && voiceSupported && !voiceError;
+  const safeVoiceEnabled = isVoiceEnabled && voiceSupported && !voiceError;
 
   useEffect(() => {
     mountedRef.current = true;
@@ -73,105 +64,111 @@ export default function AIChatComponent() {
     };
   }, []);
 
-  // Read voice provider on client-side mount (after hydration)
-  useEffect(() => {
-    const urlParam = new URLSearchParams(window.location.search).get('voice_provider') || '';
-    const envProvider = runtimeFlags.voiceProvider || 'openai';
-    const resolved = (urlParam || envProvider).toLowerCase();
-    console.log('[Voice Provider] Detected:', { urlParam, envProvider, resolved });
-    setVoiceProvider(resolved === 'gemini' ? 'gemini' : 'openai');
-    setProviderReady(true);
-  }, []);
-
-  // Debug: Log provider state changes
-  useEffect(() => {
-    console.log('[AIChatComponent] Provider state:', {
-      isGeminiProvider,
-      providerReady,
-      voiceProvider,
-      voiceSupported,
-      voiceError,
-      safeVoiceEnabled,
-      openAIEnabled: safeVoiceEnabled && providerReady && !isGeminiProvider,
-      geminiEnabled: safeVoiceEnabled && providerReady && isGeminiProvider,
-    });
-  }, [isGeminiProvider, providerReady, voiceProvider, voiceSupported, voiceError, safeVoiceEnabled]);
-
-  // OpenAI hook - only enable when providerReady AND NOT Gemini
-  const {
-    isListening: realtimeListening,
-    isMuted,
-    startVoice: startRealtimeVoice,
-    stopVoice: stopRealtimeVoice,
-    toggleMute,
-    audioRef,
-    centerCircleRef,
-  } = useRealtimeVoiceSession({
-    isVoiceEnabled: safeVoiceEnabled && providerReady && !isGeminiProvider,
-    isFunctionCallingEnabled,
-    isModeA,
-    isModeB,
-    useClientVad,
-    handleFunctionCall,
-    onTranscript: setLastTranscript,
-  });
-
-  // Gemini hook - only enable when providerReady AND IS Gemini
+  // Gemini hook (the only supported provider)
   const {
     isListening: geminiListening,
     isMuted: geminiMuted,
+    isAiSpeaking: geminiAiSpeaking,
+    playbackAnalyser: geminiPlaybackAnalyser,
     startVoice: startGeminiVoice,
     stopVoice: stopGeminiVoice,
     toggleMute: toggleGeminiMute,
-    audioRef: geminiAudioRef,
+    sendText: sendGeminiText,
   } = useGeminiLiveSession({
-    enabled: safeVoiceEnabled && providerReady && isGeminiProvider,
+    enabled: safeVoiceEnabled,
     isFunctionCallingEnabled,
     handleFunctionCall,
     onTranscript: setLastTranscript,
     onError: (msg) => setVoiceError(msg),
     onResponseText: (txt) => {
-      // Optional: map to UI as needed
-      console.log('[Gemini][text]', txt);
+      appendAssistantDelta(txt);
     },
   });
 
-  const isListening = isGeminiProvider ? geminiListening : realtimeListening;
+  const isListening = geminiListening;
+  const isAiSpeaking = geminiAiSpeaking;
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleSubmit = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
+  const createId = () => {
     try {
-      ChatMessageSchema.parse({ message });
-      if (isGeminiProvider) {
-        void sendGeminiText(message);
-      } else {
-        console.log('Sending message:', message);
-      }
-      setMessage('');
-    } catch (error) {
-      console.error('Invalid message:', error);
-    }
+      if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID();
+    } catch {}
+    return `${Date.now()}_${Math.random().toString(16).slice(2)}`;
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    e.stopPropagation();
-    setMessage(e.target.value);
-  };
+  const appendUserMessage = useCallback((content: string, modality: 'text' | 'voice' = 'text') => {
+    const msg: PersistedChatMessage = {
+      id: createId(),
+      role: 'user',
+      content,
+      isPartial: false,
+      isFinal: true,
+      timestamp: new Date(),
+      modality,
+    };
+    setMessages((prev) => [...prev, msg]);
+    return msg.id;
+  }, []);
+
+  const appendAssistantDelta = useCallback((delta: string) => {
+    if (!delta) return;
+    setMessages((prev) => {
+      const id = assistantDraftIdRef.current || createId();
+      const existingIdx = prev.findIndex((m) => m.id === id);
+      assistantDraftIdRef.current = id;
+
+      if (existingIdx >= 0) {
+        const next = [...prev];
+        const cur = next[existingIdx]!;
+        next[existingIdx] = {
+          ...cur,
+          content: `${cur.content}${delta}`,
+          isPartial: true,
+          isFinal: false,
+        };
+        return next;
+      }
+
+      const nextMsg: PersistedChatMessage = {
+        id,
+        role: 'assistant',
+        content: delta,
+        isPartial: true,
+        isFinal: false,
+        timestamp: new Date(),
+        modality: 'text',
+      };
+      return [...prev, nextMsg];
+    });
+
+    // Debounced "finalize" so we don't create a new bubble per token.
+    if (assistantFlushTimerRef.current) window.clearTimeout(assistantFlushTimerRef.current);
+    assistantFlushTimerRef.current = window.setTimeout(() => {
+      const draftId = assistantDraftIdRef.current;
+      assistantDraftIdRef.current = null;
+      if (!draftId) return;
+      setMessages((prev) => prev.map((m) => (m.id === draftId ? { ...m, isPartial: false, isFinal: true } : m)));
+    }, 700);
+  }, []);
 
   // Close chat when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node | null;
+      const clickedInsideCap =
+        !!target &&
+        target instanceof Element &&
+        Boolean(target.closest('[data-lumina-ai-inside="1"]'));
+
       if (isOpen && 
           chatRef.current && 
           buttonRef.current &&
-          !chatRef.current.contains(event.target as Node) &&
-          !buttonRef.current.contains(event.target as Node)) {
+          !clickedInsideCap &&
+          !chatRef.current.contains(target as Node) &&
+          !buttonRef.current.contains(target as Node)) {
         setIsOpen(false);
       }
     };
@@ -204,19 +201,6 @@ export default function AIChatComponent() {
   // Auto-restart voice after SPA navigation when flagged (debounced)
   // (moved below after voice helper definitions)
 
-  // Resume audio playback on tab visibility (bypass autoplay blocks)
-  useEffect(() => {
-    const onVis = async () => {
-    if (document.visibilityState === 'visible') {
-      try {
-        if (audioRef.current) await audioRef.current.play().catch(() => {});
-      } catch {}
-    }
-    };
-    document.addEventListener('visibilitychange', onVis);
-    return () => document.removeEventListener('visibilitychange', onVis);
-  }, [audioRef]);
-
   const matchesNavigateTrigger = (raw: string | undefined | null): boolean => {
     if (!raw) return false;
     const m = raw.toLowerCase();
@@ -230,7 +214,11 @@ export default function AIChatComponent() {
   // Fallback: keyword-based navigation when function-calling doesn't trigger
   useEffect(() => {
     if (matchesNavigateTrigger(message)) {
-                try { window.sessionStorage.setItem('lumina_ai_autostart', isOpen ? '1' : '0'); } catch {}
+                try {
+                  window.sessionStorage.setItem('lumina_ai_autostart', isOpen ? '1' : '0');
+                  // Only auto-start voice after navigation if we were already in voice mode.
+                  window.sessionStorage.setItem('lumina_ai_autostart_mode', isListening ? 'voice' : 'text');
+                } catch {}
                   router.push('/properties');
                 }
   }, [message, isOpen, router]);
@@ -238,7 +226,10 @@ export default function AIChatComponent() {
   // Additional fallback: navigate based on latest voice transcript
   useEffect(() => {
     if (matchesNavigateTrigger(lastTranscript)) {
-                try { window.sessionStorage.setItem('lumina_ai_autostart', isOpen ? '1' : '0'); } catch {}
+                try {
+                  window.sessionStorage.setItem('lumina_ai_autostart', isOpen ? '1' : '0');
+                  window.sessionStorage.setItem('lumina_ai_autostart_mode', isListening ? 'voice' : 'text');
+                } catch {}
                 router.push('/properties');
     }
   }, [lastTranscript, isOpen, router]);
@@ -248,45 +239,133 @@ export default function AIChatComponent() {
       setVoiceError('Voice capture is not available in this browser.');
       return;
     }
-    if (!providerReady) {
-      setVoiceError('Voice is initializing. Please try again in a moment.');
-      return;
-    }
     try {
       setVoiceError(null);
-      if (isGeminiProvider) {
-        await startGeminiVoice();
-      } else {
-        await startRealtimeVoice();
-      }
+      try { window.sessionStorage.setItem('lumina_ai_autostart_mode', 'voice'); } catch {}
+      await startGeminiVoice();
     } catch (err) {
       console.error('AI voice failed to start', err);
       if (mountedRef.current) {
         setVoiceError('Voice session failed to start. Check mic permissions and retry.');
       }
     }
-  }, [isGeminiProvider, startGeminiVoice, startRealtimeVoice, voiceSupported]);
+  }, [startGeminiVoice, voiceSupported]);
 
   const stopVoice = useCallback(async () => {
     try {
-      if (isGeminiProvider) {
-        await stopGeminiVoice();
-      } else {
-        await stopRealtimeVoice();
+      await stopGeminiVoice();
+      try { window.sessionStorage.setItem('lumina_ai_autostart_mode', 'text'); } catch {}
+      // Persist the final voice transcript as a user message once per stop.
+      const finalTranscript = (lastTranscript || '').trim();
+      if (finalTranscript && finalTranscript !== lastSavedTranscriptRef.current) {
+        lastSavedTranscriptRef.current = finalTranscript;
+        appendUserMessage(finalTranscript, 'voice');
       }
     } catch (err) {
       console.error('AI voice failed to stop cleanly', err);
     }
-  }, [isGeminiProvider, stopGeminiVoice, stopRealtimeVoice]);
+  }, [appendUserMessage, lastTranscript, stopGeminiVoice]);
+
+  const persistMessage = useCallback(async (m: PersistedChatMessage) => {
+    try {
+      const res = await fetch('/api/chat/message', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          id: m.id,
+          role: m.role,
+          modality: m.modality ?? 'text',
+          content: m.content,
+        }),
+      });
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        throw new Error(`chat persistence failed: ${res.status}${text ? ` - ${text}` : ''}`);
+      }
+      const json = (await res.json().catch(() => null)) as any;
+      if (json && typeof json.summary === 'string') {
+        setChatSummary(json.summary);
+      }
+    } catch (err) {
+      // allow retry on next render
+      persistedMessageIdsRef.current.delete(m.id);
+      console.warn('[chat] persist failed', err);
+    }
+  }, []);
+
+  const safeParseTimestamp = useCallback((value: unknown): Date => {
+    if (typeof value !== 'string') return new Date();
+
+    // Try normalize microsecond timestamps coming from Supabase (e.g. ".169252+00:00")
+    const trimmed = value.trim();
+    const m = trimmed.match(
+      /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(\.(\d+))?(Z|[+-]\d{2}:\d{2})$/,
+    );
+    const normalized = m
+      ? `${m[1]}${m[3] ? `.${m[3].slice(0, 3).padEnd(3, '0')}` : ''}${m[4]}`
+      : trimmed;
+
+    const d = new Date(normalized);
+    return Number.isNaN(d.getTime()) ? new Date() : d;
+  }, []);
+
+  // Load history on mount (anon-first). This also bootstraps visitor/conversation cookies.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/chat/history', { method: 'GET' });
+        if (!res.ok) return;
+        const json = (await res.json()) as any;
+        const rows = Array.isArray(json?.messages) ? json.messages : [];
+        const hydrated: PersistedChatMessage[] = rows
+          .map((r: any) => ({
+            id: String(r.id),
+            role: r.role === 'assistant' ? 'assistant' : 'user',
+            content: String(r.content ?? ''),
+            isPartial: false,
+            isFinal: true,
+            timestamp: safeParseTimestamp(r.createdAt),
+            modality: r.modality === 'voice' ? 'voice' : 'text',
+          }))
+          .filter((m: PersistedChatMessage) => m.content.trim().length > 0);
+
+        if (cancelled) return;
+        setMessages(hydrated);
+        persistedMessageIdsRef.current = new Set(hydrated.map((m) => m.id));
+        if (typeof json?.summary === 'string') setChatSummary(json.summary);
+      } catch {
+        // ignore (demo/offline)
+      } finally {
+        hydratedFromDbRef.current = true;
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [safeParseTimestamp]);
+
+  // Persist newly-finalized messages (text + voice) once.
+  useEffect(() => {
+    if (!hydratedFromDbRef.current) return;
+    for (const m of messages) {
+      if (!m.isFinal) continue;
+      if (persistedMessageIdsRef.current.has(m.id)) continue;
+      persistedMessageIdsRef.current.add(m.id);
+      void persistMessage(m);
+    }
+  }, [messages, persistMessage]);
 
   useEffect(() => {
     let t: number | null = null;
     try {
       const key = 'lumina_ai_autostart';
       const should = typeof window !== 'undefined' ? window.sessionStorage.getItem(key) : null;
+      const mode = typeof window !== 'undefined' ? window.sessionStorage.getItem('lumina_ai_autostart_mode') : null;
       if (should === '1') {
         try { window.sessionStorage.removeItem(key); } catch {}
-        if (providerReady && safeVoiceEnabled && !isListening) {
+        // Only auto-start voice if navigation came from voice mode.
+        if (mode === 'voice' && safeVoiceEnabled && !isListening) {
           t = window.setTimeout(() => {
             void startVoice();
           }, 350);
@@ -294,7 +373,7 @@ export default function AIChatComponent() {
       }
     } catch {}
     return () => { if (t) window.clearTimeout(t); };
-  }, [pathname, providerReady, safeVoiceEnabled, startVoice, isListening]);
+  }, [pathname, safeVoiceEnabled, startVoice, isListening]);
 
   return (
     <>
@@ -519,9 +598,10 @@ export default function AIChatComponent() {
           position: fixed;
           bottom: 120px;
           right: 24px;
-          width: 240px;
-          height: 320px;
-          padding: 6px;
+          /* Slightly larger than before; still safe on mobile. */
+          width: min(420px, calc(100vw - 24px));
+          height: min(560px, calc(100vh - 160px));
+          padding: 0;
           opacity: 0;
           visibility: hidden;
           pointer-events: none;
@@ -534,6 +614,476 @@ export default function AIChatComponent() {
           visibility: visible;
           pointer-events: auto;
         }
+
+        /* Suggestions "cap" that sits OUTSIDE the panel (like a hat) */
+        .lumina-aiCap {
+          position: absolute;
+          /* Lift it higher so it doesn't overlap panel content */
+          top: -56px;
+          left: 12px;
+          right: 52px; /* keep space for the close button */
+          z-index: 10001;
+          /* Match the reference: tabs floating above, no big rounded container */
+          padding: 0;
+          border-radius: 0;
+          background: transparent;
+          border: none;
+          -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+          box-shadow: none;
+          overflow: visible;
+          pointer-events: auto;
+        }
+        .lumina-aiCap .chat-marquee {
+          margin: 0;
+        }
+        /* Cap-style suggestions: "tabs" row (static, horizontal scroll) */
+        .lumina-aiCap .chat-marquee {
+          width: 100%;
+          /* restore marquee behavior */
+          overflow: hidden;
+          mask-image: linear-gradient(
+            to right,
+            rgba(0, 0, 0, 0),
+            rgba(0, 0, 0, 1) 18%,
+            rgba(0, 0, 0, 1) 82%,
+            rgba(0, 0, 0, 0)
+          );
+        }
+        .lumina-aiCap .chat-marquee > ul {
+          animation: scroll-marquee-left 30s linear infinite;
+          justify-content: space-around;
+          gap: 10px;
+          padding: 0;
+          margin: 0;
+        }
+        .lumina-aiCap .chat-marquee:hover > ul { animation-play-state: paused !important; }
+        .lumina-aiCap .chat-marquee > ul[aria-hidden="true"] { display: flex; }
+        .lumina-aiCap .chat-marquee > ul > li > button {
+          padding: 10px 14px;
+          font-size: 13px;
+          font-weight: 600;
+          border-radius: 12px;
+          /* Match chat panel look: dark glass, not bright */
+          background: rgba(17, 17, 17, 0.80);
+          border: 1px solid rgba(31, 41, 55, 0.80); /* gray-800 */
+          color: rgba(255, 255, 255, 0.86);
+          -webkit-backdrop-filter: blur(14px);
+          backdrop-filter: blur(14px);
+        }
+        .lumina-aiCap .chat-marquee > ul > li > button:hover {
+          background: rgba(17, 17, 17, 0.88);
+          border-color: rgba(240, 131, 54, 0.28); /* soft orange accent */
+          color: rgba(255, 255, 255, 0.92);
+        }
+
+        html:not(.dark) .lumina-aiCap .chat-marquee > ul > li > button {
+          background: rgba(255, 255, 255, 0.88);
+          border: 1px solid rgba(229, 231, 235, 1); /* gray-200 */
+          color: rgba(15, 23, 42, 0.80);
+          -webkit-backdrop-filter: blur(14px);
+          backdrop-filter: blur(14px);
+        }
+        html:not(.dark) .lumina-aiCap .chat-marquee > ul > li > button:hover {
+          background: rgba(255, 255, 255, 0.96);
+          border-color: rgba(240, 131, 54, 0.28);
+          color: rgba(15, 23, 42, 0.92);
+        }
+
+        /* Voice mode should NOT render a big rectangle behind Orb */
+        .container-ai-chat.voice-active {
+          width: auto;
+          height: auto;
+          background: transparent !important;
+          -webkit-backdrop-filter: none !important;
+          backdrop-filter: none !important;
+          border: none !important;
+          box-shadow: none !important;
+        }
+
+        /* Hybrid AI panel (Uiverse-inspired, flat CSS) */
+        .lumina-aiPanel {
+          /* Match site header tone (#111111) */
+          --primary-color: #111111;
+          --neutral-color: rgba(255, 255, 255, 0.86);
+          --accent-color: #d4af37; /* Lumina gold */
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          height: 100%;
+          border-radius: 14px; /* more rectangular */
+          overflow: hidden;
+          /* Header-like glass: dark + blur */
+          background: rgba(17, 17, 17, 0.78);
+          -webkit-backdrop-filter: blur(14px);
+          backdrop-filter: blur(14px);
+          border: 1px solid rgba(31, 41, 55, 0.80); /* gray-800 */
+          box-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
+          position: relative;
+        }
+
+        /* Light theme (header is white) */
+        html:not(.dark) .lumina-aiPanel {
+          --primary-color: #ffffff;
+          --neutral-color: rgba(15, 23, 42, 0.78);
+          background: rgba(255, 255, 255, 0.88);
+          border: 1px solid rgba(243, 244, 246, 1); /* gray-100 */
+          box-shadow: 0 22px 60px rgba(0, 0, 0, 0.12);
+        }
+
+        .lumina-aiPanel.voice-active {
+          background: transparent !important;
+          -webkit-backdrop-filter: none !important;
+          backdrop-filter: none !important;
+          border: none !important;
+          box-shadow: none !important;
+          overflow: visible;
+          width: auto;
+          height: auto;
+        }
+
+        /* Ensure inner containers don't paint a panel in voice mode (light/dark). */
+        .container-ai-chat.voice-active .lumina-aiPanel__body {
+          background: transparent !important;
+        }
+
+        /* floating close (no header bar) */
+        .lumina-aiClose {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          width: 34px;
+          height: 34px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 12px;
+          border: 1px solid rgba(31, 41, 55, 0.80); /* gray-800 */
+          background: rgba(17, 17, 17, 0.30);
+          color: rgba(255, 255, 255, 0.90);
+          cursor: pointer;
+          transition: transform 0.12s ease, background 0.12s ease;
+          z-index: 2;
+        }
+        .lumina-aiClose:hover { transform: translateY(-1px); background: rgba(17, 17, 17, 0.42); }
+        .lumina-aiClose:active { transform: scale(0.96); }
+
+        html:not(.dark) .lumina-aiClose {
+          background: rgba(255, 255, 255, 0.78);
+          border: 1px solid rgba(229, 231, 235, 1); /* gray-200 */
+          color: rgba(15, 23, 42, 0.82);
+        }
+        html:not(.dark) .lumina-aiClose:hover { background: rgba(255, 255, 255, 0.92); }
+
+        .lumina-aiPanel__body {
+          position: relative;
+          display: flex;
+          flex: 1 1 auto;
+          min-height: 0;
+          flex-direction: column;
+        }
+
+        .lumina-aiPanel__messages {
+          flex: 1 1 auto;
+          min-height: 0;
+          overflow: auto;
+          padding: 12px;
+          /* Input is now in normal flow (not overlay), so no huge bottom padding needed. */
+          padding-bottom: 12px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          background: transparent;
+        }
+
+        .lumina-aiPanel__empty {
+          margin: auto;
+          text-align: center;
+          color: rgba(255, 255, 255, 0.70);
+          padding: 18px 12px;
+          border: 1px dashed rgba(212, 175, 55, 0.20);
+          border-radius: 14px;
+          max-width: 320px;
+        }
+        .lumina-aiPanel__emptyTitle { font-weight: 700; color: rgba(255,255,255,0.88); margin-bottom: 6px; }
+        .lumina-aiPanel__emptySub { font-size: 12px; }
+
+        html:not(.dark) .lumina-aiPanel__empty {
+          color: rgba(15, 23, 42, 0.70);
+          border-color: rgba(229, 231, 235, 1);
+        }
+        html:not(.dark) .lumina-aiPanel__emptyTitle { color: rgba(15, 23, 42, 0.88); }
+        html:not(.dark) .lumina-aiPanel__emptySub { color: rgba(15, 23, 42, 0.65); }
+
+        /* Uiverse "AI-Input" (flat CSS, no nesting) */
+        .AI-Input {
+          --primary-color: #0f172a; /* Lumina deep navy */
+          --neutral-color: rgba(255, 255, 255, 0.86);
+          --accent-color: #d4af37; /* Lumina gold */
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          /* Keep input anchored at the bottom *without* overlapping messages. */
+          position: relative;
+          left: auto;
+          bottom: auto;
+          transform: none;
+          width: calc(100% - 24px);
+          max-width: 40em;
+          user-select: none;
+          margin: 8px auto 12px auto;
+          z-index: 1;
+        }
+
+        .chat-marquee {
+          --gap: 1em;
+          display: flex;
+          gap: var(--gap);
+          /* Default (when used elsewhere); cap overrides to margin:0 */
+          margin: 10px 12px 0 12px;
+          width: 100%;
+          mask-image: linear-gradient(
+            to right,
+            rgba(0, 0, 0, 0),
+            rgba(0, 0, 0, 1) 20%,
+            rgba(0, 0, 0, 1) 80%,
+            rgba(0, 0, 0, 0)
+          );
+          overflow: hidden;
+          transition: all 0.2s ease-in-out;
+        }
+        .chat-marquee > ul {
+          display: flex;
+          gap: var(--gap);
+          flex-shrink: 0;
+          justify-content: space-around;
+          list-style: none;
+          animation: scroll-marquee-left 30s linear infinite;
+          padding: 0;
+          margin: 0;
+        }
+        .chat-marquee:hover > ul { animation-play-state: paused !important; }
+        .chat-marquee > ul > li { display: flex; }
+        .chat-marquee > ul > li > button {
+          padding: 0.5rem 1rem;
+          background-color: rgba(17, 17, 17, 0.86);
+          border: 1px solid rgba(31, 41, 55, 0.80); /* gray-800 */
+          border-radius: 10px;
+          color: var(--neutral-color);
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.2s ease-in-out, transform 0.1s ease-in-out;
+          white-space: nowrap;
+        }
+        .chat-marquee > ul > li > button:hover {
+          background-color: rgba(255, 255, 255, 0.06);
+          border-color: rgba(212, 175, 55, 0.28); /* subtle gold on hover */
+          color: rgba(255, 255, 255, 0.92);
+        }
+        .chat-marquee > ul > li > button:active { transform: scale(0.98); }
+
+        @keyframes scroll-marquee-left {
+          to {
+            transform: translateX(calc(-100% - var(--gap)));
+          }
+        }
+
+        .chat-container {
+          position: relative;
+          width: 100%;
+          background: rgba(17, 17, 17, 0.92);
+          border: 1px solid rgba(31, 41, 55, 0.80); /* gray-800 */
+          border-radius: 18px; /* closer to reference */
+          overflow: hidden;
+          transition: all 0.5s cubic-bezier(0.3, 1.5, 0.6, 1);
+        }
+        /* Subtle header-button orange accent when user is typing */
+        .chat-container:focus-within {
+          border-color: rgba(240, 131, 54, 0.45); /* #F08336, softened */
+          box-shadow: 0 0 0 3px rgba(240, 131, 54, 0.10);
+        }
+        .chat-container::before {
+          content: "";
+          position: absolute;
+          top: -9rem;
+          left: -6rem;
+          width: 15rem;
+          height: 15rem;
+          background: radial-gradient(
+            circle,
+            rgba(212, 175, 55, 0.55) 0%,
+            rgba(212, 175, 55, 0.12) 22%,
+            rgba(17, 17, 17, 0.92) 70%
+          );
+          filter: blur(10px);
+          border-radius: 50%;
+          z-index: 0;
+          transition: all 1s cubic-bezier(0.3, 1.5, 0.6, 1);
+        }
+        .chat-container:focus-within::before {
+          top: -6rem;
+          left: 50%;
+          filter: blur(50px);
+        }
+
+        .chat-wrapper {
+          position: relative;
+          z-index: 1;
+          display: flex;
+          flex-direction: column;
+          padding: 0.95rem;
+          transition: all 0.2s ease-in-out;
+        }
+
+        #chat-input {
+          padding: 0.6rem;
+          width: 100%;
+          min-height: 3rem;
+          max-height: 10rem;
+          background: none;
+          border: none;
+          color: white;
+          font-size: 16px;
+          line-height: 1.5;
+          outline: none;
+          resize: none;
+        }
+        #chat-input::placeholder { color: var(--neutral-color); }
+
+        html:not(.dark) .chat-container {
+          background: rgba(255, 255, 255, 0.92);
+          border: 1px solid rgba(243, 244, 246, 1); /* gray-100 */
+        }
+        html:not(.dark) .chat-container::before {
+          /* Remove the dark "smudge" on light theme */
+          background: radial-gradient(
+            circle,
+            rgba(240, 131, 54, 0.22) 0%,
+            rgba(240, 131, 54, 0.08) 28%,
+            rgba(255, 255, 255, 0.92) 72%
+          );
+          filter: blur(14px);
+        }
+        html:not(.dark) .chat-container:focus-within::before {
+          filter: blur(40px);
+        }
+        html:not(.dark) #chat-input {
+          color: rgba(15, 23, 42, 0.92);
+        }
+        html:not(.dark) #chat-input::placeholder {
+          color: rgba(15, 23, 42, 0.50);
+        }
+
+        .button-bar {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 0.5rem;
+          width: 100%;
+        }
+
+        .left-buttons {
+          display: flex;
+          gap: 0.5rem;
+        }
+
+        .right-buttons {
+          display: flex;
+          gap: 0.75rem;
+        }
+
+        .left-buttons > button,
+        .right-buttons > button {
+          display: inline-flex;
+          justify-content: center;
+          align-items: center;
+          width: 2.5rem;
+          height: 2.5rem;
+          border: 1px solid rgba(212, 175, 55, 0.16);
+          border-radius: 50%;
+          cursor: pointer;
+          background: rgba(212, 175, 55, 0.06);
+          color: rgba(255, 255, 255, 0.92);
+          transition: all 0.2s ease-in-out, transform 0.1s ease-in-out;
+        }
+        html:not(.dark) .right-buttons > button {
+          border: 1px solid rgba(229, 231, 235, 1); /* gray-200 */
+          background: rgba(240, 131, 54, 0.10); /* soft orange */
+          color: rgba(15, 23, 42, 0.75);
+        }
+        html:not(.dark) .right-buttons > button:hover {
+          box-shadow: 0.2rem 0.2rem 0.5rem 0.2rem rgba(15, 23, 42, 0.10);
+        }
+
+        /* Left buttons match site primary CTA (orange). */
+        .left-buttons > button {
+          border: 1px solid rgba(240, 131, 54, 0.22);
+          background: #F08336;
+          color: #ffffff;
+        }
+        .left-buttons > button:hover {
+          background: #e0743a;
+        }
+
+        /* Mic button matches site primary CTA (orange). */
+        .right-buttons > button:first-child {
+          border: 1px solid rgba(240, 131, 54, 0.22);
+          background: #F08336;
+          color: #ffffff;
+        }
+        .right-buttons > button:first-child:hover {
+          background: #e0743a;
+        }
+        .left-buttons > button:hover,
+        .right-buttons > button:hover {
+          box-shadow: 0.2rem 0.2rem 0.5rem 0.2rem rgba(0, 0, 0, 0.2);
+          transform: translateY(-10%) scale(1.03);
+        }
+        .left-buttons > button:active,
+        .right-buttons > button:active { transform: scale(0.95); }
+        .right-buttons > button:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        .lumina-aiVoiceFloating {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 14px;
+          padding: 10px;
+        }
+
+        .lumina-aiVoiceFloating__orb {
+          width: 90px;
+          height: 90px;
+          border-radius: 9999px;
+          overflow: hidden;
+        }
+
+        .lumina-aiVoiceFloating__controls {
+          display: flex;
+          gap: 14px;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .lumina-aiVoiceFloating__btn {
+          width: 40px;
+          height: 40px;
+          border-radius: 9999px;
+          border: 1px solid rgba(212, 175, 55, 0.22);
+          background: rgba(15, 23, 42, 0.35);
+          color: rgba(255, 255, 255, 0.92);
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          transition: transform 0.12s ease, background 0.12s ease;
+        }
+        .lumina-aiVoiceFloating__btn:hover {
+          transform: translateY(-1px);
+          background: rgba(15, 23, 42, 0.45);
+        }
+        .lumina-aiVoiceFloating__btn:active { transform: scale(0.96); }
 
         .chat {
           display: flex;
@@ -1076,109 +1626,41 @@ export default function AIChatComponent() {
             height: 26px;
           }
         }
-      `}</style>
 
-      
+        /* (removed) top-left Orb overlay */
+      `}</style>
 
       <ChatLauncherButton isOpen={isOpen} onToggle={handleToggle} buttonRef={buttonRef} />
 
-      <ChatWindow
+      <HybridChatPanel
         isOpen={isOpen}
-        chatRef={chatRef}
-        message={message}
-        onMessageChange={handleInputChange}
-        onSubmit={handleSubmit}
+        panelRef={chatRef}
         onClose={() => setIsOpen(false)}
-        isFunctionCallingEnabled={isFunctionCallingEnabled}
-        showInlineResults={showInlineResults}
-        searchResults={searchResults}
-        lastSearchSummary={lastSearchSummary}
-        isVoiceEnabled={safeVoiceEnabled}
-        centerCircleRef={centerCircleRef}
+        messages={messages}
+        value={message}
+        onChange={setMessage}
+        onSend={() => {
+          try {
+            ChatMessageSchema.parse({ message });
+            appendUserMessage(message, 'text');
+            try { window.sessionStorage.setItem('lumina_ai_autostart_mode', 'text'); } catch {}
+            void sendGeminiText(message).catch((err) => {
+              console.error('Gemini live text send failed', err);
+              appendAssistantDelta('\n\n[Error] Could not reach AI session. Please retry.');
+            });
+            setMessage('');
+          } catch (error) {
+            console.error('Invalid message:', error);
+          }
+        }}
         isListening={isListening}
+        isAiSpeaking={isAiSpeaking}
+        isMuted={geminiMuted}
         onStartVoice={startVoice}
         onStopVoice={stopVoice}
-        toggleMute={isGeminiProvider ? toggleGeminiMute : toggleMute}
-        isMuted={isGeminiProvider ? geminiMuted : isMuted}
-        audioRef={isGeminiProvider ? geminiAudioRef : audioRef}
+        onToggleMute={toggleGeminiMute}
+        orbAnalyser={geminiPlaybackAnalyser}
       />
     </>
   );
-} 
-
-async function sendGeminiText(text: string) {
-  try {
-    const res = await fetch('/api/vertex-token');
-    if (!res.ok) {
-      console.error('Gemini token error', await res.text());
-      return;
-    }
-    const token = await res.json();
-    const wsUrl = `wss://${token.region}-aiplatform.googleapis.com/v1/projects/${token.projectId}/locations/${token.region}/publishers/google/models/${token.model}:streamGenerateContent?access_token=${token.accessToken}`;
-
-    await new Promise<void>((resolve, reject) => {
-      const ws = new WebSocket(wsUrl);
-      const timer = setTimeout(() => {
-        ws.close();
-        reject(new Error('Gemini WS timeout'));
-      }, 15000);
-
-      ws.onopen = () => {
-        const setup = {
-          setup: {
-            model: `projects/${token.projectId}/locations/${token.region}/publishers/google/models/${token.model}`,
-            generationConfig: {
-              candidateCount: 1,
-              maxOutputTokens: 1024,
-              temperature: 0.9,
-              responseModalities: ['TEXT'],
-            },
-            inputAudioTranscription: { enabled: false },
-            outputAudioTranscription: { enabled: false },
-          },
-        };
-        ws.send(JSON.stringify(setup));
-        const msg = {
-          clientContent: {
-            turns: [
-              {
-                role: 'user',
-                parts: [{ text }],
-              },
-            ],
-            turnComplete: true,
-          },
-        };
-        ws.send(JSON.stringify(msg));
-      };
-
-      ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          const textPart = data?.serverContent?.modelTurn?.parts?.find((p: any) => p?.text);
-          if (textPart?.text) {
-            console.log('[Gemini] response:', textPart.text);
-          }
-          const done = data?.serverContent?.generationComplete || data?.serverContent?.turnComplete;
-          if (done) {
-            clearTimeout(timer);
-            ws.close();
-            resolve();
-          }
-        } catch (err) {
-          console.error('Gemini parse error', err);
-        }
-      };
-
-      ws.onerror = (err) => {
-        clearTimeout(timer);
-        reject(err);
-      };
-      ws.onclose = () => {
-        clearTimeout(timer);
-      };
-    });
-  } catch (error) {
-    console.error('Gemini text send failed', error);
-  }
 }

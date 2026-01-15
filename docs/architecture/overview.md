@@ -47,7 +47,7 @@
 ```
 
 ## Planned / Pending Work
-- **CRM Module**: Implement lead/contact/deal/task models, multi-tenant RLS, automation hooks, and dashboards per `docs/CRM_ANALYSIS_2025-11-05.md`.
+- **CRM Module**: Implement lead/contact/deal/task models, multi-tenant RLS, automation hooks, and dashboards per `docs/crm/analysis-2025-11-05.md`.
 - **Supabase Integration**: Provision DATABASE_URL, run Prisma migrations, configure JWT claims + RLS helpers, and replace dev mock auth with Supabase Auth.
 - **AI Enhancements**: Finalize Gemini toggle, expand AI toolset (set_filters, property navigation), and surface CRM insights via internal AI assistant.
 - **Automation & Observability**: Introduce background jobs (e.g., reminders, materialized view refresh), Semgrep security scanning, and design-system compliance checks referenced in workspace rules.

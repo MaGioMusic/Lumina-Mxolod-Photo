@@ -3,7 +3,6 @@
 import { useMemo } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import type { ProfileAppointment, ProfileInquiry } from '@/types/profile';
-import { cn } from '@/lib/utils';
 import { ArrowRight } from '@phosphor-icons/react';
 
 interface PerformanceOverviewSectionProps {
@@ -27,15 +26,24 @@ export function PerformanceOverviewSection({
 
   const data = useMemo(() => {
     const points = 15;
+    // Use real counts to subtly shape the (demo) chart
+    const favoritesBoost = Math.min(40, Math.max(0, favoritesCount));
+    const appointmentsBoost = Math.min(20, Math.max(0, appointments.length));
+    const inquiriesBoost = Math.min(20, Math.max(0, inquiries.length));
+
     return Array.from({ length: points }).map((_, index) => {
       const date = new Date(Date.now() - (points - index - 1) * 24 * 3600 * 1000);
       const label = new Intl.DateTimeFormat(language, { weekday: 'narrow' }).format(date);
-      const dayNum = date.getDate();
       
       // Create slightly prettier fake data curve
       const x = index / points;
-      const viewsBase = 50 + Math.sin(x * Math.PI * 2) * 20 + index * 2;
-      const inqBase = 10 + Math.sin(x * Math.PI * 2 + 1) * 5 + index;
+      const viewsBase =
+        50 +
+        Math.sin(x * Math.PI * 2) * 20 +
+        index * 2 +
+        favoritesBoost * 0.35 +
+        appointmentsBoost * 0.9;
+      const inqBase = 10 + Math.sin(x * Math.PI * 2 + 1) * 5 + index + inquiriesBoost * 0.8;
       
       return {
         label,
@@ -44,7 +52,7 @@ export function PerformanceOverviewSection({
         inquiries: Math.round(inqBase),
       };
     });
-  }, [language]);
+  }, [language, favoritesCount, appointments.length, inquiries.length]);
 
   const maxVal = Math.max(...data.map(d => d.views));
 

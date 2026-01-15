@@ -42,7 +42,7 @@ export interface AddMembershipInput {
 
 export async function addMembership(input: AddMembershipInput): Promise<OrganizationMembership> {
   const record = await prisma.organizationMembership.upsert({
-    where: { organizationId_userId: { organizationId: input.organizationId, userId: input.userId } },
+    where: { organization_membership_unique: { organizationId: input.organizationId, userId: input.userId } },
     update: { role: input.role ?? OrgRole.member },
     create: { organizationId: input.organizationId, userId: input.userId, role: input.role ?? OrgRole.member },
   });
@@ -55,7 +55,7 @@ export async function setMemberRole(
   role: OrgRole,
 ): Promise<OrganizationMembership> {
   const record = await prisma.organizationMembership.update({
-    where: { organizationId_userId: { organizationId, userId } },
+    where: { organization_membership_unique: { organizationId, userId } },
     data: { role },
   });
   return mapOrganizationMembership(record);
@@ -63,7 +63,7 @@ export async function setMemberRole(
 
 export async function removeMembership(organizationId: string, userId: string): Promise<void> {
   await prisma.organizationMembership.delete({
-    where: { organizationId_userId: { organizationId, userId } },
+    where: { organization_membership_unique: { organizationId, userId } },
   });
 }
 

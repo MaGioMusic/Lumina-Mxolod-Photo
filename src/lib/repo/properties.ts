@@ -59,11 +59,14 @@ const buildWhere = (params: PropertyListParams): Prisma.PropertyWhereInput => {
   return where;
 };
 
-const buildOrderBy = (sort: PropertySortKey | undefined, dir: 'asc' | 'desc' | undefined) => {
-  const direction = dir ?? 'desc';
+const buildOrderBy = (
+  sort: PropertySortKey | undefined,
+  dir: 'asc' | 'desc' | undefined,
+): Prisma.PropertyOrderByWithRelationInput[] => {
+  const direction: Prisma.SortOrder = dir ?? 'desc';
   switch (sort) {
     case 'price':
-      return [{ price: direction } as Prisma.PropertyOrderByWithRelationInput, { createdAt: 'desc' }];
+      return [{ price: direction }, { createdAt: 'desc' }];
     case 'views':
       return [{ viewsCount: direction }, { createdAt: 'desc' }];
     default:

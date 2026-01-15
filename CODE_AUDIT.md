@@ -14,14 +14,14 @@
 | Frontend ინტეგრაცია | 75 | PropertiesGrid API-ზეა მიბმული, თუმცა Auth/UI-ს ნაწილები მაინც mock მოდელით მუშაობს. |
 | უსაფრთხოება | 55 | AuthContext ადგილობრივი საცავით იმიტირებულია; API header-ზე ეყრდნობა (`x-user-id`), რეალური RBAC/RLS არ მოქმედებს. |
 | წარმადობა & ოპტიმიზაცია | 68 | UI-ში lazy load/animations კარგია, მაგრამ API caching, rate limiting და Supabase-ის ოპტიმიზაციები აკლია. |
-| ტესტირება | 40 | Docs/testing-ci.md გეგმა დეტალურია, მაგრამ ავტომატური ტესტები ფაქტობრივად არ არსებობს. |
-| დოკუმენტაცია | 80 | ERD_AUDIT.md და docs/api-contracts.md კარგად აღწერს ბექენდის კონტრაქტებს, README-ში გარემოს მაგალითები უნდა გაიტესტოს. |
+| ტესტირება | 40 | `docs/engineering/testing-ci.md` გეგმა დეტალურია, მაგრამ ავტომატური ტესტები ფაქტობრივად არ არსებობს. |
+| დოკუმენტაცია | 80 | ERD_AUDIT.md და `docs/engineering/api-contracts.md` კარგად აღწერს ბექენდის კონტრაქტებს, README-ში გარემოს მაგალითები უნდა გაიტესტოს. |
 
 ## სიძლიერეები
 
 - Prisma schema + migrations ასახავს ERD-ს და მზადაა Supabase/PostgreSQL-სთვის.
 - `src/lib/repo` შრე აშორებს Prisma-ს პირდაპირ გამოყენებას და უზრუნველყოფს სუფთა დომენურ API-ს.
-- `docs/api-contracts.md` სრულად აღწერს REST endpoint-ებს, ზოდზე დაყრდნობით.
+- `docs/engineering/api-contracts.md` სრულად აღწერს REST endpoint-ებს, ზოდზე დაყრდნობით.
 - Frontend უკვე ახორციელებს `/api/properties` ინტეგრაციას (`PropertiesGrid.tsx`).
 - ERD აუდიტორი (`scripts/erd-check.*`) უზრუნველყოფს მონაცემთა მოდელის კონსისტენტურობას.
 
@@ -62,7 +62,7 @@ export function requireUser(request: NextRequest, allowedRoles?: UserRole[]): Us
 
 ### 3. ტესტირება და CI
 
-- `docs/testing-ci.md` გეგმაში აღწერილი Jest/Playwright/Semgrep ნაბიჯები ჯერ არ არის ავტომატიზებული.
+- `docs/engineering/testing-ci.md` გეგმაში აღწერილი Jest/Playwright/Semgrep ნაბიჯები ჯერ არ არის ავტომატიზებული.
 - GitHub Actions workflow-ებში მხოლოდ lint + erd-check ეშვება, უსაფრთხოების ან დიზაინის სკანერები არ არის ჩართული.
 
 ### 4. Supabase ინტეგრაცია

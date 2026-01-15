@@ -66,7 +66,7 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
     const limitRaw = Number(args.limit);
     const previewLimit = Number.isFinite(limitRaw) ? Math.max(1, Math.min(10, limitRaw)) : 6;
     const preview = results.slice(0, previewLimit).map((p) => ({
-      id: String(p.id),
+      id: `mock-${p.id}`,
       price: p.price,
       address: p.address,
       bedrooms: p.bedrooms,
@@ -82,6 +82,10 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
   const rememberAutostart = useCallback(() => {
     try {
       window.sessionStorage.setItem('lumina_ai_autostart', isChatOpen ? '1' : '0');
+      // Preserve current interaction mode if already set (voice/text).
+      // Default to text so navigation doesn't auto-start voice unexpectedly.
+      const existing = window.sessionStorage.getItem('lumina_ai_autostart_mode');
+      if (!existing) window.sessionStorage.setItem('lumina_ai_autostart_mode', 'text');
     } catch {
       // ignore storage errors in restricted contexts (SSR/tests)
     }
@@ -257,10 +261,19 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
           if (!isDemoMode) {
             return { handled: true, payload: { ok: false, error: 'demo_mode_disabled' } };
           }
-          const first = searchResults[0];
+          // If the user asked to open a property without searching first,
+          // create a default result set so open_first_property works.
+          const ensureList = () => {
+            if (searchResults.length) return searchResults;
+            const full = runPropertySearch({});
+            setSearchResults(full);
+            return full;
+          };
+          const list = ensureList();
+          const first = list[0];
           if (first && first.id) {
-            ensureNavigation(`/properties/${first.id}`);
-            return { handled: true, payload: { ok: true, id: first.id } };
+            ensureNavigation(`/properties/mock-${first.id}`);
+            return { handled: true, payload: { ok: true, id: `mock-${first.id}`, total_count: list.length } };
           }
           ensureNavigation('/properties');
           return { handled: true, payload: { ok: false, error: 'no_results' } };
@@ -273,12 +286,19 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
           const indexRaw = Number(argsObj.index);
           const idx = Number.isFinite(indexRaw) ? Math.floor(indexRaw) - 1 : -1; // 1-based -> 0-based
           if (idx < 0) return { handled: true, payload: { ok: false, error: 'bad_index' } };
-          const item = searchResults[idx];
+          const ensureList = () => {
+            if (searchResults.length) return searchResults;
+            const full = runPropertySearch({});
+            setSearchResults(full);
+            return full;
+          };
+          const list = ensureList();
+          const item = list[idx];
           if (item?.id) {
-            ensureNavigation(`/properties/${item.id}`);
-            return { handled: true, payload: { ok: true, id: String(item.id), index: idx + 1 } };
+            ensureNavigation(`/properties/mock-${item.id}`);
+            return { handled: true, payload: { ok: true, id: `mock-${item.id}`, index: idx + 1, total_count: list.length } };
           }
-          return { handled: true, payload: { ok: false, error: 'index_out_of_range', index: idx + 1, total_count: searchResults.length } };
+          return { handled: true, payload: { ok: false, error: 'index_out_of_range', index: idx + 1, total_count: list.length } };
         }
 
         if (fnName === 'list_results') {
@@ -290,7 +310,7 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
           const offset = Number.isFinite(offsetRaw) ? Math.max(0, Math.floor(offsetRaw)) : 0;
           const limit = Number.isFinite(limitRaw) ? Math.max(1, Math.min(10, Math.floor(limitRaw))) : 6;
           const slice = searchResults.slice(offset, offset + limit).map((p) => ({
-            id: String(p.id),
+            id: `mock-${p.id}`,
             price: p.price,
             address: p.address,
             bedrooms: p.bedrooms,

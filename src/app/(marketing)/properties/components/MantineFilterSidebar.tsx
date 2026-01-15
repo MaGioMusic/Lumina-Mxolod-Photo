@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Paper,
   Stack,
@@ -9,14 +9,12 @@ import {
   Button,
   NumberInput,
   MultiSelect,
-  Checkbox,
   Badge,
   Divider,
   Collapse,
   ActionIcon,
   Box,
   RangeSlider,
-  SegmentedControl,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 

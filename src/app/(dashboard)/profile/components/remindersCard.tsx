@@ -1,6 +1,6 @@
 'use client';
 
-import { CalendarBlank, BellSimpleRinging, TagSimple } from '@phosphor-icons/react';
+import { CalendarBlank, TagSimple } from '@phosphor-icons/react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import type { ProfileAppointment, ProfileNotification } from '@/types/profile';
 

@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import AIChatComponent from './AIChatComponent';
 import MapView from './MapView';
 import { useTheme } from '@/contexts/ThemeContext';
 
@@ -111,9 +110,6 @@ export default function MotiffTestPropertiesPage() {
   const [searchType, setSearchType] = useState<'rent' | 'sale'>('rent');
   const [keyword, setKeyword] = useState('');
   const [location, setLocation] = useState('');
-  const [propertyType, setPropertyType] = useState('');
-  const [sortBy, setSortBy] = useState('default');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [advancedSearchModalOpen, setAdvancedSearchModalOpen] = useState(false);
   const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>({
     propertyTypes: [],

@@ -24,8 +24,8 @@ export interface UseRealtimeVoiceSessionResult {
   stopVoice: () => Promise<void>;
   toggleMute: () => void;
   requestModelResponse: () => void;
-  audioRef: RefObject<HTMLAudioElement>;
-  centerCircleRef: RefObject<HTMLDivElement>;
+  audioRef: RefObject<HTMLAudioElement | null>;
+  centerCircleRef: RefObject<HTMLDivElement | null>;
 }
 
 export const useRealtimeVoiceSession = ({
@@ -229,7 +229,9 @@ export const useRealtimeVoiceSession = ({
           if (!disconnectedTimerRef.current) {
             disconnectedTimerRef.current = window.setTimeout(() => {
               try { (pc as any).restartIce?.(); } catch {}
-              disconnectedTimerRef.current && window.clearTimeout(disconnectedTimerRef.current);
+              if (disconnectedTimerRef.current) {
+                window.clearTimeout(disconnectedTimerRef.current);
+              }
               disconnectedTimerRef.current = null;
             }, 2000);
           }
@@ -426,7 +428,9 @@ export const useRealtimeVoiceSession = ({
                 }
 
                 isSpeakingRef.current = false;
-                silenceTimerRef.current && window.clearTimeout(silenceTimerRef.current);
+                if (silenceTimerRef.current) {
+                  window.clearTimeout(silenceTimerRef.current);
+                }
                 silenceTimerRef.current = null;
                 lastCommitAtRef.current = Date.now();
                 try { console.log('[OAI][client-vad] stop detected → commit'); } catch {}

@@ -30,4 +30,3 @@
 3. Provide a tiny “Gemini disabled” stub so types remain satisfied when the flag is off.
 4. Document the flag usage in `docs/ai-chat-hook-audit.md` and `.env.example` after code changes.
 
-

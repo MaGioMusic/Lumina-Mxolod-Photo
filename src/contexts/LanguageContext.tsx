@@ -680,7 +680,7 @@ const translations: Translations = {
     ru: 'Герой секция'
   },
   heroTitle: {
-    ka: 'იპოვეთ თქვენი სრულყოფილი სახლი',
+    ka: 'იპოვეთ თქვენი იდეალური სახლი',
     en: 'Find Your Perfect Home',
     ru: 'Найдите свой идеальный дом'
   },
@@ -2250,6 +2250,19 @@ const translations: Translations = {
   chat_note: { ka: 'ნოტი', en: 'Note', ru: 'Заметка' },
   chat_quick_replies: { ka: 'სწრაფი პასუხები', en: 'Quick Replies', ru: 'Быстрые ответы' },
   chat_type_message: { ka: 'დაწერეთ შეტყობინება...', en: 'Type a message...', ru: 'Напишите сообщение...' },
+  chat_empty_title: { ka: 'დაიწყე საუბარი', en: 'Start a conversation', ru: 'Начните разговор' },
+  chat_empty_sub: { ka: 'დაწერე შეტყობინება ან გამოიყენე მიკროფონი.', en: 'Type a message or use the mic.', ru: 'Напишите сообщение или используйте микрофон.' },
+  chat_suggest_1: { ka: 'იპოვე ბინა ვაკეში', en: 'Find apartments in Vake', ru: 'Квартиры в Ваке' },
+  chat_suggest_2: { ka: 'ქირა საბურთალოზე', en: 'Rentals in Saburtalo', ru: 'Аренда в Сабуртало' },
+  chat_suggest_3: { ka: 'ახალი აშენებული ₾300,000-მდე', en: 'New builds under ₾300,000', ru: 'Новостройки до ₾300,000' },
+  chat_suggest_4: { ka: '2 საძინებელი მეტროსთან', en: '2-bedroom near Metro', ru: '2 спальни рядом с метро' },
+  chat_close: { ka: 'დახურვა', en: 'Close', ru: 'Закрыть' },
+  chat_attach: { ka: 'ფაილის მიმაგრება', en: 'Attach', ru: 'Прикрепить' },
+  chat_send: { ka: 'გაგზავნა', en: 'Send', ru: 'Отправить' },
+  chat_voice_start: { ka: 'ხმოვანი რეჟიმის ჩართვა', en: 'Start voice', ru: 'Включить голос' },
+  chat_voice_stop: { ka: 'ხმოვანი რეჟიმის გაჩერება', en: 'Stop voice', ru: 'Остановить голос' },
+  chat_mic_mute: { ka: 'მიკროფონის დადუმება', en: 'Mute microphone', ru: 'Выключить микрофон' },
+  chat_mic_unmute: { ka: 'მიკროფონის ჩართვა', en: 'Unmute microphone', ru: 'Включить микрофон' },
   chat_go_to_bottom: { ka: 'ბოლოში გადასვლა', en: 'Go to bottom', ru: 'Вниз' },
   chat_recent_properties: { ka: 'ბოლოს ნანახი ქონება', en: 'Recent Properties', ru: 'Недавние объекты' },
   chat_save: { ka: 'შენახვა', en: 'Save', ru: 'Сохранить' },

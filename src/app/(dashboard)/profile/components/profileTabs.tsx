@@ -207,7 +207,7 @@ export function ProfileTabs({
                     </h3>
                     <p className="text-xs uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500">
                       {formatter.format(search.filters?.min_price as number ?? 0)} ·{' '}
-                      {search.filters?.district}
+                      {String(search.filters?.district ?? '')}
                     </p>
                   </div>
                   {search.totalMatches !== undefined && (

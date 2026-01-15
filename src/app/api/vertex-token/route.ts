@@ -6,16 +6,25 @@ import { HttpError } from '@/lib/repo/errors';
 import { enforceRateLimit } from '@/lib/security/rateLimiter';
 import { ensureRealtimeAccess } from '@/lib/auth/devGuard';
 
+type VertexTokenResponse = {
+  accessToken: string;
+  expiresAt: number;
+  projectId: string;
+  region: string;
+  model: string;
+};
+
+let cachedToken: VertexTokenResponse | null = null;
+let mintInFlight: Promise<VertexTokenResponse> | null = null;
+
+const SAFETY_WINDOW_MS = 60_000; // refresh 60s before expiry
+
 // Token endpoint for Gemini Live API (WebSocket) access.
 // Returns a short-lived access token plus region/model metadata.
 export async function GET(req: NextRequest) {
+  let access: ReturnType<typeof ensureRealtimeAccess> | null = null;
   try {
-    const access = ensureRealtimeAccess(req);
-    enforceRateLimit(access.rateLimitKey, {
-      limit: 10,
-      windowMs: 60_000,
-      feature: 'vertex live token request',
-    });
+    access = ensureRealtimeAccess(req);
   } catch (error) {
     if (error instanceof HttpError) {
       return json({ error: { code: error.code, message: error.message } }, { status: error.status });
@@ -35,31 +44,50 @@ export async function GET(req: NextRequest) {
     return json({ error: { code: 'CONFIG_MISSING', message: 'Missing GCP_PROJECT_ID' } }, { status: 500 });
   }
 
-  // Obtain an access token with Cloud Platform scope
   try {
-    const auth = new GoogleAuth({
-      scopes: ['https://www.googleapis.com/auth/cloud-platform'],
-    });
-    const client = await auth.getClient();
-    const token = await client.getAccessToken();
-
-    if (!token || !token.token) {
-      throw new Error('No access token issued');
+    if (cachedToken && cachedToken.expiresAt - Date.now() > SAFETY_WINDOW_MS) {
+      return json(cachedToken);
     }
 
-    // Compute expiry (best effort): expires_in is not always present, so fall back to 55m
-    const expiresInMs = typeof token.res?.data?.expires_in === 'number'
-      ? token.res.data.expires_in * 1000
-      : 55 * 60 * 1000;
-    const expiresAt = Date.now() + expiresInMs;
-
-    return json({
-      accessToken: token.token,
-      expiresAt,
-      projectId,
-      region,
-      model,
+    // Only rate-limit when we actually need to mint.
+    enforceRateLimit(access!.rateLimitKey, {
+      limit: 10,
+      windowMs: 60_000,
+      feature: 'vertex live token request',
     });
+
+    if (!mintInFlight) {
+      mintInFlight = (async (): Promise<VertexTokenResponse> => {
+        // Obtain an access token with Cloud Platform scope
+        const auth = new GoogleAuth({
+          scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+        });
+        const client = await auth.getClient();
+        const token = await client.getAccessToken();
+
+        if (!token || !token.token) {
+          throw new Error('No access token issued');
+        }
+
+        // Compute expiry (best effort): expires_in is not always present, so fall back to 55m
+        const expiresInMs =
+          typeof token.res?.data?.expires_in === 'number' ? token.res.data.expires_in * 1000 : 55 * 60 * 1000;
+        const expiresAt = Date.now() + expiresInMs;
+
+        return {
+          accessToken: token.token,
+          expiresAt,
+          projectId,
+          region,
+          model,
+        };
+      })().finally(() => {
+        mintInFlight = null;
+      });
+    }
+
+    cachedToken = await mintInFlight;
+    return json(cachedToken);
   } catch (error) {
     console.error('[vertex-token] failed to mint access token', error);
     return json(

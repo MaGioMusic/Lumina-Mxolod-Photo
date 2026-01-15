@@ -1,19 +1,15 @@
 'use client';
 
 import Image from 'next/image';
-import { motion } from 'framer-motion';
 import {
   User,
   Phone,
   EnvelopeSimple,
-  ShieldCheck,
-  CrownSimple,
   PencilSimple,
   SealCheck
 } from '@phosphor-icons/react';
 import type { ProfileUser } from '@/types/profile';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { cn } from '@/lib/utils';
 
 interface ProfileSideCardProps {
   user: ProfileUser;

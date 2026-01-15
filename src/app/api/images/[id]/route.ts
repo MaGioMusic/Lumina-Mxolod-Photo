@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { deleteImage, updateImage } from '@/lib/repo';
-import { errorResponse, jsonResponse } from '../../utils';
-import { requireUser, resolveActorContext } from '@/lib/auth/server';
+import { errorResponse, jsonResponse, requireUser } from '../../utils';
+import { resolveActorContext } from '@/lib/auth/server';
 
 const updateBodySchema = z.object({
   alt: z.string().nullable().optional(),

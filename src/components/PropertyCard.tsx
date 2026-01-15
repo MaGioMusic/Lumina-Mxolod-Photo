@@ -1,4 +1,5 @@
 import React from 'react';
+import PropertyCardImpl from '@/app/(marketing)/properties/components/PropertyCard';
 
 interface PropertyCardProps {
   id: string;
@@ -21,6 +22,5 @@ interface PropertyCardProps {
 
 export default function PropertyCard(props: PropertyCardProps) {
   // Delegate to the canonical card implementation used on properties page
-  const Impl = require('@/app/(marketing)/properties/components/PropertyCard').default;
-  return <Impl {...(props as any)} />;
+  return <PropertyCardImpl {...(props as any)} />;
 }

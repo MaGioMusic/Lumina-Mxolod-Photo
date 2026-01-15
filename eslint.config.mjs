@@ -14,6 +14,16 @@ const eslintConfig = [
   {
     ignores: [".next/**", "backup/**", "node_modules/**", "dist/**", "out/**"],
   },
+  // Keep project rules centralized here (ESLint v9 flat config).
+  // Mirrors legacy `.eslintrc.json` intent.
+  {
+    rules: {
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "react/no-unescaped-entities": "off",
+      "@next/next/no-img-element": "off",
+    },
+  },
 ];
 
 export default eslintConfig;

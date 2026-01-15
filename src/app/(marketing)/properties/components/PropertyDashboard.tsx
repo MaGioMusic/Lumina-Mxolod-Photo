@@ -1,27 +1,21 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import {
+  BarChart3,
+  Home,
+  MessageCircle,
   MapPin,
-  Bed,
-  Bath,
-  Square,
-  Phone,
-  Mail,
-  Calendar,
+  Paperclip,
+  Search,
+  Send,
+  Settings,
+  Smile,
   Upload,
-  Camera,
-  Edit,
-  Trash2,
-  Plus,
-  X,
   ChevronLeft,
-  ChevronRight,
-  Star
 } from 'lucide-react';
 
 interface PropertyDashboardProps {
@@ -30,7 +24,7 @@ interface PropertyDashboardProps {
 
 const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => {
   const { t } = useLanguage();
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [messageInput, setMessageInput] = useState('');
   const [messages, setMessages] = useState([
@@ -51,6 +45,9 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
       isOwn: true
     }
   ]);
+
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Show loading while auth is initializing
   if (isLoading) {
@@ -145,9 +142,6 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
     '/images/properties/property-3.jpg',
     '/images/properties/property-4.jpg'
   ];
-
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [isUploading, setIsUploading] = useState(false);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;

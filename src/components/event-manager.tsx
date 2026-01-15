@@ -826,11 +826,11 @@ export function EventManager({
                   }
                   onChange={(e) => {
                     const date = new Date(e.target.value);
-                    isCreating
-                      ? setNewEvent((prev) => ({ ...prev, startTime: date }))
-                      : setSelectedEvent((prev) =>
-                          prev ? { ...prev, startTime: date } : null
-                        );
+                    if (isCreating) {
+                      setNewEvent((prev) => ({ ...prev, startTime: date }));
+                    } else {
+                      setSelectedEvent((prev) => (prev ? { ...prev, startTime: date } : null));
+                    }
                   }}
                 />
               </div>
@@ -860,11 +860,11 @@ export function EventManager({
                   }
                   onChange={(e) => {
                     const date = new Date(e.target.value);
-                    isCreating
-                      ? setNewEvent((prev) => ({ ...prev, endTime: date }))
-                      : setSelectedEvent((prev) =>
-                          prev ? { ...prev, endTime: date } : null
-                        );
+                    if (isCreating) {
+                      setNewEvent((prev) => ({ ...prev, endTime: date }));
+                    } else {
+                      setSelectedEvent((prev) => (prev ? { ...prev, endTime: date } : null));
+                    }
                   }}
                 />
               </div>

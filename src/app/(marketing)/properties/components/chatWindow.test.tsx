@@ -12,6 +12,7 @@ const baseProps = {
   lastSearchSummary: '',
   isVoiceEnabled: false,
   isListening: false,
+  isAiSpeaking: false,
   onStartVoice: async () => {},
   onStopVoice: async () => {},
   toggleMute: () => {},

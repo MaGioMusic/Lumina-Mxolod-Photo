@@ -1968,3 +1968,11 @@ html:not(.dark) .ps-sidebar-root .ps-submenu-root > .ps-menu-button {
   color: #111827 !important;
 }
 
+/* React Pro Sidebar: disable slow transitions/animations (prevents "slow slide-in") */
+.ps-sidebar-root,
+.ps-sidebar-container,
+.ps-menu-button,
+.ps-submenu-content {
+  transition: none !important;
+  animation: none !important;
+}

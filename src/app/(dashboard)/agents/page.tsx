@@ -54,6 +54,11 @@ interface AgentProperty {
   unitNumbers: string;
 }
 
+interface TopPerformingAgent {
+  name: string;
+  volume: string;
+}
+
 export default function AgentsPage() {
   const { theme } = useTheme();
   const { /* t */ } = useLanguage();
@@ -96,6 +101,16 @@ export default function AgentsPage() {
     { name: 'Condos', value: 15, color: '#34D399' },
     { name: 'Commercial', value: 10, color: '#93C5FD' },
   ];
+
+  const topPerformingAgents: TopPerformingAgent[] = [
+    { name: 'Sarah Wilson', volume: '$4.2M' },
+    { name: 'Michael Brown', volume: '$3.8M' },
+    { name: 'Emma Johnson', volume: '$3.5M' },
+    { name: 'James Chen', volume: '$3.1M' },
+  ];
+
+  const getAgentAvatarUrl = (name: string) =>
+    `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(name)}&radius=50&backgroundColor=d4af37,b8860b&textColor=0f172a`;
 
   const [clients, setClients] = useState<Client[]>([
     {
@@ -621,50 +636,30 @@ export default function AgentsPage() {
           <div className={`${theme === 'dark' ? 'bg-dark-bg-secondary' : 'bg-white'} rounded-2xl p-6 shadow-lg ring-1 ring-black/5`}>
             <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'} mb-6`}>Top Performing Agents</h3>
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <img
-                    src="/images/photos/sarah-wilson.jpg"
-                    alt="Sarah Wilson"
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <span className={`font-medium ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>Sarah Wilson</span>
+              {topPerformingAgents.map((agent) => (
+                <div key={agent.name} className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <img
+                      src={getAgentAvatarUrl(agent.name)}
+                      alt={agent.name}
+                      className="w-10 h-10 rounded-full object-cover shrink-0 bg-gray-100"
+                      loading="lazy"
+                      onError={(e) => {
+                        // If the avatar service fails, fall back to a simple transparent pixel
+                        // to avoid the browser showing a broken-image icon + alt text.
+                        e.currentTarget.src =
+                          'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
+                      }}
+                    />
+                    <span className={`font-medium ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'} truncate`}>
+                      {agent.name}
+                    </span>
+                  </div>
+                  <span className="text-blue-600 dark:text-blue-400 font-medium tabular-nums shrink-0">
+                    {agent.volume}
+                  </span>
                 </div>
-                <span className="text-blue-600 font-medium">$4.2M</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <img
-                    src="/images/photos/agent-2.jpg"
-                    alt="Michael Brown"
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <span className={`font-medium ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>Michael Brown</span>
-                </div>
-                <span className="text-blue-600 font-medium">$3.8M</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <img
-                    src="/images/photos/agent-3.jpg"
-                    alt="Emma Johnson"
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <span className={`font-medium ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>Emma Johnson</span>
-                </div>
-                <span className="text-blue-600 font-medium">$3.5M</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <img
-                    src="/images/photos/agent-4.jpg"
-                    alt="James Chen"
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <span className={`font-medium ${theme === 'dark' ? 'text-gray-100' : 'text-gray-900'}`}>James Chen</span>
-                </div>
-                <span className="text-blue-600 font-medium">$3.1M</span>
-              </div>
+              ))}
             </div>
           </div>
         </div>

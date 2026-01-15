@@ -75,12 +75,10 @@ export const mapAgent = (record: Prisma.AgentGetPayload<Record<string, never>>) 
     updatedAt: toISOString(record.updatedAt),
   });
 
-type PropertyWithRelations = Prisma.PropertyGetPayload<{
-  include: {
-    images?: true;
-    listings?: true;
-  };
-}>;
+type PropertyWithRelations = Prisma.PropertyGetPayload<Record<string, never>> & {
+  images?: Prisma.ImageGetPayload<Record<string, never>>[];
+  listings?: Prisma.ListingGetPayload<Record<string, never>>[];
+};
 
 export const mapProperty = (record: PropertyWithRelations) =>
   propertySchema.parse({

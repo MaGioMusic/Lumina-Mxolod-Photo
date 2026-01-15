@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { step1DetailsSchema, type Step1Details, emptyStep1Details } from '../../../../../types/listing';
+import { step1DetailsSchema, type Step1Details, emptyStep1Details } from '@/types/listing';
 
 interface Step1DetailsFormProps {
   initialValues?: Step1Details;

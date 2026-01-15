@@ -1,15 +1,11 @@
 'use client';
 
-import { useTheme } from '@/contexts/ThemeContext';
-
 interface IOSToggleProps {
   isGrid: boolean;
   onToggle: (view: 'grid' | 'map') => void;
 }
 
 export default function IOSToggle({ isGrid, onToggle }: IOSToggleProps) {
-  const { theme } = useTheme();
-
   const handleToggle = () => {
     onToggle(isGrid ? 'map' : 'grid');
   };

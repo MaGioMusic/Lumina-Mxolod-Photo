@@ -223,7 +223,7 @@ export async function GET(req: NextRequest) {
         : {}),
     };
 
-    let res = await fetch('https://api.openai.com/v1/realtime/sessions', {
+    const res = await fetch('https://api.openai.com/v1/realtime/sessions', {
       method: 'POST',
       headers: { ...baseHeaders, 'OpenAI-Beta': 'realtime=v1, prompts=v1' },
       body: JSON.stringify({

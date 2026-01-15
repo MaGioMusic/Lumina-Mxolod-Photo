@@ -1,8 +1,7 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { addFavorite } from '@/lib/repo';
-import { errorResponse, jsonResponse } from '../utils';
-import { requireUser } from '@/lib/auth/server';
+import { errorResponse, jsonResponse, requireUser } from '../utils';
 
 const bodySchema = z.object({
   propertyId: z.string().uuid(),

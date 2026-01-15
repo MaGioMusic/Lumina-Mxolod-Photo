@@ -3,7 +3,7 @@ import React, { type RefObject } from 'react';
 interface ChatLauncherButtonProps {
   isOpen: boolean;
   onToggle: () => void;
-  buttonRef: RefObject<HTMLDivElement>;
+  buttonRef: RefObject<HTMLDivElement | null>;
 }
 
 export const ChatLauncherButton: React.FC<ChatLauncherButtonProps> = ({

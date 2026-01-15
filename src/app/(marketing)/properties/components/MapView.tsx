@@ -757,11 +757,6 @@ export default function MapView({ onPropertyHighlight }: { onPropertyHighlight?:
     }
   };
 
-  // Map event handler component
-  const MapEventHandler = () => {
-    return null; // Simplified - zoom tracking handled in MapContainer
-  };
-
   return (
     <>
       <style jsx global>{`
@@ -1118,7 +1113,7 @@ export default function MapView({ onPropertyHighlight }: { onPropertyHighlight?:
                       </h4>
                       
                       <div className="space-y-3 max-h-60 overflow-y-auto">
-                        {cluster.properties.slice(0, 4).map((property, index) => (
+                        {cluster.properties.slice(0, 4).map((property) => (
                           <div key={property.id} className="flex gap-2 p-2 hover:bg-gray-50 rounded border-b border-gray-100 last:border-0">
                             <img 
                               src={property.image} 

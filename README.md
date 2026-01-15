@@ -36,6 +36,9 @@ NEXT_PUBLIC_ENABLE_GEMINI=0
 GCP_PROJECT_ID=gen-lang-client-0216641365
 GCP_REGION=us-central1
 GEMINI_LIVE_MODEL=gemini-live-2.5-flash-native-audio
+# Gemini Text (Vertex AI generateContent)
+# IMPORTANT: gemini-live-* models do NOT work with generateContent.
+GEMINI_TEXT_MODEL=gemini-2.0-flash
 GOOGLE_APPLICATION_CREDENTIALS=/absolute/path/to/gen-lang-client-0216641365-e304c87b4d01.json
 NEXT_PUBLIC_VOICE_PROVIDER=gemini
 NEXT_PUBLIC_FALLBACK_PROVIDER=openai
@@ -66,7 +69,8 @@ npm run lint
 - Realtime Voice (OpenAI) via WebRTC + DataChannel
 - Server issues ephemeral token at `/api/realtime/token`
 - Tooling examples: `open_page`, `set_filters`, `set_view`, `navigate_to_property`, `open_first_property`
-- Gemini voice integration არის **experimental**: კოდი ინახება `src/experimental/gemini/` დირექტორიაში და default-ად არ იტვირთება. მის გასააქტიურებლად საჭიროა `NEXT_PUBLIC_ENABLE_GEMINI=1` + შესაბამისი proxy/API key-ები (`docs/gemini-toggle-notes.md` იხილე ინსტრუქციებისთვის).
+- Gemini voice integration არის **experimental**: კოდი ინახება `src/experimental/gemini/` დირექტორიაში და default-ად არ იტვირთება. მის გასააქტიურებლად საჭიროა `NEXT_PUBLIC_ENABLE_GEMINI=1` + შესაბამისი proxy/API key-ები (`docs/ai/gemini-toggle-notes.md` იხილე ინსტრუქციებისთვის).
+- Gemini text responses (Vertex AI) მუშაობს `POST /api/gemini-text`-ით და საჭიროებს ცალკე ტექსტურ მოდელს: `GEMINI_TEXT_MODEL` (იხილე `docs/ai/gemini-text-notes.md`).
 
 ## Backup & Restore
 See `BACKUP.md` for the mirror strategy and full snapshot instructions (ZIP release).
@@ -122,10 +126,23 @@ npm run dev
 Create a `.env.local` file in the root directory:
 
 ```env
+## NextAuth (required for auth routes)
+# Dev:
+# - Use localhost URL
+# - Use any strong random string (32+ chars recommended)
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=replace-with-a-strong-secret
+
+# Prisma / Database
+DATABASE_URL=postgresql://user:password@localhost:5432/lumina
+DIRECT_URL=postgresql://user:password@localhost:5432/lumina
+
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
+
+**Note:** The build will warn if `NEXTAUTH_SECRET` is missing and temporarily falls back to a placeholder to avoid blocking `next build`, but you **must** set a real `NEXTAUTH_SECRET` for production.
 
 ### Dark Mode
 The application uses a class-based dark mode strategy. Dark mode can be toggled from:

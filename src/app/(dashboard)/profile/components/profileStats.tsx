@@ -1,7 +1,6 @@
 'use client';
 
-import type { ComponentType } from 'react';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import {
   ArrowUpRight,
   ArrowDownRight,
@@ -10,11 +9,12 @@ import {
   CalendarDots,
   ChatCircleDots,
   TrendUp,
+  type Icon,
 } from '@phosphor-icons/react';
 import type { ProfileStat } from '@/types/profile';
 import { cn } from '@/lib/utils';
 
-const ICON_MAP: Record<string, ComponentType<{ size?: number; weight?: string }>> = {
+const ICON_MAP: Record<string, Icon> = {
   Star,
   Calendar: CalendarDots,
   Chat: ChatCircleDots,
@@ -27,7 +27,7 @@ interface ProfileStatsProps {
 }
 
 // Animations
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -35,9 +35,9 @@ const containerVariants = {
   },
 };
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 15 } },
+  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 15 } },
 };
 
 export function ProfileStats({ stats, isLoading }: ProfileStatsProps) {

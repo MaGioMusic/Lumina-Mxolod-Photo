@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { useRef, useState, useEffect } from 'react';
+import { useSearchParams, usePathname } from 'next/navigation';
 import PropertyCard from './PropertyCard';
 import UploadPropertyModal from './UploadPropertyModal';
 import LoginRegisterModal from '@/components/LoginRegisterModal';
 import { emitPageSnapshotNow } from '@/app/components/PageSnapshotEmitter';
-import { useLanguage, translations } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { getMockProperties } from '@/lib/mockProperties';
 import { logger } from '@/lib/logger';
@@ -56,7 +56,8 @@ interface Property {
 const mockProperties = getMockProperties(100);
 const fallbackProperties: Property[] = mockProperties.map((property) => ({
   id: property.id,
-  slug: property.id.toString(),
+  // IMPORTANT: keep ids consistent with /api/properties mock ids
+  slug: `mock-${property.id}`,
   title: `Property #${property.id}`,
   price: property.price,
   address: property.address,
@@ -85,7 +86,6 @@ export default function PropertiesGrid({
   const { t } = useLanguage();
   const { isAuthenticated } = useAuth();
   const searchParams = useSearchParams();
-  const router = useRouter();
   const pathname = usePathname();
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -172,7 +172,6 @@ export default function PropertiesGrid({
   
   // Get current page from URL params
   const currentPage = parseInt(searchParams.get('page') || '1');
-  const sortBy = searchParams.get('sort') || 'price';
   // Prefer URL 'location', fallback to prop searchQuery
   const locationParam = (searchParams.get('location') || injectedFilters.location || searchQuery || '').toString();
   // URL-driven overrides for filters (so navigation with query applies filters even on first load)
@@ -318,7 +317,7 @@ export default function PropertiesGrid({
   logger.debug('Floor filter value:', effectiveFilters.floor);
   
   // Calculate pagination based on filtered results
-  const totalProperties = filteredProperties.length;
+  const totalProperties = apiTotal ?? filteredProperties.length;
   const totalPages = Math.ceil(totalProperties / PROPERTIES_PER_PAGE);
   const startIndex = (currentPage - 1) * PROPERTIES_PER_PAGE;
   const endIndex = startIndex + PROPERTIES_PER_PAGE;
@@ -326,6 +325,7 @@ export default function PropertiesGrid({
 
   
   const currentProperties = filteredProperties.slice(startIndex, endIndex);
+  const lastAiListingSnapshotKeyRef = useRef<string>('');
 
   // Broadcast a lightweight listing snapshot to the AI session (if any) via BroadcastChannel.
   // This helps the model "see" what is actually available on the listing page.
@@ -347,19 +347,41 @@ export default function PropertiesGrid({
         isNew: Boolean(p.isNew),
       }));
 
+      // De-dupe: StrictMode / rerenders can cause the same snapshot to be emitted twice.
+      const key = (() => {
+        try {
+          const ids = preview.map((x) => x.id).join(',');
+          return [
+            totalProperties,
+            currentPage,
+            locationParam || '',
+            Number.isFinite(minPrice) ? String(minPrice) : '',
+            Number.isFinite(maxPrice) ? String(maxPrice) : '',
+            statusParam || '',
+            propTypeParam || '',
+            roomsParam || '',
+            ids,
+          ].join('|');
+        } catch {
+          return '';
+        }
+      })();
+      if (key && key === lastAiListingSnapshotKeyRef.current) return;
+      lastAiListingSnapshotKeyRef.current = key;
+
       emitPageSnapshotNow({
         page: 'properties',
         title: document.title,
-        summary: `Showing ${startIndex + 1}-${Math.min(endIndex, filteredProperties.length)} of ${filteredProperties.length}`,
+        summary: `Showing ${startIndex + 1}-${Math.min(endIndex, totalProperties)} of ${totalProperties}`,
         data: {
           kind: 'properties_listing',
-          total_count: filteredProperties.length,
+          total_count: totalProperties,
           page: currentPage,
           page_size: PROPERTIES_PER_PAGE,
           showing_from: startIndex + 1,
-          showing_to: Math.min(endIndex, filteredProperties.length),
+          showing_to: Math.min(endIndex, totalProperties),
           filters: {
-            location: locationParam || undefined,
+            location: (normalizedLocationKey || locationParam) || undefined,
             minPrice: Number.isFinite(minPrice) ? minPrice : undefined,
             maxPrice: Number.isFinite(maxPrice) ? maxPrice : undefined,
             status: statusParam || undefined,
@@ -439,11 +461,20 @@ export default function PropertiesGrid({
       {/* Results Summary - compact */}
       <div className="flex justify-between items-center py-1">
         <p className="text-sm text-gray-600 dark:text-gray-300">
-          {t('showing')} {startIndex + 1}-{Math.min(endIndex, filteredProperties.length)} {t('of')} {filteredProperties.length} {t('propertiesCount')}
+          {t('showing')} {startIndex + 1}-{Math.min(endIndex, totalProperties)} {t('of')} {totalProperties} {t('propertiesCount')}
         </p>
-        <p className="text-xs text-gray-500 dark:text-gray-400">
-          {t('page')} {currentPage} {t('of')} {totalPages}
-        </p>
+        <div className="flex items-center gap-3">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {t('page')} {currentPage} {t('of')} {totalPages}
+          </p>
+          <button
+            type="button"
+            onClick={handleUploadClick}
+            className="h-8 px-3 rounded-md text-xs font-semibold border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+          >
+            {t('uploadProperty') || 'ქონების ატვირთვა'}
+          </button>
+        </div>
       </div>
       {isFetching && (
         <p className="text-xs text-orange-500 dark:text-orange-300">{t('loading')}...</p>

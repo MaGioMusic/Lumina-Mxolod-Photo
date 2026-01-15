@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Sidebar, Menu, SubMenu } from 'react-pro-sidebar';
 import { useTheme } from '@/contexts/ThemeContext';
 import ToggleSwitch from './ToggleSwitch';
@@ -43,6 +43,13 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
 }) => {
   const { theme } = useTheme(); // Dark mode detection
   const [showCollapsedSearch, setShowCollapsedSearch] = useState(false);
+  // Prevent "slow slide-in" on initial mount caused by width transitions.
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setHasMounted(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
   
   // Dynamic color scheme based on theme
   const colors = {
@@ -211,7 +218,9 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
           height: '100%',
           color: colors.text,
           '.ps-sidebar-container': {
-            transition: 'width 90ms cubic-bezier(0.2,0.8,0.2,1), min-width 90ms cubic-bezier(0.2,0.8,0.2,1)',
+            transition: hasMounted
+              ? 'width 90ms cubic-bezier(0.2,0.8,0.2,1), min-width 90ms cubic-bezier(0.2,0.8,0.2,1)'
+              : 'none',
             willChange: 'width',
             overflow: 'hidden',
           },

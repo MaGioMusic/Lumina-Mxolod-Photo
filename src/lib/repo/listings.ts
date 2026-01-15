@@ -1,4 +1,4 @@
-import { ListingStatus, Prisma } from '@prisma/client';
+import { ListingStatus, Prisma, type CurrencyType } from '@prisma/client';
 import type { Listing } from '@/types/models';
 import { prisma } from '@/lib/prisma';
 import { ForbiddenError, NotFoundError } from './errors';
@@ -57,7 +57,7 @@ export interface CreateListingInput {
   userId: string;
   agentId?: string | null;
   price: string;
-  currency: Prisma.CurrencyType;
+  currency: CurrencyType;
   status?: ListingStatus;
   expiryDate?: Date | null;
   notes?: string | null;

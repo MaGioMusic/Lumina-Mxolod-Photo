@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CaretDown, CaretUp } from '@phosphor-icons/react';
+import { CaretDown } from '@phosphor-icons/react';
 
 interface FilterCategoryBlockProps {
   title: string;

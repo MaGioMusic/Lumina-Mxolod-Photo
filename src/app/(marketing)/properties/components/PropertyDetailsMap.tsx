@@ -1,8 +1,8 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { Bed, Bath, Maximize2, MapPin } from 'lucide-react';
+import { Bed, Maximize2, MapPin } from 'lucide-react';
 
 // Correct dynamic import approach for Next.js 15
 const Map = dynamic(() => import('./LeafletMap'), { 

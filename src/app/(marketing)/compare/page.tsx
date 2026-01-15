@@ -68,18 +68,6 @@ export default function ComparePage() {
     return chips;
   };
 
-  if (ids.length === 0 || items.length === 0) {
-    return (
-      <div className="max-w-5xl mx-auto px-4 py-12 text-center">
-        <h1 className="text-2xl font-semibold mb-2">{t('compare') || 'Compare'}</h1>
-        <p className="text-gray-600 dark:text-gray-300 mb-6">{t('compareEmptyState') || 'არჩევა სცადე'}</p>
-        <button onClick={() => router.push('/properties')} className="px-4 py-2 bg-[#F08336] text-white rounded-md">
-          {t('browseProperties') || 'Browse properties'}
-        </button>
-      </div>
-    );
-  }
-
   type Row = {
     key: string;
     label: string;
@@ -154,8 +142,9 @@ export default function ComparePage() {
     { key: 'status', label: t('status') || 'Status', value: (p) => p.status, render: (p) => <span>{p.status === 'for-sale' ? (t('forSale')||'For Sale') : (t('forRent')||'For Rent')}</span> },
   ];
 
-  // Calculate identical vs different row counts to inform the UI
-  const sameCount = useMemo(() => {
+  // Calculate identical vs different row counts to inform the UI.
+  // Keep this as a plain calculation (not a Hook) to avoid conditional-hook issues.
+  const sameCount = (() => {
     if (items.length <= 1) return 0;
     let same = 0;
     for (const row of rows) {
@@ -165,7 +154,19 @@ export default function ComparePage() {
       if (!isDifferent) same += 1;
     }
     return same;
-  }, [items]);
+  })();
+
+  if (ids.length === 0 || items.length === 0) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 py-12 text-center">
+        <h1 className="text-2xl font-semibold mb-2">{t('compare') || 'Compare'}</h1>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">{t('compareEmptyState') || 'არჩევა სცადე'}</p>
+        <button onClick={() => router.push('/properties')} className="px-4 py-2 bg-[#F08336] text-white rounded-md">
+          {t('browseProperties') || 'Browse properties'}
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full px-2 sm:px-4 lg:px-8 py-6">

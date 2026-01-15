@@ -32,8 +32,8 @@ const DEV_TOKEN_USERS: Record<
 const ALLOWED_DEV_ROLES: Set<UserRole> = new Set(['client', 'agent', 'investor', 'admin']);
 
 const getClientIp = (request: NextRequest) =>
-  request.ip ??
   request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+  request.headers.get('x-real-ip') ??
   request.headers.get('cf-connecting-ip') ??
   'unknown';
 

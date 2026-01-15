@@ -2,7 +2,7 @@
 
 ყველა endpoint ემსახურება PostgreSQL + Prisma მოდელებს (`prisma/schema.prisma`). ქვემოთ აღწერილია ძირითადი კონტრაქტები, რომლებსაც ფრონტი და ბექენდი იზიარებს.
 
-## പൊതური წესები
+## ზოგადი წესები
 - ყველა თარიღი ISO-8601 სტრინგად (UTC offset-ით) ბრუნდება.
 - Decimal მნიშვნელობები იგზავნება სტრინგად (ზუსტი precision-ისთვის).
 - Auth header: `Authorization: Bearer <token>`.
@@ -184,4 +184,5 @@
 
 ---
 
- ამ ფაილს უნდა დაეყრდნოს API implementation (`src/app/api/**`) და ფრონტის data-fetching ფენაც (`src/lib/repo/**`).
+ამ ფაილს უნდა დაეყრდნოს API implementation (`src/app/api/**`) და ფრონტის data-fetching ფენაც (`src/lib/repo/**`).
+

@@ -57,8 +57,6 @@ export default function PropertyCard({
   const router = useRouter();
   const [isHovered, setIsHovered] = useState(false);
   const [heartClick, setHeartClick] = useState(false);
-  const [detailsClick] = useState(false);
-  const [imageLoaded] = useState(false);
   const propertyId = slug ?? id;
   
   // Generate multiple images for carousel if not provided
@@ -126,7 +124,6 @@ export default function PropertyCard({
 
   // Prevent hydration mismatch by not applying dynamic classes until hydrated
   const shouldApplyHoverEffects = isHydrated && isHovered;
-  const shouldApplyClickEffects = isHydrated;
 
   const cardInner = (
     <div className={isNew ? 'new-property-gradient-border' : ''}>
@@ -141,7 +138,10 @@ export default function PropertyCard({
           ${isHighlighted ? 'ring-4 ring-orange-500/50 shadow-2xl shadow-orange-500/25 scale-105 border-orange-500' : ''}
         `}
         onClick={handleCardClick}
-        onMouseEnter={() => setIsHovered(true)}
+        onMouseEnter={() => {
+          setIsHovered(true);
+          onHighlight?.();
+        }}
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Property Image Carousel with Overlays */}

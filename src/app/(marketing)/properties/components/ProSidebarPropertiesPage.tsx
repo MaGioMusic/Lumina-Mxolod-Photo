@@ -51,8 +51,10 @@ const ProSidebarPropertiesPage: React.FC = () => {
   });
 
   // Debounced inputs for smoother filtering
-  const debouncedQuery = useDebounced(searchQuery, 250);
-  const debouncedFilters = useDebounced(filters, 250);
+  const debouncedQuery = useDebounced(searchQuery, 200);
+  // Only debounce "continuous" range sliders; discrete toggles should feel instant.
+  const debouncedPriceRange = useDebounced(filters.priceRange, 120);
+  const debouncedAreaRange = useDebounced(filters.area, 120);
 
   // Mock: reuse filtering from PropertiesGrid by replicating minimal shape
   const allProperties = useMemo(() => Array.from({ length: 100 }, (_, i) => ({
@@ -75,20 +77,20 @@ const ProSidebarPropertiesPage: React.FC = () => {
         const q = debouncedQuery.toLowerCase();
         if (!(`${p.address}`.toLowerCase().includes(q))) return false;
       }
-      if (p.price < debouncedFilters.priceRange[0] || p.price > debouncedFilters.priceRange[1]) return false;
-      if (debouncedFilters.propertyTypes.length && !debouncedFilters.propertyTypes.includes(p.type)) return false;
-      if (debouncedFilters.bedrooms.length) {
-        const ok = debouncedFilters.bedrooms.some((b) => b === '5+' ? p.bedrooms >= 5 : p.bedrooms === parseInt(b));
+      if (p.price < debouncedPriceRange[0] || p.price > debouncedPriceRange[1]) return false;
+      if (filters.propertyTypes.length && !filters.propertyTypes.includes(p.type)) return false;
+      if (filters.bedrooms.length) {
+        const ok = filters.bedrooms.some((b) => b === '5+' ? p.bedrooms >= 5 : p.bedrooms === parseInt(b));
         if (!ok) return false;
       }
-      if (debouncedFilters.bathrooms.length) {
-        const ok = debouncedFilters.bathrooms.some((b) => b === '4+' ? p.bathrooms >= 4 : p.bathrooms === parseInt(b));
+      if (filters.bathrooms.length) {
+        const ok = filters.bathrooms.some((b) => b === '4+' ? p.bathrooms >= 4 : p.bathrooms === parseInt(b));
         if (!ok) return false;
       }
-      if (p.sqft < debouncedFilters.area[0] || p.sqft > debouncedFilters.area[1]) return false;
+      if (p.sqft < debouncedAreaRange[0] || p.sqft > debouncedAreaRange[1]) return false;
       return true;
     });
-  }, [allProperties, debouncedFilters, debouncedQuery]);
+  }, [allProperties, debouncedAreaRange, debouncedPriceRange, debouncedQuery, filters.bathrooms, filters.bedrooms, filters.propertyTypes]);
 
   // (Google map props გამორთულია დროებით — ვიყენებთ PropertyDetailsMap-ს)
 
@@ -252,7 +254,10 @@ const ProSidebarPropertiesPage: React.FC = () => {
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
         {/* Sidebar (sticky) */}
         <div className="flex-shrink-0">
-          <div className="sticky top-16 h-[calc(100vh-4rem)] overflow-auto pr-2 relative group">
+          <div
+            className="sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden pr-2 relative group"
+            style={{ scrollbarGutter: 'stable' }}
+          >
             <ProSidebarFilter
               filters={filters}
               onFiltersChange={handleFiltersChange}

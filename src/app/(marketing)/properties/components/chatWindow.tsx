@@ -2,6 +2,9 @@ import React, { type ChangeEvent, type SyntheticEvent, type RefObject } from 're
 import { Microphone } from '@phosphor-icons/react';
 import { AIVoiceInput } from '@/components/ui/ai-voice-input';
 import type { MockProperty } from '@/lib/mockProperties';
+import dynamic from 'next/dynamic';
+
+const GlassOrb = dynamic(() => import('@/components/voice/GlassOrb'), { ssr: false });
 
 interface ChatWindowProps {
   isOpen: boolean;
@@ -17,6 +20,9 @@ interface ChatWindowProps {
   isVoiceEnabled: boolean;
   centerCircleRef: RefObject<HTMLDivElement>;
   isListening: boolean;
+  isAiSpeaking?: boolean;
+  isOrbEnabled?: boolean;
+  orbAnalyser?: AnalyserNode | null;
   onStartVoice: () => Promise<void> | void;
   onStopVoice: () => Promise<void> | void;
   toggleMute: () => void;
@@ -38,6 +44,9 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   isVoiceEnabled,
   centerCircleRef,
   isListening,
+  isAiSpeaking = false,
+  isOrbEnabled = false,
+  orbAnalyser = null,
   onStartVoice,
   onStopVoice,
   toggleMute,
@@ -122,24 +131,32 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       )}
 
       {isVoiceEnabled && (
-        <div ref={centerCircleRef} className={`voice-center-blobs ${isListening ? 'on' : ''}`} aria-hidden="true">
-          {isListening && (
-            <div className="blobs palette-4">
-              <svg viewBox="0 0 1200 1200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <g className="blob blob-1">
-                  <path d="M 100 600 q 0 -500, 500 -500 t 500 500 t -500 500 T 100 600 z" />
-                </g>
-                <g className="blob blob-2 alt">
-                  <path d="M 100 600 q -50 -400, 500 -500 t 450 550 t -500 500 T 100 600 z" />
-                </g>
-                <g className="blob blob-3">
-                  <path d="M 100 600 q 0 -400, 500 -500 t 400 500 t -500 500 T 100 600 z" />
-                </g>
-                <g className="blob blob-4 alt">
-                  <path d="M 150 600 q 0 -600, 500 -500 t 500 550 t -500 500 T 150 600 z" />
-                </g>
-              </svg>
-            </div>
+        <div ref={centerCircleRef} className={`voice-center-blobs ${(isListening || isAiSpeaking) ? 'on' : ''}`} aria-hidden="true">
+          {(isListening || isAiSpeaking) && (
+            <>
+              {isOrbEnabled ? (
+                <div className="h-full w-full" style={{ borderRadius: 9999, overflow: 'hidden' }}>
+                  <GlassOrb analyser={orbAnalyser} className="h-full w-full" />
+                </div>
+              ) : (
+                <div className="blobs palette-4">
+                  <svg viewBox="0 0 1200 1200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <g className="blob blob-1">
+                      <path d="M 100 600 q 0 -500, 500 -500 t 500 500 t -500 500 T 100 600 z" />
+                    </g>
+                    <g className="blob blob-2 alt">
+                      <path d="M 100 600 q -50 -400, 500 -500 t 450 550 t -500 500 T 100 600 z" />
+                    </g>
+                    <g className="blob blob-3">
+                      <path d="M 100 600 q 0 -400, 500 -500 t 400 500 t -500 500 T 100 600 z" />
+                    </g>
+                    <g className="blob blob-4 alt">
+                      <path d="M 150 600 q 0 -600, 500 -500 t 500 550 t -500 500 T 150 600 z" />
+                    </g>
+                  </svg>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}

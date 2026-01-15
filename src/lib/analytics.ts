@@ -1,18 +1,25 @@
 'use client';
 
-export function gtag(...args: any[]) {
+type GtagWindow = {
+  dataLayer?: unknown[];
+  gtag?: (...args: unknown[]) => void;
+};
+
+export function gtag(...args: unknown[]) {
   try {
-    // @ts-ignore
-    window.dataLayer = window.dataLayer || [];
-    // @ts-ignore
-    window.dataLayer.push(arguments);
+    const w = window as unknown as GtagWindow;
+    w.dataLayer = w.dataLayer || [];
+    // Push the full argument list as one dataLayer entry (standard gtag pattern)
+    w.dataLayer.push(args);
   } catch {}
 }
 
-export function trackEvent(eventName: string, params?: Record<string, any>) {
+export function trackEvent(eventName: string, params?: Record<string, unknown>) {
   try {
-    // @ts-ignore
-    window.gtag && window.gtag('event', eventName, params || {});
+    const w = window as unknown as GtagWindow;
+    if (typeof w.gtag === 'function') {
+      w.gtag('event', eventName, params || {});
+    }
   } catch {}
 }
 

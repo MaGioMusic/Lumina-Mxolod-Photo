@@ -5,7 +5,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 // Card primitives
-interface DivProps extends React.HTMLAttributes<HTMLDivElement> {}
+type DivProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function AnimatedCard({ className, ...props }: DivProps) {
   return (
@@ -33,7 +33,7 @@ export function CardBody({ className, ...props }: DivProps) {
   );
 }
 
-interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {}
+type CardTitleProps = React.HTMLAttributes<HTMLHeadingElement>;
 export function CardTitle({ className, ...props }: CardTitleProps) {
   return (
     <h3
@@ -46,7 +46,7 @@ export function CardTitle({ className, ...props }: CardTitleProps) {
   );
 }
 
-interface CardDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {}
+type CardDescriptionProps = React.HTMLAttributes<HTMLParagraphElement>;
 export function CardDescription({ className, ...props }: CardDescriptionProps) {
   return (
     <p

@@ -7,7 +7,7 @@ import { House, Buildings, Car, SwimmingPool, Barbell, Plant } from '@phosphor-i
 // Import our new components
 import FilterPanelWrapper from './FilterPanelWrapper';
 import FilterCategoryBlock from './FilterCategoryBlock';
-import { CheckboxOption, RangeSliderOption, SelectOption, ToggleOption } from './FilterOption';
+import { CheckboxOption, RangeSliderOption, SelectOption } from './FilterOption';
 import MobileFilterDrawer, { MobileFilterToggle } from './MobileFilterDrawer';
 
 interface FiltersState {

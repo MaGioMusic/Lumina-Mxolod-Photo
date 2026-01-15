@@ -1,6 +1,6 @@
-import { useEffect, useRef, useMemo } from 'react';
-
 'use client';
+
+import { useEffect, useRef, useMemo } from 'react';
 
 import { loadMaps, loadMarker } from '@/lib/googleMaps';
 import { useRouter } from 'next/navigation';
@@ -27,7 +27,6 @@ export default function GoogleMapView({ properties, center, zoom = 12, onPropert
   const markersRef = useRef<Array<google.maps.marker.AdvancedMarkerElement | google.maps.Marker>>([]);
   const router = useRouter();
 
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
   const mapId = process.env.NEXT_PUBLIC_GOOGLE_MAP_ID || '';
 
   const initialCenter = useMemo(() => {
@@ -85,8 +84,10 @@ export default function GoogleMapView({ properties, center, zoom = 12, onPropert
           const ce = e as CustomEvent<any>;
           const { lat, lng, zoom: z } = ce.detail || {};
           if (typeof lat === 'number' && typeof lng === 'number') {
-            if (typeof z === 'number') map.panTo({ lat, lng }), map.setZoom(z);
-            else map.panTo({ lat, lng });
+            map.panTo({ lat, lng });
+            if (typeof z === 'number') {
+              map.setZoom(z);
+            }
           }
         } catch {}
       };
@@ -106,7 +107,7 @@ export default function GoogleMapView({ properties, center, zoom = 12, onPropert
     })();
 
     return () => { cleanup(); };
-  }, [apiKey, initialCenter, zoom, properties, onPropertyHighlight, router]);
+  }, [initialCenter, zoom, properties, onPropertyHighlight, router, mapId]);
 
   return (
     <div className="w-full h-full">

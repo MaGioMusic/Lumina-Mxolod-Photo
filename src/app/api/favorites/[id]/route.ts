@@ -1,7 +1,6 @@
 import { NextRequest } from 'next/server';
 import { removeFavoriteById } from '@/lib/repo';
-import { errorResponse, jsonResponse } from '../../utils';
-import { requireUser } from '@/lib/auth/server';
+import { errorResponse, jsonResponse, requireUser } from '../../utils';
 
 interface Params {
   params: { id: string };

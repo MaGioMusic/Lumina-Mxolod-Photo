@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { MantineProvider, Group, Box } from '@mantine/core';
 import MantineFilterSidebar from './MantineFilterSidebar';
 import PropertiesGrid from './PropertiesGrid';
-import AIChatComponent from './AIChatComponent';
 
 // Use the correct FiltersState interface that matches PropertiesGrid
 interface FiltersState {

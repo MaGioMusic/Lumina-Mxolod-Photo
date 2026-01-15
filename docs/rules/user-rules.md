@@ -78,4 +78,5 @@ AUTOMATED ACTIONS:
 - Score < Threshold → Block deployment + Generate fix suggestions
 - Score ≥ Threshold → Approve + Generate improvement recommendations
 - Critical Issues → Immediate notification + Auto-rollback option
-``` 
+```
+

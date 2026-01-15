@@ -45,6 +45,9 @@ export default function HeroSection() {
   const formRef = useRef<HTMLFormElement>(null);
   const heroSectionRef = useRef<HTMLElement>(null);
   const backgroundLayersRef = useRef<HTMLDivElement[]>([]);
+
+  // Video fallback (only show image if video fails to load/play)
+  const [videoFailed, setVideoFailed] = useState(false);
   
   // Dropdown states
   const [isPropertyTypeOpen, setIsPropertyTypeOpen] = useState(false);
@@ -165,7 +168,10 @@ export default function HeroSection() {
       const videoElement = document.querySelector('video') as HTMLElement;
       if (videoElement) {
         const speed = 0.5;
-        const yPos = -(scrolled * speed);
+        // Clamp upward shift so we never reveal an empty gap under the hero overlay.
+        // Video is rendered ~120% height with -10% top offset, so allow up to ~10% viewport shift.
+        const maxUpShiftPx = Math.round(window.innerHeight * 0.1);
+        const yPos = Math.max(-maxUpShiftPx, -(scrolled * speed));
         videoElement.style.transform = `translateY(${yPos}px)`;
       }
 
@@ -277,20 +283,26 @@ export default function HeroSection() {
         loop
         muted
         playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover z-0 hidden sm:block"
+        // Slightly oversized + shifted up so parallax translateY never reveals an empty gap at the bottom.
+        className="absolute top-[-10%] left-0 w-full h-[120%] object-cover z-0 block"
         preload="auto"
+        onError={() => setVideoFailed(true)}
+        onLoadedData={() => setVideoFailed(false)}
       >
         <source src="/videos/hero-background-new.mp4?v=2025-10-26" type="video/mp4" />
         {/* Fallback for browsers that don't support video */}
       </video>
 
-      {/* Fallback Background Image for Mobile and Video Load Failure */}
-        <div 
-        className="absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat z-0 sm:hidden"
+      {/* Fallback Background Image ONLY when video fails */}
+      {videoFailed && (
+        <div
+          // Match the oversized sizing used for the video to avoid any parallax gaps.
+          className="absolute top-[-10%] left-0 w-full h-[120%] bg-cover bg-center bg-no-repeat z-0"
           style={{
-          backgroundImage: `url('/images/photos/hero-background.jpg')`
+            backgroundImage: `url('/images/photos/hero-background.jpg')`,
           }}
         />
+      )}
 
       {/* Dark Gradient Overlay for Text Readability */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/10 z-10"></div>
