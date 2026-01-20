@@ -14,6 +14,7 @@ import {
   /* Bell, */ EnvelopeSimple, ChartLine, UserList, GridFour, CaretDown, MapTrifold
 } from '@phosphor-icons/react';
 import IOSToggle from '@/app/(marketing)/properties/components/IOSToggle';
+import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
 import LoginModal from '@/components/LoginModal';
 import PropertySubmitModal from '@/components/PropertySubmitModal';
 
@@ -202,7 +203,7 @@ export default function Header() {
       <header className={`${theme === 'dark' 
           ? (isScrolled ? 'bg-[#111111]/80 backdrop-blur-md border-gray-800' : 'bg-[#111111] border-gray-800') 
           : (isScrolled ? 'bg-white/80 backdrop-blur-md border-gray-100' : 'bg-white border-gray-100')
-        } border-b sticky top-0 z-50 font-['Geist',sans-serif] ${isScrolled ? 'shadow-sm' : ''}`}>
+        } border-b sticky top-0 z-50 h-20 font-['Geist',sans-serif] ${isScrolled ? 'shadow-sm' : ''}`}>
         <div className="px-8 py-5">
           <div className="flex items-center justify-between">
             {/* Logo Section - Keeping Lumina Estate */}
@@ -353,15 +354,13 @@ export default function Header() {
               {/* Account controls moved next to auth buttons */}
 
               {/* Theme Toggle */}
-              <button
-                onClick={toggleTheme}
+              <AnimatedThemeToggler
+                type="button"
                 className={`p-2 rounded-lg transition-colors ${
                   theme === 'dark' ? 'text-gray-300 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-100'
                 }`}
                 title={theme === 'dark' ? t('lightMode') : t('darkMode')}
-              >
-                {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-              </button>
+              />
 
               {/* Favorites (if authenticated) */}
               {isAuthenticated && (

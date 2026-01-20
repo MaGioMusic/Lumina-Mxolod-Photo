@@ -1,16 +1,17 @@
-import { UnderConstruction } from '@/components/underConstruction';
+import { cookies } from 'next/headers';
+import { getUserProfile } from '@/lib/profile';
+import ProfileDashboard from './components/profileDashboard';
 
-export default function ProfilePage() {
-  return (
-    <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-[1200px]">
-        <UnderConstruction
-          title="Profile Dashboard — Under Construction"
-          description="We’re rebuilding this dashboard from scratch. Some sections may return soon."
-          backHref="/"
-          backLabel="Back to home"
-        />
-      </div>
-    </div>
-  );
+async function resolveLocale(): Promise<string> {
+  const cookieStore = await cookies();
+  const langCookie = cookieStore.get('lumina_language')?.value;
+  if (langCookie === 'en' || langCookie === 'ru' || langCookie === 'ka') return langCookie;
+  return 'ka';
+}
+
+export default async function ProfilePage() {
+  const locale = await resolveLocale();
+  const profile = await getUserProfile({ locale });
+
+  return <ProfileDashboard profile={profile} />;
 }

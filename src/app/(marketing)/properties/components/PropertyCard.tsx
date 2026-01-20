@@ -65,21 +65,7 @@ export default function PropertyCard({
   // Check if this property is in favorites
   const isPropertyFavorite = isFavorite(propertyId);
 
-  // Scroll to this property when it becomes highlighted
-  useEffect(() => {
-    if (isHighlighted) {
-      // Small delay to ensure the component is rendered with highlighting styles
-      setTimeout(() => {
-        const element = document.getElementById(`property-${id}`);
-        if (element) {
-          element.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-          });
-        }
-      }, 100);
-    }
-  }, [isHighlighted, id]);
+  // Note: do not auto-scroll on hover highlight to avoid jumpy UX.
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();

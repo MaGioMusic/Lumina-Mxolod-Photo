@@ -28,7 +28,6 @@ import PropertyDetailsMap from './PropertyDetailsMap';
 
 const ProSidebarPropertiesPage: React.FC = () => {
   const searchParams = useSearchParams();
-  const [isCollapsed, setIsCollapsed] = useState(false);
   // Hydration-safe default: always start with 'grid' on first render.
   // Then, after mount, sync from URL/localStorage/effects.
   const [currentView, setCurrentView] = useState<'grid' | 'map'>('grid');
@@ -177,9 +176,6 @@ const ProSidebarPropertiesPage: React.FC = () => {
 
   // Inline handler now passed directly where needed
 
-  const handleToggleCollapse = () => {
-    setIsCollapsed(!isCollapsed);
-  };
 
   const handleFiltersChange = (newFilters: FiltersState) => {
     setFilters(newFilters);
@@ -251,40 +247,28 @@ const ProSidebarPropertiesPage: React.FC = () => {
   }, [currentView]);
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-[#111111]">
         {/* Sidebar (sticky) */}
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 bg-white dark:bg-[#111111]">
           <div
-            className="sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden pr-2 relative group"
+            className="sticky top-16 h-[calc(100vh-4rem)] relative group overflow-y-auto overflow-x-hidden pr-2 bg-white dark:bg-[#111111]"
             style={{ scrollbarGutter: 'stable' }}
           >
             <ProSidebarFilter
               filters={filters}
               onFiltersChange={handleFiltersChange}
-              isCollapsed={isCollapsed}
-              onToggleCollapse={handleToggleCollapse}
+              isCollapsed={false}
+              onToggleCollapse={() => {}}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
             />
-            {/* Floating chevron handle - expand when collapsed */}
-            {isCollapsed && (
-              <button
-                type="button"
-                onClick={() => setIsCollapsed(false)}
-                aria-label="Expand filters"
-                title="Expand filters"
-                className="absolute top-1/2 -right-3 -translate-y-1/2 w-8 h-8 rounded-full bg-orange-500 text-white shadow-md opacity-80 hover:opacity-100 focus:opacity-100 transition flex items-center justify-center"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-              </button>
-            )}
           </div>
         </div>
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
           {/* Applied Filters (compact) */}
-          <div className="sticky top-16 z-10 p-2 border-b border-gray-200 bg-white/70 dark:bg-gray-900/60 backdrop-blur relative">
+          <div className="sticky top-16 z-10 p-2 bg-white/70 dark:bg-[#111111]/90 backdrop-blur relative">
             <AppliedFiltersChips 
               searchQuery={searchQuery}
               filters={filters}

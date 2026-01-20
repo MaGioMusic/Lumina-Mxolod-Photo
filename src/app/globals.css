@@ -5,6 +5,12 @@
 /* Tailwind v4 Dark Mode Configuration */
 @custom-variant dark (&:where(.dark, .dark *));
 
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
 /* Earth Tones Color Palette Variables */
 :root {
   /* Natural Earth Tones Palette */
@@ -1913,29 +1919,29 @@ body {
 /* Dark Mode Styles */
 html.dark .ps-sidebar-container,
 html.dark .ps-sidebar-root .ps-sidebar-container {
-  background-color: #1f2937 !important;
+  background-color: #111111 !important;
 }
 
 html.dark .ps-menu-button,
 html.dark .ps-sidebar-root .ps-menu-button {
-  background-color: #1f2937 !important;
+  background-color: #111111 !important;
   color: #f9fafb !important;
 }
 
 html.dark .ps-menu-button:hover,
 html.dark .ps-sidebar-root .ps-menu-button:hover {
-  background-color: #374151 !important;
+  background-color: #1b1b1b !important;
   color: #f9fafb !important;
 }
 
 html.dark .ps-submenu-content,
 html.dark .ps-sidebar-root .ps-submenu-content {
-  background-color: #1f2937 !important;
+  background-color: #111111 !important;
 }
 
 html.dark .ps-submenu-root > .ps-menu-button,
 html.dark .ps-sidebar-root .ps-submenu-root > .ps-menu-button {
-  background-color: #1f2937 !important;
+  background-color: #111111 !important;
   color: #f9fafb !important;
 }
 

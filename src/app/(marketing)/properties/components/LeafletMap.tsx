@@ -52,6 +52,7 @@ export default function LeafletMap({
   onBoundsChange 
 }: LeafletMapProps) {
   const mapRef = useRef<L.Map | null>(null);
+  const hasFitBounds = useRef(false);
   const [layer, setLayer] = useState<'osm' | 'sat'>('osm');
   const isDev = process.env.NODE_ENV === 'development';
 
@@ -90,16 +91,17 @@ export default function LeafletMap({
     }
   `;
 
-  // Fit bounds to current properties whenever the set changes
+  // Fit bounds once on initial properties load to avoid "magnet" effect
   useEffect(() => {
     try {
       const map = mapRef.current;
-      if (!map || !properties || properties.length === 0) return;
+      if (!map || !properties || properties.length === 0 || hasFitBounds.current) return;
       const bounds = L.latLngBounds(properties.map((p) => L.latLng(p.coordinates[0], p.coordinates[1])));
       if (!bounds.isValid()) return;
       map.fitBounds(bounds.pad(0.15));
       const b = map.getBounds();
       onBoundsChange({ north: b.getNorth(), south: b.getSouth(), east: b.getEast(), west: b.getWest() });
+      hasFitBounds.current = true;
     } catch {}
   }, [properties?.length]);
 

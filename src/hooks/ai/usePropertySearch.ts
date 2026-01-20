@@ -14,6 +14,10 @@ export interface PropertyFunctionCallResult {
   payload?: Record<string, unknown>;
 }
 
+export type PropertyFunctionCallResultLike =
+  | PropertyFunctionCallResult
+  | Promise<PropertyFunctionCallResult>;
+
 const propertyTypes = ['apartment', 'house', 'villa', 'studio', 'penthouse'];
 
 export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => {
@@ -166,7 +170,7 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
   }, []);
 
   const handleFunctionCall = useCallback(
-    (fnName: string, argsText: string, context?: { transport?: ToolCallTransport }): PropertyFunctionCallResult => {
+    (fnName: string, argsText: string, context?: { transport?: ToolCallTransport }): PropertyFunctionCallResultLike => {
       const transport = context?.transport ?? 'realtime';
       const useRouterNav = transport === 'realtime';
 
@@ -178,6 +182,39 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
 
       try {
         const argsObj = JSON.parse(argsText || '{}');
+
+        if (fnName === 'get_nearby_places') {
+          const address = typeof argsObj.address === 'string' ? argsObj.address.trim() : '';
+          const radius = Number(argsObj.radius_m);
+          const types = Array.isArray(argsObj.types) ? argsObj.types : undefined;
+          if (!address) {
+            return { handled: true, payload: { ok: false, error: 'missing_address' } };
+          }
+          if (!Number.isFinite(radius) || radius <= 0) {
+            return { handled: true, payload: { ok: false, error: 'missing_radius' } };
+          }
+          return (async () => {
+            try {
+              const res = await fetch('/api/places', {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify({ address, radius_m: radius, types }),
+              });
+              const data = await res.json().catch(() => null);
+              try {
+                if (data) {
+                  window.dispatchEvent(new CustomEvent('lumina:places:result', { detail: data }));
+                }
+              } catch {}
+              return {
+                handled: true,
+                payload: data && typeof data === 'object' ? data : { ok: false, error: 'bad_response' },
+              };
+            } catch {
+              return { handled: true, payload: { ok: false, error: 'request_failed' } };
+            }
+          })();
+        }
 
         if (fnName === 'search_properties') {
           if (!isDemoMode) {

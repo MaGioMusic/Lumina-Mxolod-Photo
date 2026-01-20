@@ -8,8 +8,9 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { FiSearch, FiDownload, FiFilter, FiPlus, FiEye, FiEdit, FiTrash2, FiChevronLeft, FiChevronRight, FiCalendar, FiChevronDown, FiTrendingUp, FiArrowUp, FiUsers, FiTarget, FiHome, FiMoreHorizontal } from 'react-icons/fi';
 import SinglePropertyMap from '@/app/(marketing)/properties/components/SinglePropertyMap';
 import AgentDashboard from './components/AgentDashboard';
+import AgentCrmDashboard from './components/AgentCrmDashboard';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
-import AgentSideNav from './components/AgentSideNav';
+import { AgentShell } from './components/agentShell';
 import { useStaleFlag } from '@/hooks/useStaleFlag';
 import AgentCalendar from './components/AgentCalendar';
 
@@ -405,8 +406,7 @@ export default function AgentsPage() {
 
   if (activeTab === 'analytics') {
     return (
-      <div className="flex min-h-screen">
-        <AgentSideNav />
+      <AgentShell title="Analytics Dashboard">
         <div className={`flex-1 ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
         {/* Header with Controls */}
         <div className="flex items-center justify-between p-6 relative">
@@ -664,7 +664,7 @@ export default function AgentsPage() {
           </div>
         </div>
         </div>
-      </div>
+      </AgentShell>
     );
   }
 
@@ -675,8 +675,7 @@ export default function AgentsPage() {
         : properties.filter(p => p.occupancy === propStatusFilter);
 
     return (
-      <div className="flex min-h-screen">
-        <AgentSideNav />
+      <AgentShell title="Properties Management">
         <div className={`${theme === 'dark' ? 'bg-dark-bg' : 'bg-gray-50'} flex-1`}>
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
@@ -751,28 +750,26 @@ export default function AgentsPage() {
             </div>
           </div>
         </div>
-      </div>
+      </AgentShell>
     );
   }
 
   if (activeTab === 'calendar') {
     return (
-      <div className="flex min-h-screen">
-        <AgentSideNav />
+      <AgentShell title="Calendar">
         <div className={`${theme === 'dark' ? 'bg-dark-bg' : 'bg-gray-50'} flex-1`}>
           <div className="p-6">
             <h1 className={`text-2xl font-bold mb-4 ${theme === 'dark' ? 'text-dark-text' : 'text-gray-900'}`}>Calendar</h1>
             <AgentCalendar />
           </div>
         </div>
-      </div>
+      </AgentShell>
     );
   }
 
   if (activeTab === 'settings') {
     return (
-      <div className="flex min-h-screen">
-        <AgentSideNav />
+      <AgentShell title="Agent Settings">
         <div className={`flex-1 ${theme === 'dark' ? 'bg-dark-bg' : 'bg-gray-50'}`}>
           <div className="p-6">
             <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-dark-text' : 'text-gray-900'}`}>
@@ -783,123 +780,124 @@ export default function AgentsPage() {
             </p>
           </div>
         </div>
-      </div>
+      </AgentShell>
     );
   }
 
   // Placeholder pages for other tabs (temporary)
   if (activeTab === 'projects') {
     return (
-      <div className="flex min-h-screen">
-        <AgentSideNav />
+      <AgentShell title="Projects">
         <div className={`flex-1 ${theme === 'dark' ? 'bg-dark-bg' : 'bg-gray-50'}`}>
           <div className="p-6">
             <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-dark-text' : 'text-gray-900'}`}>Projects</h1>
             <p className={`${theme === 'dark' ? 'text-dark-text-secondary' : 'text-gray-600'} mt-4`}>Projects content coming soon...</p>
           </div>
         </div>
-      </div>
+      </AgentShell>
     );
   }
 
   if (activeTab === 'offers') {
     return (
-      <div className="flex min-h-screen">
-        <AgentSideNav />
+      <AgentShell title="Offers">
         <div className={`flex-1 ${theme === 'dark' ? 'bg-dark-bg' : 'bg-gray-50'}`}>
           <div className="p-6">
             <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-dark-text' : 'text-gray-900'}`}>Offers</h1>
             <p className={`${theme === 'dark' ? 'text-dark-text-secondary' : 'text-gray-600'} mt-4`}>Offers content coming soon...</p>
           </div>
         </div>
-      </div>
+      </AgentShell>
     );
   }
 
   if (activeTab === 'agreements') {
     return (
-      <div className="flex min-h-screen">
-        <AgentSideNav />
+      <AgentShell title="Agreements">
         <div className={`flex-1 ${theme === 'dark' ? 'bg-dark-bg' : 'bg-gray-50'}`}>
           <div className="p-6">
             <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-dark-text' : 'text-gray-900'}`}>Agreements</h1>
             <p className={`${theme === 'dark' ? 'text-dark-text-secondary' : 'text-gray-600'} mt-4`}>Agreements content coming soon...</p>
           </div>
         </div>
-      </div>
+      </AgentShell>
     );
   }
 
   if (activeTab === 'contacts') {
     return (
-      <div className="flex min-h-screen">
-        <AgentSideNav />
+      <AgentShell title="Contacts & Orgs">
         <div className={`flex-1 ${theme === 'dark' ? 'bg-dark-bg' : 'bg-gray-50'}`}>
           <div className="p-6">
             <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-dark-text' : 'text-gray-900'}`}>Contacts & Orgs</h1>
             <p className={`${theme === 'dark' ? 'text-dark-text-secondary' : 'text-gray-600'} mt-4`}>Contacts & Organizations content coming soon...</p>
           </div>
         </div>
-      </div>
+      </AgentShell>
     );
   }
 
   if (activeTab === 'brokers') {
     return (
-      <div className="flex min-h-screen">
-        <AgentSideNav />
+      <AgentShell title="Brokers & Agents">
         <div className={`flex-1 ${theme === 'dark' ? 'bg-dark-bg' : 'bg-gray-50'}`}>
           <div className="p-6">
             <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-dark-text' : 'text-gray-900'}`}>Brokers & Agents</h1>
             <p className={`${theme === 'dark' ? 'text-dark-text-secondary' : 'text-gray-600'} mt-4`}>Brokers & Agents content coming soon...</p>
           </div>
         </div>
-      </div>
+      </AgentShell>
     );
   }
 
   if (activeTab === 'campaigns') {
     return (
-      <div className="flex min-h-screen">
-        <AgentSideNav />
+      <AgentShell title="Campaigns">
         <div className={`flex-1 ${theme === 'dark' ? 'bg-dark-bg' : 'bg-gray-50'}`}>
           <div className="p-6">
             <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-dark-text' : 'text-gray-900'}`}>Campaigns</h1>
             <p className={`${theme === 'dark' ? 'text-dark-text-secondary' : 'text-gray-600'} mt-4`}>Campaigns content coming soon...</p>
           </div>
         </div>
-      </div>
+      </AgentShell>
     );
   }
 
   if (activeTab === 'documents') {
     return (
-      <div className="flex min-h-screen">
-        <AgentSideNav />
+      <AgentShell title="Documents">
         <div className={`flex-1 ${theme === 'dark' ? 'bg-dark-bg' : 'bg-gray-50'}`}>
           <div className="p-6">
             <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-dark-text' : 'text-gray-900'}`}>Documents</h1>
             <p className={`${theme === 'dark' ? 'text-dark-text-secondary' : 'text-gray-600'} mt-4`}>Documents content coming soon...</p>
           </div>
         </div>
-      </div>
+      </AgentShell>
     );
   }
 
   if (activeTab === 'dashboard') {
     return (
-      <div className="flex min-h-screen">
-        <AgentSideNav />
+      <AgentShell title="Agent Dashboard">
         <div className="flex-1">
           <AgentDashboard />
         </div>
-      </div>
+      </AgentShell>
+    );
+  }
+
+  if (activeTab === 'crm') {
+    return (
+      <AgentShell title="CRM Dashboard">
+        <div className="flex-1">
+          <AgentCrmDashboard />
+        </div>
+      </AgentShell>
     );
   }
 
   return (
-    <div className="flex min-h-screen">
-      <AgentSideNav />
+    <AgentShell title="Clients Management">
       <div className={`flex-1 ${theme === 'dark' ? 'bg-dark-bg' : 'bg-gray-50'}`}>
         <div className="p-6">
         <div className="flex items-center justify-between mb-6">
@@ -1236,6 +1234,6 @@ export default function AgentsPage() {
         )}
       </AnimatePresence>
       </div>
-    </div>
+    </AgentShell>
   );
 } 

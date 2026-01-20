@@ -53,7 +53,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
   
   // Dynamic color scheme based on theme
   const colors = {
-    background: theme === 'dark' ? '#1f2937' : '#ffffff',
+    background: theme === 'dark' ? '#111111' : '#ffffff',
     border: theme === 'dark' ? '#374151' : '#e5e7eb',
     text: theme === 'dark' ? '#f9fafb' : '#111827',
     textSecondary: theme === 'dark' ? '#d1d5db' : '#6b7280',
@@ -210,7 +210,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
       <Sidebar
         collapsed={isCollapsed}
         width="280px"
-        collapsedWidth="85px"
+        collapsedWidth="0px"
         backgroundColor={colors.background}
         rootStyles={{
           border: 'none',
@@ -218,34 +218,31 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
           height: '100%',
           color: colors.text,
           '.ps-sidebar-container': {
+            backgroundColor: colors.background,
             transition: hasMounted
               ? 'width 90ms cubic-bezier(0.2,0.8,0.2,1), min-width 90ms cubic-bezier(0.2,0.8,0.2,1)'
               : 'none',
             willChange: 'width',
             overflow: 'hidden',
           },
+          '.ps-menu-root': {
+            backgroundColor: colors.background,
+          },
+          '.ps-menu-button': {
+            backgroundColor: colors.background,
+            color: colors.text,
+          },
           '.ps-submenu-content': {
+            backgroundColor: colors.background,
             transition: 'none', // prevent nested height animations during sidebar collapse
           },
-          // Force override react-pro-sidebar styles
-          // '.ps-sidebar-container': {
-          //   backgroundColor: `${colors.background} !important`,
-          // },
-          // '.ps-menu-button': {
-          //   backgroundColor: `${colors.background} !important`,
-          //   color: `${colors.text} !important`,
-          // },
-          // '.ps-submenu-content': {
-          //   backgroundColor: `${colors.background} !important`,
-          // },
         }}
         style={{
           backgroundColor: colors.background,
         }}
       >
         {/* Enhanced Header */}
-        <div className={`p-4 border-b transition-colors duration-150`} style={{
-          borderColor: colors.border,
+        <div className="p-4 transition-colors duration-150" style={{
           backgroundColor: colors.background,
           color: colors.text
         }}>
@@ -269,7 +266,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                   </div>
                 </div>
               )}
-              
+
               {/* Clear all button */}
               {!isCollapsed && activeFiltersCount > 0 && (
                 <button
@@ -282,22 +279,12 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                   </svg>
                 </button>
               )}
-              
-              {/* Toggle button */}
-              <button
-                onClick={onToggleCollapse}
-                className="p-2 text-gray-600 hover:text-primary-600 hover:bg-cream-100 rounded-lg transition-colors transition-transform duration-150 transform-gpu will-change-transform hover:scale-105"
-              >
-                <svg className={`w-5 h-5 transition-transform duration-150 transform-gpu ${isCollapsed ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
             </div>
           </div>
         </div>
 
         {/* Always-visible Search (orange) */}
-        <div className="px-3 py-3 relative border-b" style={{ borderColor: colors.border, backgroundColor: colors.background }}>
+        <div className="px-3 py-3 relative" style={{ backgroundColor: colors.background }}>
           {!isCollapsed ? (
             <div className="relative p-2 pr-10 rounded-full bg-[#f97316] shadow-sm flex items-center">
               <svg className="w-4 h-4 text-white ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">

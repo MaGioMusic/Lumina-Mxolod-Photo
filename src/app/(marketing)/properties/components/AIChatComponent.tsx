@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { z } from 'zod';
 import { ChatLauncherButton } from './chatLauncherButton';
@@ -9,6 +9,7 @@ import type { ChatMessage } from './ChatMessageComponent';
 import { usePropertySearch } from '@/hooks/ai/usePropertySearch';
 import { runtimeFlags } from '@/lib/flags';
 import { useGeminiLiveSession } from '@/hooks/ai/useGeminiLiveSession';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const ChatMessageSchema = z.object({
   message: z.string().min(1, 'Message cannot be empty').max(500, 'Message too long'),
@@ -19,6 +20,7 @@ type PersistedChatMessage = ChatMessage & {
 };
 
 export default function AIChatComponent() {
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const chatRef = useRef<HTMLDivElement>(null);
@@ -48,6 +50,64 @@ export default function AIChatComponent() {
 
   const [lastTranscript, setLastTranscript] = useState('');
   const safeVoiceEnabled = isVoiceEnabled && voiceSupported && !voiceError;
+
+  const nearbyConfig = useMemo(() => {
+    return {
+      keywords: [
+        'near', 'nearby', 'around', 'close to', 'what is around', 'near me',
+        'ახლოს', 'გარშემო', 'მახლობლად', 'თან', 'შუასადაც',
+        'рядом', 'вокруг', 'поблизости',
+      ],
+      typeMap: [
+        { key: 'metro', patterns: ['metro', 'subway', 'station', 'მეტრო', 'метро'] },
+        { key: 'school', patterns: ['school', 'schools', 'სკოლა', 'школа'] },
+        { key: 'kindergarten', patterns: ['kindergarten', 'детский сад', 'садик', 'საბავშვო ბაღი', 'ბაღი'] },
+        { key: 'market', patterns: ['market', 'markets', 'supermarket', 'სუპერმარკეტი', 'მარკეტი', 'рынок', 'магазин'] },
+      ],
+    };
+  }, []);
+
+  const extractRadiusMeters = useCallback((raw: string) => {
+    const text = raw.toLowerCase();
+    const kmMatch = text.match(/(\d+(?:[.,]\d+)?)\s*(km|კმ|kilometer|kilometre|км)\b/);
+    if (kmMatch) {
+      const value = Number(kmMatch[1].replace(',', '.'));
+      if (Number.isFinite(value)) return Math.round(value * 1000);
+    }
+    const mMatch = text.match(/(\d+(?:[.,]\d+)?)\s*(m|მ|meter|метр)\b/);
+    if (mMatch) {
+      const value = Number(mMatch[1].replace(',', '.'));
+      if (Number.isFinite(value)) return Math.round(value);
+    }
+    return null;
+  }, []);
+
+  const extractTypes = useCallback((raw: string) => {
+    const lower = raw.toLowerCase();
+    const types: string[] = [];
+    nearbyConfig.typeMap.forEach((entry) => {
+      if (entry.patterns.some((p) => lower.includes(p))) {
+        types.push(entry.key);
+      }
+    });
+    return types.length ? Array.from(new Set(types)) : undefined;
+  }, [nearbyConfig.typeMap]);
+
+  const stripTokens = useCallback((raw: string) => {
+    let cleaned = raw;
+    cleaned = cleaned.replace(/(\d+(?:[.,]\d+)?)\s*(km|კმ|kilometer|kilometre|км|m|მ|meter|метр)\b/gi, ' ');
+    nearbyConfig.typeMap.forEach((entry) => {
+      entry.patterns.forEach((p) => {
+        const re = new RegExp(`\\b${p}\\b`, 'gi');
+        cleaned = cleaned.replace(re, ' ');
+      });
+    });
+    nearbyConfig.keywords.forEach((kw) => {
+      const re = new RegExp(`\\b${kw}\\b`, 'gi');
+      cleaned = cleaned.replace(re, ' ');
+    });
+    return cleaned.replace(/\s{2,}/g, ' ').trim();
+  }, [nearbyConfig]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -153,6 +213,55 @@ export default function AIChatComponent() {
       setMessages((prev) => prev.map((m) => (m.id === draftId ? { ...m, isPartial: false, isFinal: true } : m)));
     }, 700);
   }, []);
+
+  const maybeHandleNearbyFallback = useCallback(async (raw: string) => {
+    const text = raw.trim();
+    if (!text) return { handled: false };
+    const lower = text.toLowerCase();
+    const isNearbyIntent = nearbyConfig.keywords.some((k) => lower.includes(k)) ||
+      nearbyConfig.typeMap.some((entry) => entry.patterns.some((p) => lower.includes(p)));
+    if (!isNearbyIntent) return { handled: false };
+
+    const radius = extractRadiusMeters(text);
+    const types = extractTypes(text);
+    const address = stripTokens(text);
+
+    if (!address || address.length < 3) {
+      appendAssistantDelta(`${t('aiAskAddress')}\n`);
+      return { handled: true };
+    }
+    if (!radius) {
+      appendAssistantDelta(`${t('aiAskRadius')}\n`);
+      return { handled: true };
+    }
+
+    appendAssistantDelta(`${t('aiNearbySearchStarted')}\n`);
+    try {
+      const res = await fetch('/api/places', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ address, radius_m: radius, types }),
+      });
+      const data = await res.json().catch(() => null);
+      if (data) {
+        window.dispatchEvent(new CustomEvent('lumina:places:result', { detail: data }));
+      }
+      if (!data || data.ok !== true) {
+        appendAssistantDelta(`${t('aiNearbySearchFailed')}\n`);
+        return { handled: true };
+      }
+      const total = Array.isArray(data.categories)
+        ? data.categories.reduce((acc: number, cat: any) => acc + (Array.isArray(cat.results) ? cat.results.length : 0), 0)
+        : 0;
+      if (total === 0) {
+        appendAssistantDelta(`${t('aiNearbySearchNoResults')}\n`);
+      }
+      return { handled: true };
+    } catch {
+      appendAssistantDelta(`${t('aiNearbySearchFailed')}\n`);
+      return { handled: true };
+    }
+  }, [appendAssistantDelta, extractRadiusMeters, extractTypes, nearbyConfig, stripTokens, t]);
 
   // Close chat when clicking outside
   useEffect(() => {
@@ -260,11 +369,12 @@ export default function AIChatComponent() {
       if (finalTranscript && finalTranscript !== lastSavedTranscriptRef.current) {
         lastSavedTranscriptRef.current = finalTranscript;
         appendUserMessage(finalTranscript, 'voice');
+        void maybeHandleNearbyFallback(finalTranscript);
       }
     } catch (err) {
       console.error('AI voice failed to stop cleanly', err);
     }
-  }, [appendUserMessage, lastTranscript, stopGeminiVoice]);
+  }, [appendUserMessage, lastTranscript, maybeHandleNearbyFallback, stopGeminiVoice]);
 
   const persistMessage = useCallback(async (m: PersistedChatMessage) => {
     try {
@@ -1644,9 +1754,15 @@ export default function AIChatComponent() {
             ChatMessageSchema.parse({ message });
             appendUserMessage(message, 'text');
             try { window.sessionStorage.setItem('lumina_ai_autostart_mode', 'text'); } catch {}
-            void sendGeminiText(message).catch((err) => {
-              console.error('Gemini live text send failed', err);
-              appendAssistantDelta('\n\n[Error] Could not reach AI session. Please retry.');
+            void maybeHandleNearbyFallback(message).then((result) => {
+              if (result?.handled) {
+                setMessage('');
+                return;
+              }
+              void sendGeminiText(message).catch((err) => {
+                console.error('Gemini live text send failed', err);
+                appendAssistantDelta('\n\n[Error] Could not reach AI session. Please retry.');
+              });
             });
             setMessage('');
           } catch (error) {

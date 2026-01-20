@@ -15,14 +15,16 @@ export default function ConditionalLayout({
   // Debug: Log current pathname (dev only)
   logger.log('ConditionalLayout pathname:', pathname);
 
-  const isComparePage = pathname?.startsWith('/compare');
+  const normalizedPathname = pathname?.replace(/^\/(ka|en|ru)(?=\/)/, '') ?? '';
+  const isComparePage = normalizedPathname.startsWith('/compare');
 
   return (
     <>
-      {/* Main header should show on all pages including admin */}
       <Header />
       <main className="min-h-screen">
-        {children}
+        <div style={{ ['--app-header-height' as string]: '5rem' }}>
+          {children}
+        </div>
       </main>
       {/* Sticky Compare Bar (hide on /compare) */}
       {!isComparePage && <StickyCompareBar />}

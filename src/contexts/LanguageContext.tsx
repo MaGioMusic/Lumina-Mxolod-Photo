@@ -741,6 +741,21 @@ const translations: Translations = {
     en: 'Penthouse',
     ru: 'Пентхаус'
   },
+  office: {
+    ka: 'ოფისი',
+    en: 'Office',
+    ru: 'Офис'
+  },
+  cottage: {
+    ka: 'კოტეჯი',
+    en: 'Cottage',
+    ru: 'Коттедж'
+  },
+  loft: {
+    ka: 'ლოფტი',
+    en: 'Loft',
+    ru: 'Лофт'
+  },
   anyPropertyType: {
     ka: 'ნებისმიერი ტიპი',
     en: 'Any Type',
@@ -973,6 +988,51 @@ const translations: Translations = {
     ka: 'ქონება',
     en: 'properties',
     ru: 'недвижимость'
+  },
+  propertiesSearchPlaceholder: {
+    ka: 'ქონებების ძებნა...',
+    en: 'Search properties...',
+    ru: 'Поиск недвижимости...'
+  },
+  propertiesInThisArea: {
+    ka: 'ქონება ამ არეალში',
+    en: 'properties in this area',
+    ru: 'объектов в этой зоне'
+  },
+  noPropertiesInThisArea: {
+    ka: 'ამ არეალში ქონება ვერ მოიძებნა',
+    en: 'No properties in this area',
+    ru: 'В этой зоне объектов нет'
+  },
+  tryAdjustingMap: {
+    ka: 'გადიდეთ ან გადაადგილეთ რუკა მეტი ქონებისთვის',
+    en: 'Try zooming out or moving the map to see more properties',
+    ru: 'Попробуйте уменьшить масштаб или сдвинуть карту, чтобы увидеть больше объектов'
+  },
+  aiAskRadius: {
+    ka: 'რა რადიუსში გინდა ვიპოვო გარშემო ობიექტები?',
+    en: 'What radius should I use to search nearby places?',
+    ru: 'Какой радиус использовать для поиска поблизости?'
+  },
+  aiAskAddress: {
+    ka: 'რომელ მისამართთან მოვძებნო გარშემო ობიექტები?',
+    en: 'Which address should I search around?',
+    ru: 'Вокруг какого адреса искать?'
+  },
+  aiNearbySearchStarted: {
+    ka: 'ვიწყებ გარშემო ობიექტების ძებნას რუკაზე...',
+    en: 'Searching nearby places on the map...',
+    ru: 'Ищу объекты поблизости на карте...'
+  },
+  aiNearbySearchFailed: {
+    ka: 'ვერ მოვიძებნა ობიექტები — სცადე სხვა მისამართი ან უფრო დიდი რადიუსი.',
+    en: 'No nearby places found. Try another address or a larger radius.',
+    ru: 'Ничего не найдено. Попробуйте другой адрес или больший радиус.'
+  },
+  aiNearbySearchNoResults: {
+    ka: 'ამ რადიუსში შედეგი არ არის. სცადე უფრო დიდი რადიუსი.',
+    en: 'No results within this radius. Try a larger radius.',
+    ru: 'В этом радиусе результатов нет. Попробуйте больший радиус.'
   },
   
 

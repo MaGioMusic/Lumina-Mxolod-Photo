@@ -52,13 +52,13 @@ export default function AgentDashboard() {
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-dark-bg' : 'bg-gray-50'} pt-20`}>
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="mx-auto w-full max-w-[1600px] px-6 py-8 lg:px-10">
         {activeTab === 'dashboard' && (
-          <div className="flex gap-6">
+          <div className="flex gap-8">
             {/* Left Column */}
             <div className="flex-1">
               {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-7 mb-8">
                 {/* Total Properties */}
                 <div className={`${theme === 'dark' ? 'bg-dark-bg-secondary' : 'bg-white'} rounded-lg shadow-sm p-6 transform transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in-up`} style={{animationDelay: '0.1s'}}>
                   <div className="flex items-start justify-between mb-4">
@@ -121,12 +121,12 @@ export default function AgentDashboard() {
               </div>
 
               {/* Recent Properties */}
-              <div className={`${theme === 'dark' ? 'bg-dark-bg-secondary' : 'bg-white'} rounded-lg shadow-sm p-6 mb-6 animate-fade-in-up`} style={{animationDelay: '0.5s'}}>
+              <div className={`${theme === 'dark' ? 'bg-dark-bg-secondary' : 'bg-white'} rounded-lg shadow-sm p-6 mb-8 animate-fade-in-up`} style={{animationDelay: '0.5s'}}>
                 <div className="flex items-center justify-between mb-6">
                   <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-dark-text' : 'text-gray-900'}`}>Recent Properties</h2>
                   <button className="text-primary-500 hover:text-primary-600 font-medium transition-colors duration-300 hover:scale-105 transform">View All</button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
                   {/* Modern Villa */}
                   <div className={`border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} rounded-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl animate-fade-in-up`} style={{animationDelay: '0.6s'}}>
                     <div className="overflow-hidden">
@@ -336,7 +336,7 @@ export default function AgentDashboard() {
             </div>
 
             {/* Right Sidebar */}
-            <div className="w-80 space-y-6">
+            <div className="w-96 xl:w-[420px] space-y-6">
               {/* Tasks Due Today */}
               <div className={`${theme === 'dark' ? 'bg-dark-bg-secondary' : 'bg-white'} rounded-lg shadow-sm p-6 animate-fade-in-up transform transition-all duration-300 hover:shadow-lg`} style={{animationDelay: '0.9s'}}>
                 <h3 className={`text-lg font-bold ${theme === 'dark' ? 'text-dark-text' : 'text-gray-900'} mb-4`}>Tasks Due Today</h3>

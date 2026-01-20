@@ -13,16 +13,26 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+function setThemeCookie(value: Theme) {
+  try {
+    document.cookie = `lumina_theme=${value}; path=/; max-age=31536000`;
+  } catch {}
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === 'undefined') return 'light';
+    const stored = localStorage.getItem('theme') as Theme | null;
+    if (stored === 'dark' || stored === 'light') return stored;
+    return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+  });
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    // Always default to light mode, ignore system preferences completely
     const savedTheme = localStorage.getItem('theme') as Theme | null;
-    const initialTheme = savedTheme || 'light';
-    
-    setTheme(initialTheme);
+    const initialTheme = savedTheme || (document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+
+    setTheme(initialTheme as Theme);
     
     // Apply theme to document
     if (initialTheme === 'dark') {
@@ -31,8 +41,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.classList.remove('dark');
     }
     
-    // Force light color scheme to prevent browser interference
-    document.documentElement.style.colorScheme = 'light';
+    // Match browser color scheme to theme
+    document.documentElement.style.colorScheme = initialTheme === 'dark' ? 'dark' : 'light';
+    setThemeCookie(initialTheme as Theme);
     
     setIsHydrated(true);
   }, []);
@@ -41,6 +52,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
+    setThemeCookie(newTheme);
     
     if (newTheme === 'dark') {
       document.documentElement.classList.add('dark');

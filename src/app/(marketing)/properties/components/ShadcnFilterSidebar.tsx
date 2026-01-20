@@ -134,17 +134,20 @@ const ShadcnFilterSidebar: React.FC<ShadcnFilterSidebarProps> = memo(({
               </Badge>
             )}
           </div>
-          {activeFiltersCount > 0 && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={clearAllFilters}
-              className="group-data-[collapsible=icon]:hidden"
-            >
-              <X className="h-4 w-4 mr-1" />
-              {t('clearAll')}
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {activeFiltersCount > 0 && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={clearAllFilters}
+                className="group-data-[collapsible=icon]:hidden"
+              >
+                <X className="h-4 w-4 mr-1" />
+                {t('clearAll')}
+              </Button>
+            )}
+            <SidebarTrigger className="h-8 w-8" />
+          </div>
         </div>
       </SidebarHeader>
 

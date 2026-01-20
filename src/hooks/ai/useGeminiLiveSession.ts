@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { PropertyFunctionCallResult } from './usePropertySearch';
+import type { PropertyFunctionCallResult, PropertyFunctionCallResultLike } from './usePropertySearch';
 import { getVertexToken, type VertexToken } from '@/lib/vertexTokenClient';
 
 type ConnectionState = 'idle' | 'connecting' | 'connected' | 'stopped' | 'error';
@@ -13,7 +13,7 @@ export interface UseGeminiLiveSessionOptions {
     fnName: string,
     argsText: string,
     context?: { transport?: 'realtime' | 'websocket' },
-  ) => PropertyFunctionCallResult;
+  ) => PropertyFunctionCallResultLike;
   onTranscript?: (text: string) => void;
   onResponseText?: (text: string) => void;
   onError?: (message: string) => void;
@@ -105,6 +105,9 @@ const buildSystemPrompt = (lang: LuminaLanguage, pageContext: { path: string; ti
     '- თუ მომხმარებელი ამბობს “კიდევ მაჩვენე/შემდეგი” → გამოიძახე list_results offset/limit-ით და ისევ ჩამოთვალე results_preview.',
     '- თუ ამბობს “გახსენი პირველი/მეორე/…” → open_first_property / open_nth_result და მერე დაელოდე property_snapshot-ს.',
     '- თუ ამბობს “გადადით id …” → navigate_to_property.',
+    '- თუ მომხმარებელი კითხულობს “რა არის გარშემო/ახლოს” (მეტრო, სკოლა, ბაღი, მარკეტი) → გამოიყენე get_nearby_places.',
+    '- get_nearby_places მოითხოვს address და radius_m. თუ ერთ-ერთი აკლია, ჯერ დაუსვი დამაზუსტებელი კითხვა.',
+    '- არასდროს თქვა, რომ რუკაზე ჩვენება/ზუმი “არ შეგიძლია”. თუ მისამართი/რადიუსი აკლია, ჯერ კითხვა დასვი, შემდეგ გამოიყენე get_nearby_places და მიუთითე რომ რუკაზე მონიშვნა მოხდება.',
     '- თუ tool-call არ არის ხელმისაწვდომი ან ვერ შესრულდა → არ გამოიგონო შედეგი. თქვი ზუსტად რომ tool ვერ შესრულდა და შესთავაზე კონკრეტული ალტერნატივა (მაგ: სხვა ფილტრი ან ხელახლა ცდა).',
     '',
     'Snapshot პოლიტიკა:',
@@ -498,6 +501,24 @@ export function useGeminiLiveSession({
                             additionalProperties: false,
                           },
                         },
+                        {
+                          name: 'get_nearby_places',
+                          description:
+                            'Find nearby amenities (metro, school, kindergarten, market) around a given address within a radius (meters).',
+                          parameters: {
+                            type: 'object',
+                            properties: {
+                              address: { type: 'string' },
+                              radius_m: { type: 'number' },
+                              types: {
+                                type: 'array',
+                                items: { type: 'string', enum: ['metro', 'school', 'kindergarten', 'market'] },
+                              },
+                            },
+                            required: ['address', 'radius_m'],
+                            additionalProperties: false,
+                          },
+                        },
                       ],
                     },
                   ],
@@ -758,40 +779,42 @@ export function useGeminiLiveSession({
                 const argsText = typeof args === 'string' ? args : JSON.stringify(args);
                 if (!name) continue;
                 const res = toolHandler(name, argsText, { transport: 'realtime' });
-                if (!res?.handled) continue;
-                try {
-                  // Vertex/Gemini Live API prefers snake_case message fields.
-                  // If we send camelCase here, the server may ignore tool outputs.
-                  const toolResponseSnake = {
-                    tool_response: {
-                      function_responses: [
-                        {
-                          ...(id ? { id } : {}),
-                          name,
-                          response: res.payload || { ok: true },
-                        },
-                      ],
-                    },
-                  };
-                  if (!toolDebugOnceRef.current) {
-                    // If somehow first log didn't run, ensure at least one response log.
-                    toolDebugOnceRef.current = true;
-                  }
+                const sendToolResponse = (result: PropertyFunctionCallResult) => {
+                  if (!result?.handled) return;
                   try {
-                    console.log('[Gemini] tool response sent', {
-                      id: id || undefined,
-                      name,
-                      // Avoid logging huge payloads; just keys.
-                      responseKeys: res.payload ? Object.keys(res.payload) : ['ok'],
-                    });
+                    const toolResponseSnake = {
+                      tool_response: {
+                        function_responses: [
+                          {
+                            ...(id ? { id } : {}),
+                            name,
+                            response: result.payload || { ok: true },
+                          },
+                        ],
+                      },
+                    };
+                    if (!toolDebugOnceRef.current) {
+                      toolDebugOnceRef.current = true;
+                    }
+                    try {
+                      console.log('[Gemini] tool response sent', {
+                        id: id || undefined,
+                        name,
+                        responseKeys: result.payload ? Object.keys(result.payload) : ['ok'],
+                      });
+                    } catch {}
+                    ws.send(JSON.stringify(toolResponseSnake));
                   } catch {}
-                  ws.send(
-                    // IMPORTANT: tool response message_type is a oneof.
-                    // Do NOT include multiple variants (camelCase + snake_case) in one message,
-                    // otherwise the server will close with 1007 "oneof already set".
-                    JSON.stringify(toolResponseSnake),
-                  );
-                } catch {}
+                };
+                if (res && typeof (res as Promise<PropertyFunctionCallResult>).then === 'function') {
+                  (res as Promise<PropertyFunctionCallResult>)
+                    .then((result) => sendToolResponse(result))
+                    .catch(() => {
+                      sendToolResponse({ handled: true, payload: { ok: false, error: 'tool_failed' } });
+                    });
+                  continue;
+                }
+                sendToolResponse(res as PropertyFunctionCallResult);
               }
               return;
             }
@@ -1062,6 +1085,24 @@ export function useGeminiLiveSession({
                             additionalProperties: false,
                           },
                         },
+                        {
+                          name: 'get_nearby_places',
+                          description:
+                            'Find nearby amenities (metro, school, kindergarten, market) around a given address within a radius (meters).',
+                          parameters: {
+                            type: 'object',
+                            properties: {
+                              address: { type: 'string' },
+                              radius_m: { type: 'number' },
+                              types: {
+                                type: 'array',
+                                items: { type: 'string', enum: ['metro', 'school', 'kindergarten', 'market'] },
+                              },
+                            },
+                            required: ['address', 'radius_m'],
+                            additionalProperties: false,
+                          },
+                        },
                       ],
                     },
                   ],
@@ -1221,28 +1262,39 @@ export function useGeminiLiveSession({
                 const argsText = typeof args === 'string' ? args : JSON.stringify(args);
                 if (!name) continue;
                 const res = toolHandler(name, argsText, { transport: 'realtime' });
-                if (!res?.handled) continue;
-                try {
-                  const toolResponseSnake = {
-                    tool_response: {
-                      function_responses: [
-                        {
-                          ...(id ? { id } : {}),
-                          name,
-                          response: res.payload || { ok: true },
-                        },
-                      ],
-                    },
-                  };
+                const sendToolResponse = (result: PropertyFunctionCallResult) => {
+                  if (!result?.handled) return;
                   try {
-                    console.log('[Gemini] tool response sent', {
-                      id: id || undefined,
-                      name,
-                      responseKeys: res.payload ? Object.keys(res.payload) : ['ok'],
-                    });
+                    const toolResponseSnake = {
+                      tool_response: {
+                        function_responses: [
+                          {
+                            ...(id ? { id } : {}),
+                            name,
+                            response: result.payload || { ok: true },
+                          },
+                        ],
+                      },
+                    };
+                    try {
+                      console.log('[Gemini] tool response sent', {
+                        id: id || undefined,
+                        name,
+                        responseKeys: result.payload ? Object.keys(result.payload) : ['ok'],
+                      });
+                    } catch {}
+                    ws.send(JSON.stringify(toolResponseSnake));
                   } catch {}
-                  ws.send(JSON.stringify(toolResponseSnake));
-                } catch {}
+                };
+                if (res && typeof (res as Promise<PropertyFunctionCallResult>).then === 'function') {
+                  (res as Promise<PropertyFunctionCallResult>)
+                    .then((result) => sendToolResponse(result))
+                    .catch(() => {
+                      sendToolResponse({ handled: true, payload: { ok: false, error: 'tool_failed' } });
+                    });
+                  continue;
+                }
+                sendToolResponse(res as PropertyFunctionCallResult);
               }
               return;
             }

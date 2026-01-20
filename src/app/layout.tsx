@@ -73,10 +73,22 @@ export default async function RootLayout({
   const cookieStore = await cookies();
   const langCookie = cookieStore.get('lumina_language')?.value as 'ka' | 'en' | 'ru' | undefined;
   const initialLang = langCookie && ['ka','en','ru'].includes(langCookie) ? langCookie : 'ka';
+  const themeCookie = cookieStore.get('lumina_theme')?.value as 'light' | 'dark' | undefined;
+  const initialTheme = themeCookie === 'dark' ? 'dark' : 'light';
   const gaId = runtimeFlags.ga4Id;
   return (
-    <html lang={initialLang} suppressHydrationWarning>
+    <html
+      lang={initialLang}
+      className={initialTheme === 'dark' ? 'dark' : undefined}
+      suppressHydrationWarning
+    >
       <head>
+        {/* Prevent theme flash by syncing before paint */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');var d=t==='dark';var c=document.documentElement.classList;d?c.add('dark'):c.remove('dark');document.documentElement.style.colorScheme=d?'dark':'light';}catch(e){}})();`,
+          }}
+        />
         {gaId ? (
           <>
             <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import ShadcnFilterSidebar from './ShadcnFilterSidebar';
@@ -95,9 +95,6 @@ const ShadcnPropertiesPage: React.FC<ShadcnPropertiesPageProps> = ({ className =
             <header className="sticky top-0 z-10 bg-background border-b p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  {/* Desktop Sidebar Trigger */}
-                  <SidebarTrigger className="hidden md:flex" />
-                  
                   {/* Mobile Filter Button */}
                   <Button 
                     variant="outline" 
