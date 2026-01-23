@@ -588,6 +588,16 @@ const translations: Translations = {
     en: 'Add to favorites',
     ru: 'Добавить в избранное'
   },
+  removeFromFavorites: {
+    ka: 'რჩეულებიდან ამოღება',
+    en: 'Remove from favorites',
+    ru: 'Удалить из избранного'
+  },
+  inFavorites: {
+    ka: 'რჩეულებშია',
+    en: 'In favorites',
+    ru: 'В избранном'
+  },
   compare: {
     ka: 'შედარება',
     en: 'Compare',

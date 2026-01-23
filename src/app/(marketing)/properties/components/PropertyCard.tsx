@@ -29,6 +29,7 @@ interface PropertyCardProps {
   area?: string;
   isHighlighted?: boolean;
   onHighlight?: () => void;
+  onFavoriteToggle?: (property: FavoriteProperty, nextIsFavorite: boolean) => void;
 }
 
 export default function PropertyCard({
@@ -48,7 +49,8 @@ export default function PropertyCard({
   title,
   area,
   isHighlighted,
-  onHighlight
+  onHighlight,
+  onFavoriteToggle
 }: PropertyCardProps) {
   const { t } = useLanguage();
   const { isHydrated } = useTheme();
@@ -84,6 +86,12 @@ export default function PropertyCard({
       area: area || (sqft ? `${sqft} მ²` : undefined),
       type
     };
+    const nextIsFavorite = !isPropertyFavorite;
+    
+    if (onFavoriteToggle) {
+      onFavoriteToggle(propertyData, nextIsFavorite);
+      return;
+    }
     
     if (isPropertyFavorite) {
       removeFromFavorites(propertyId);
