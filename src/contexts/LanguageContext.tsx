@@ -515,6 +515,623 @@ const translations: Translations = {
     en: 'Nino Kavtaradze',
     ru: 'Нино Кавтарадзе'
   },
+
+  // Guides Page
+  guidesHeroEyebrow: {
+    ka: 'გზამკვლევები',
+    en: 'Guide library',
+    ru: 'Гайды'
+  },
+  guidesHeroTitle: {
+    ka: 'მყიდველისა და გამყიდველის გზამკვლევები',
+    en: 'Buyer & Seller Guides',
+    ru: 'Гайды для покупателей и продавцов'
+  },
+  guidesHeroSubtitle: {
+    ka: 'მკაფიო, მოდულური გზამკვლევები, რომლებიც ამცირებს გაურკვევლობას და ყველა ტრანზაქციას წესრიგში აყენებს.',
+    en: 'Clear, modular guides built to reduce friction and keep every transaction organized.',
+    ru: 'Чёткие модульные гайды, которые снимают неопределённость и упорядочивают сделку.'
+  },
+  guidesHeroPrimaryCta: {
+    ka: 'გზამკვლევების ნახვა',
+    en: 'Browse guides',
+    ru: 'Смотреть гайды'
+  },
+  guidesHeroSecondaryCta: {
+    ka: 'კონსულტაცია აგენტთან',
+    en: 'Talk to an advisor',
+    ru: 'Поговорить с консультантом'
+  },
+  guidesHeroImageAlt: {
+    ka: 'გზამკვლევების მიმოხილვა',
+    en: 'Guides overview',
+    ru: 'Обзор гайдов'
+  },
+  guidesStatsModulesLabel: {
+    ka: 'მოდული',
+    en: 'Guide modules',
+    ru: 'Модули'
+  },
+  guidesStatsModulesDescription: {
+    ka: 'კონცენტრირებული გაკვეთილები თითო ტრეკზე.',
+    en: 'Focused lessons by track.',
+    ru: 'Сфокусированные уроки по треку.'
+  },
+  guidesStatsChecklistsLabel: {
+    ka: 'ჩეკლისტები',
+    en: 'Checklists',
+    ru: 'Чек-листы'
+  },
+  guidesStatsChecklistsDescription: {
+    ka: 'კრიტიკული ნაბიჯები ერთ ადგილზე.',
+    en: 'Critical steps in one place.',
+    ru: 'Критические шаги в одном месте.'
+  },
+  guidesStatsTemplatesLabel: {
+    ka: 'შაბლონები',
+    en: 'Templates',
+    ru: 'Шаблоны'
+  },
+  guidesStatsTemplatesDescription: {
+    ka: 'მზადი დოკუმენტები და ფორმები.',
+    en: 'Reusable documents and sheets.',
+    ru: 'Готовые документы и формы.'
+  },
+  guidesStructureEyebrow: {
+    ka: 'სტრუქტურა',
+    en: 'Structure',
+    ru: 'Структура'
+  },
+  guidesStructureTitle: {
+    ka: 'აირჩიე ტრეკი, რომელიც მიზანს შეესაბამება',
+    en: 'Choose the track that matches your goal',
+    ru: 'Выберите трек под свою цель'
+  },
+  guidesStructureDescription: {
+    ka: 'თითოეული ტრეკი შედგება მოკლე მოდულებისგან პრაქტიკული ნაბიჯებით, ჩეკლისტებით და შაბლონებით.',
+    en: 'Each track is organized into short modules with practical steps, checklists, and ready-to-use templates.',
+    ru: 'Каждый трек состоит из коротких модулей с практическими шагами, чек-листами и шаблонами.'
+  },
+  guidesModulesLabel: {
+    ka: 'მოდული',
+    en: 'modules',
+    ru: 'модуля'
+  },
+  guidesTrackSupportNote: {
+    ka: 'თავისუფალ ტემპში სწავლა და სურვილის შემთხვევაში კონსულტაცია.',
+    en: 'Self-paced learning with optional advisor support.',
+    ru: 'Самостоятельный темп и консультации при необходимости.'
+  },
+  guidesMinutesSuffix: {
+    ka: 'წთ',
+    en: 'min',
+    ru: 'мин'
+  },
+  guidesBuyerEyebrow: {
+    ka: 'მყიდველის ტრეკი',
+    en: 'Buyer track',
+    ru: 'Трек покупателя'
+  },
+  guidesBuyerTitle: {
+    ka: 'დაგეგმე, დაათვალიერე და იყიდე თავდაჯერებით',
+    en: 'Plan, tour, and purchase with confidence',
+    ru: 'Планируйте, смотрите и покупайте уверенно'
+  },
+  guidesBuyerDescription: {
+    ka: 'მოკლე მოდულები რისკის შესამცირებლად, დოკუმენტების დასალაგებლად და ბიუჯეტის გასაკონტროლებლად.',
+    en: 'Short modules designed to reduce risk, organize paperwork, and keep your budget on track.',
+    ru: 'Короткие модули, чтобы снизить риски, упорядочить документы и контролировать бюджет.'
+  },
+  guidesBuyerHighlight1: {
+    ka: 'სესხის მზადყოფნა',
+    en: 'Mortgage readiness',
+    ru: 'Готовность к ипотеке'
+  },
+  guidesBuyerHighlight2: {
+    ka: 'იურიდიული შემოწმება',
+    en: 'Due diligence',
+    ru: 'Юр. проверка'
+  },
+  guidesBuyerHighlight3: {
+    ka: 'დახურვის ჩეკლისტი',
+    en: 'Closing checklist',
+    ru: 'Чек-лист закрытия'
+  },
+  guidesBuyerCta: {
+    ka: 'მყიდველის გზამკვლევის დაწყება',
+    en: 'Start Buyer Guide',
+    ru: 'Начать трек покупателя'
+  },
+  guidesBuyerModule1Title: {
+    ka: 'ბიუჯეტი და დაფინანსება',
+    en: 'Budget & financing',
+    ru: 'Бюджет и финансирование'
+  },
+  guidesBuyerModule1Description: {
+    ka: 'დააყენე ბიუჯეტი და მოამზადე სესხის დოკუმენტები.',
+    en: 'Set your price range and prepare lending documents.',
+    ru: 'Определите бюджет и подготовьте документы по кредиту.'
+  },
+  guidesBuyerModule1Topic1: {
+    ka: 'ხელმისაწვდომობა',
+    en: 'Affordability',
+    ru: 'Доступность'
+  },
+  guidesBuyerModule1Topic2: {
+    ka: 'სესხის წინასწარი შეფასება',
+    en: 'Loan pre-check',
+    ru: 'Предварительная проверка'
+  },
+  guidesBuyerModule1Topic3: {
+    ka: 'ხარჯების რუკა',
+    en: 'Fee map',
+    ru: 'Карта расходов'
+  },
+  guidesBuyerModule2Title: {
+    ka: 'ბაზრის კვლევა',
+    en: 'Property research',
+    ru: 'Исследование рынка'
+  },
+  guidesBuyerModule2Description: {
+    ka: 'შეადარე უბნები, ფასები და შენობის ხარისხი.',
+    en: 'Compare neighborhoods, pricing, and building quality.',
+    ru: 'Сравните районы, цены и качество зданий.'
+  },
+  guidesBuyerModule2Topic1: {
+    ka: 'ბაზრის მოკლე ანალიზი',
+    en: 'Market scan',
+    ru: 'Обзор рынка'
+  },
+  guidesBuyerModule2Topic2: {
+    ka: 'შერჩევის კრიტერიუმები',
+    en: 'Shortlist criteria',
+    ru: 'Критерии отбора'
+  },
+  guidesBuyerModule2Topic3: {
+    ka: 'რისკის სიგნალები',
+    en: 'Risk signals',
+    ru: 'Риски'
+  },
+  guidesBuyerModule3Title: {
+    ka: 'დათვალიერება და შერჩევა',
+    en: 'Viewing & shortlist',
+    ru: 'Просмотры и шортлист'
+  },
+  guidesBuyerModule3Description: {
+    ka: 'სტრუქტურული ჩანაწერებით სწრაფად შეაფასე ვარიანტები.',
+    en: 'Run structured tours and score each option fast.',
+    ru: 'Ведите структурные заметки и быстро оценивайте варианты.'
+  },
+  guidesBuyerModule3Topic1: {
+    ka: 'დათვალიერების ჩანაწერები',
+    en: 'Viewing notes',
+    ru: 'Заметки по просмотрам'
+  },
+  guidesBuyerModule3Topic2: {
+    ka: 'ფოტოების არქივი',
+    en: 'Photo log',
+    ru: 'Фото-лог'
+  },
+  guidesBuyerModule3Topic3: {
+    ka: 'პრიორიტეტების სია',
+    en: 'Priority list',
+    ru: 'Приоритеты'
+  },
+  guidesBuyerModule4Title: {
+    ka: 'შეთავაზება და დახურვა',
+    en: 'Offer & closing',
+    ru: 'Офер и закрытие'
+  },
+  guidesBuyerModule4Description: {
+    ka: 'მოამზადე შეთავაზება, მოლაპარაკება და დახურვა.',
+    en: 'Move to offer, negotiate terms, and secure handover.',
+    ru: 'Подготовьте офер, переговоры и финальное закрытие.'
+  },
+  guidesBuyerModule4Topic1: {
+    ka: 'შეთავაზების პირობები',
+    en: 'Offer terms',
+    ru: 'Условия офера'
+  },
+  guidesBuyerModule4Topic2: {
+    ka: 'იურიდიული განხილვა',
+    en: 'Legal review',
+    ru: 'Юридический обзор'
+  },
+  guidesBuyerModule4Topic3: {
+    ka: 'დახურვის ნაბიჯები',
+    en: 'Closing steps',
+    ru: 'Шаги закрытия'
+  },
+  guidesSellerEyebrow: {
+    ka: 'გამყიდველის ტრეკი',
+    en: 'Seller track',
+    ru: 'Трек продавца'
+  },
+  guidesSellerTitle: {
+    ka: 'მოამზადე, დააფასე და გაყიდე მკაფიო სტრატეგიით',
+    en: 'Prepare, price, and sell with clarity',
+    ru: 'Подготовьте, оцените и продайте с ясной стратегией'
+  },
+  guidesSellerDescription: {
+    ka: 'ყველაფერი რაც საჭიროა ეფექტური ლისტინგისა და დახურვისთვის.',
+    en: 'Everything needed to list strategically, validate demand, and close with confidence.',
+    ru: 'Всё необходимое, чтобы стратегически разместить объект и закрыть сделку.'
+  },
+  guidesSellerHighlight1: {
+    ka: 'ფასის სტრატეგია',
+    en: 'Pricing strategy',
+    ru: 'Ценовая стратегия'
+  },
+  guidesSellerHighlight2: {
+    ka: 'ლისტინგის მომზადება',
+    en: 'Listing prep',
+    ru: 'Подготовка листинга'
+  },
+  guidesSellerHighlight3: {
+    ka: 'მოლაპარაკების გეგმა',
+    en: 'Negotiation plan',
+    ru: 'План переговоров'
+  },
+  guidesSellerCta: {
+    ka: 'გამყიდველის გზამკვლევის დაწყება',
+    en: 'Start Seller Guide',
+    ru: 'Начать трек продавца'
+  },
+  guidesSellerModule1Title: {
+    ka: 'ფასის სტრატეგია',
+    en: 'Pricing strategy',
+    ru: 'Ценовая стратегия'
+  },
+  guidesSellerModule1Description: {
+    ka: 'შეადარე ბაზარი და განსაზღვრე რეალური დიაპაზონი.',
+    en: 'Benchmark your asset and set a realistic price band.',
+    ru: 'Сравните рынок и определите реалистичный диапазон.'
+  },
+  guidesSellerModule1Topic1: {
+    ka: 'შედარებადი შეთავაზებები',
+    en: 'Comparable homes',
+    ru: 'Сопоставимые объекты'
+  },
+  guidesSellerModule1Topic2: {
+    ka: 'მოთხოვნის სიგნალები',
+    en: 'Demand signals',
+    ru: 'Сигналы спроса'
+  },
+  guidesSellerModule1Topic3: {
+    ka: 'ფასის დიაპაზონი',
+    en: 'Pricing bands',
+    ru: 'Ценовой диапазон'
+  },
+  guidesSellerModule2Title: {
+    ka: 'ლისტინგის მომზადება',
+    en: 'Listing preparation',
+    ru: 'Подготовка листинга'
+  },
+  guidesSellerModule2Description: {
+    ka: 'გაამწვავე ძლიერი მხარეები და მოამზადე დოკუმენტები.',
+    en: 'Package your property to show its best features.',
+    ru: 'Подчеркните сильные стороны и подготовьте документы.'
+  },
+  guidesSellerModule2Topic1: {
+    ka: 'სტაილინგის რჩევები',
+    en: 'Staging tips',
+    ru: 'Стайлинг'
+  },
+  guidesSellerModule2Topic2: {
+    ka: 'ფოტოების ჩეკლისტი',
+    en: 'Photo checklist',
+    ru: 'Чек-лист фото'
+  },
+  guidesSellerModule2Topic3: {
+    ka: 'დოკუმენტების მზადყოფნა',
+    en: 'Doc readiness',
+    ru: 'Готовность документов'
+  },
+  guidesSellerModule3Title: {
+    ka: 'მარკეტინგი და დათვალიერებები',
+    en: 'Marketing & showings',
+    ru: 'Маркетинг и показы'
+  },
+  guidesSellerModule3Description: {
+    ka: 'დაგეგმე არხები და მართე დათვალიერებები.',
+    en: 'Plan outreach and manage viewings efficiently.',
+    ru: 'Планируйте каналы и управляйте показами.'
+  },
+  guidesSellerModule3Topic1: {
+    ka: 'არხების მიქსი',
+    en: 'Channel mix',
+    ru: 'Микс каналов'
+  },
+  guidesSellerModule3Topic2: {
+    ka: 'ღია ჩვენება',
+    en: 'Open house plan',
+    ru: 'Открытый показ'
+  },
+  guidesSellerModule3Topic3: {
+    ka: 'ფიდბექის ციკლი',
+    en: 'Feedback loop',
+    ru: 'Цикл обратной связи'
+  },
+  guidesSellerModule4Title: {
+    ka: 'მოლაპარაკება და გადაცემა',
+    en: 'Negotiation & handover',
+    ru: 'Переговоры и передача'
+  },
+  guidesSellerModule4Description: {
+    ka: 'შეაფასე შეთავაზებები და მოამზადე ხელშეკრულება.',
+    en: 'Evaluate offers, prepare contracts, and close.',
+    ru: 'Оцените оферы и подготовьте договор.'
+  },
+  guidesSellerModule4Topic1: {
+    ka: 'შეთავაზების შეფასება',
+    en: 'Offer evaluation',
+    ru: 'Оценка офера'
+  },
+  guidesSellerModule4Topic2: {
+    ka: 'კონტრაქტის საფუძვლები',
+    en: 'Contract basics',
+    ru: 'Основы договора'
+  },
+  guidesSellerModule4Topic3: {
+    ka: 'გადაცემის პროცესი',
+    en: 'Handover',
+    ru: 'Процесс передачи'
+  },
+  guidesChecklistEyebrow: {
+    ka: 'ჩეკლისტი',
+    en: 'Checklist preview',
+    ru: 'Чек-лист'
+  },
+  guidesChecklistTitle: {
+    ka: 'კრიტიკული ნაბიჯები ერთ ადგილას',
+    en: 'Every critical step, neatly organized',
+    ru: 'Все критические шаги в одном месте'
+  },
+  guidesChecklistDescription: {
+    ka: 'გამოიყენე ჩეკლისტი ვადების და პასუხისმგებლობების გასაკონტროლებლად.',
+    en: 'Use the checklist to stay on schedule and keep all stakeholders aligned.',
+    ru: 'Используйте чек-лист, чтобы соблюдать сроки и держать всех в курсе.'
+  },
+  guidesChecklistItem1: {
+    ka: 'განსაზღვრე მიზანი, ვადები და ბიუჯეტის დიაპაზონი.',
+    en: 'Define your goal, timeline, and budget range.',
+    ru: 'Определите цель, сроки и бюджетный диапазон.'
+  },
+  guidesChecklistItem2: {
+    ka: 'შეადგინე must-have და nice-to-have სიები.',
+    en: 'Create a must-have vs nice-to-have list.',
+    ru: 'Составьте список must-have и nice-to-have.'
+  },
+  guidesChecklistItem3: {
+    ka: 'დაანგარიშე სრული ხარჯები (საკომისიო, გადასახადები, რემონტი).',
+    en: 'Estimate total costs (fees, taxes, repairs).',
+    ru: 'Оцените общие расходы (комиссии, налоги, ремонт).'
+  },
+  guidesChecklistItem4: {
+    ka: 'გადაამოწმე საკუთრების სტატუსი და დოკუმენტები.',
+    en: 'Verify title status and legal documentation.',
+    ru: 'Проверьте статус собственности и документы.'
+  },
+  guidesChecklistItem5: {
+    ka: 'შეადარე 3-5 ვარიანტი გვერდიგვერდ.',
+    en: 'Compare 3-5 options side-by-side.',
+    ru: 'Сравните 3-5 вариантов бок о бок.'
+  },
+  guidesChecklistItem6: {
+    ka: 'გადახედე შეთავაზების პირობებს და ვადებს.',
+    en: 'Review offer terms and deadlines carefully.',
+    ru: 'Проверьте условия офера и сроки.'
+  },
+  guidesChecklistItem7: {
+    ka: 'გეგმაზე ადრე მოამზადე გადაბარების ლოგისტიკა.',
+    en: 'Plan move-in or handover logistics early.',
+    ru: 'Заранее спланируйте передачу и логистику.'
+  },
+  guidesChecklistItem8: {
+    ka: 'შეინახე დოკუმენტები ერთიან ჩეკლისტში.',
+    en: 'Store documents in a shared checklist folder.',
+    ru: 'Храните документы в едином чек-листе.'
+  },
+  guidesTemplatesEyebrow: {
+    ka: 'შაბლონები',
+    en: 'Templates',
+    ru: 'Шаблоны'
+  },
+  guidesTemplatesTitle: {
+    ka: 'მზადი დოკუმენტები სწრაფი გადაწყვეტილებისთვის',
+    en: 'Reusable documents for faster decisions',
+    ru: 'Готовые документы для быстрых решений'
+  },
+  guidesTemplatesDescription: {
+    ka: 'კონცენტრირებული შაბლონები, რომლებიც ამარტივებს დათვალიერებას, შეთავაზებებს და დახურვას.',
+    en: 'Short templates that simplify viewings, offers, and closing handover.',
+    ru: 'Короткие шаблоны для просмотров, оферов и передачи.'
+  },
+  guidesTemplateActionLabel: {
+    ka: 'შაბლონის მოთხოვნა',
+    en: 'Request template',
+    ru: 'Запросить шаблон'
+  },
+  guidesTemplate1Title: {
+    ka: 'დათვალიერების ჩეკლისტი',
+    en: 'Viewing checklist',
+    ru: 'Чек-лист просмотра'
+  },
+  guidesTemplate1Description: {
+    ka: 'ოთახ-by-ოთახი სია პრობლემებისა და პლიუსებისთვის.',
+    en: 'Room-by-room checklist to capture issues and highlights.',
+    ru: 'Пошаговый список по комнатам для фиксации плюсов и минусов.'
+  },
+  guidesTemplate1Format: {
+    ka: 'PDF + ჩანაწერები',
+    en: 'PDF + Notes',
+    ru: 'PDF + заметки'
+  },
+  guidesTemplate2Title: {
+    ka: 'შეთავაზების შეჯამება',
+    en: 'Offer summary sheet',
+    ru: 'Сводка по оферу'
+  },
+  guidesTemplate2Description: {
+    ka: 'ფასის, პირობების, ვადებისა და მოლაპარაკების პუნქტები.',
+    en: 'Capture price, terms, deadlines, and negotiation points.',
+    ru: 'Цена, условия, сроки и пункты переговоров.'
+  },
+  guidesTemplate2Format: {
+    ka: 'DOC + PDF',
+    en: 'DOC + PDF',
+    ru: 'DOC + PDF'
+  },
+  guidesTemplate3Title: {
+    ka: 'დახურვა და გადაბარება',
+    en: 'Closing & handover list',
+    ru: 'Закрытие и передача'
+  },
+  guidesTemplate3Description: {
+    ka: 'ფინალური შემოწმება, გასაღებები და კომუნალური გადაცემა.',
+    en: 'Final walk-through steps, keys, and utility handover.',
+    ru: 'Финальная проверка, ключи и передача коммунальных услуг.'
+  },
+  guidesTemplate3Format: {
+    ka: 'PDF + ჩეკლისტი',
+    en: 'PDF + Checklist',
+    ru: 'PDF + чек-лист'
+  },
+  guidesTemplatesSupportBadge: {
+    ka: 'კონსულტაციის მხარდაჭერა',
+    en: 'Advisor support',
+    ru: 'Поддержка консультанта'
+  },
+  guidesTemplatesSupportNote: {
+    ka: 'შაბლონები გაიცემა მოკლე მოთხოვნის შემდეგ და შესაძლებელია თქვენს საჭიროებებზე მორგება.',
+    en: 'Templates are delivered after a quick request and can be customized to your needs.',
+    ru: 'Шаблоны отправляются после короткого запроса и могут быть адаптированы под ваши нужды.'
+  },
+  guidesProcessEyebrow: {
+    ka: 'პროცესი',
+    en: 'Process',
+    ru: 'Процесс'
+  },
+  guidesProcessTitle: {
+    ka: 'მარტივი ნაკადი, ძლიერი შედეგი',
+    en: 'Simple workflow, strong results',
+    ru: 'Простой поток, сильный результат'
+  },
+  guidesProcessDescription: {
+    ka: 'სტრუქტურული პროცესი ამცირებს გაურკვევლობას მყიდველისთვისაც და გამყიდველისთვისაც.',
+    en: 'A structured process that reduces uncertainty for buyers and sellers.',
+    ru: 'Структурированный процесс снижает неопределённость для покупателя и продавца.'
+  },
+  guidesProcessStep1Title: {
+    ka: 'აირჩიე ტრეკი',
+    en: 'Choose your track',
+    ru: 'Выберите трек'
+  },
+  guidesProcessStep1Description: {
+    ka: 'გადაწყვიტე მყიდველი ხარ თუ გამყიდველი.',
+    en: 'Pick buyer or seller flow based on your goal.',
+    ru: 'Определите, вы покупатель или продавец.'
+  },
+  guidesProcessStep2Title: {
+    ka: 'მოდულების დასრულება',
+    en: 'Complete the modules',
+    ru: 'Пройдите модули'
+  },
+  guidesProcessStep2Description: {
+    ka: 'მოკლე გაკვეთილები ჩეკლისტებით, რჩევებით და მაგალითებით.',
+    en: 'Short lessons with checklists, tips, and examples.',
+    ru: 'Короткие уроки с чек-листами, советами и примерами.'
+  },
+  guidesProcessStep3Title: {
+    ka: 'კონსულტაცია ექსპერტთან',
+    en: 'Validate with an advisor',
+    ru: 'Проверка с консультантом'
+  },
+  guidesProcessStep3Description: {
+    ka: 'სურვილის შემთხვევაში 20-წუთიანი გადამოწმება რისკების შესამცირებლად.',
+    en: 'Optional 20-minute check to reduce risk and mistakes.',
+    ru: 'Опциональная 20-минутная проверка для снижения рисков.'
+  },
+  guidesProcessStep4Title: {
+    ka: 'იმოქმედე თავდაჯერებით',
+    en: 'Move with confidence',
+    ru: 'Действуйте уверенно'
+  },
+  guidesProcessStep4Description: {
+    ka: 'შეასრულე ნაბიჯები მკაფიო მილესტონებით და დოკუმენტებით.',
+    en: 'Execute with clear milestones and shared documents.',
+    ru: 'Действуйте по понятным этапам и документам.'
+  },
+  guidesFaqEyebrow: {
+    ka: 'FAQ',
+    en: 'FAQ',
+    ru: 'FAQ'
+  },
+  guidesFaqTitle: {
+    ka: 'ხშირად დასმული კითხვები',
+    en: 'Questions we hear most often',
+    ru: 'Частые вопросы'
+  },
+  guidesFaqDescription: {
+    ka: 'მოკლე პასუხები დაწყებისთვის.',
+    en: 'Short answers to help you get started quickly.',
+    ru: 'Короткие ответы, чтобы быстро начать.'
+  },
+  guidesFaq1Question: {
+    ka: 'ეს გიდები პირველი მყიდველისთვისაც გამოდგება?',
+    en: 'Are the guides suitable for first-time buyers?',
+    ru: 'Подойдут ли гайды для первых покупателей?'
+  },
+  guidesFaq1Answer: {
+    ka: 'დიახ. მყიდველის ტრეკი ფოკუსირებულია ბიუჯეტზე, უსაფრთხოებაზე და ნაბიჯ-ნაბიჯ პროცესზე.',
+    en: 'Yes. The buyer track focuses on budgeting, legal safety, and step-by-step structure for first-time purchases.',
+    ru: 'Да. Трек покупателя фокусируется на бюджете, безопасности и пошаговом процессе.'
+  },
+  guidesFaq2Question: {
+    ka: 'შაბლონები კონსულტაციის გარეშე შემიძლია?',
+    en: 'Can I use the templates without a consultation?',
+    ru: 'Можно ли использовать шаблоны без консультации?'
+  },
+  guidesFaq2Answer: {
+    ka: 'კი. შაბლონები სურვილისამებრ გამოიყენება და დამოუკიდებლადაც გამოგადგება.',
+    en: 'Absolutely. Templates are optional add-ons. You can request them and use them independently.',
+    ru: 'Да. Шаблоны — опция, их можно запросить и использовать самостоятельно.'
+  },
+  guidesFaq3Question: {
+    ka: 'რამდენ ხანს გრძელდება ერთი ტრეკი?',
+    en: 'How long does it take to complete a track?',
+    ru: 'Сколько времени занимает один трек?'
+  },
+  guidesFaq3Answer: {
+    ka: 'საშუალოდ 2-3 საათი, რამდენიმე სესიად.',
+    en: 'Most users complete a full track in 2-3 hours, spread across a few sessions.',
+    ru: 'В среднем 2–3 часа, разбитые на несколько сессий.'
+  },
+  guidesFaq4Question: {
+    ka: 'მხოლოდ თბილისისთვისაა?',
+    en: 'Is this only for Tbilisi listings?',
+    ru: 'Это только для Тбилиси?'
+  },
+  guidesFaq4Answer: {
+    ka: 'პროცესი მთელი საქართველოსთვის მუშაობს. უბნების დეტალები მოგვიანებით დაემატება.',
+    en: 'The process works across Georgia. Neighborhood-specific insights will be added later.',
+    ru: 'Процесс работает по всей Грузии. Детали по районам добавим позже.'
+  },
+  guidesCtaTitle: {
+    ka: 'გინდა პერსონალური გეგმა?',
+    en: 'Need a tailored plan?',
+    ru: 'Нужен персональный план?'
+  },
+  guidesCtaDescription: {
+    ka: 'დაჯავშნე 20-წუთიანი სესია და მოარგე შემდეგი ნაბიჯი ადგილობრივ ექსპერტებთან.',
+    en: 'Book a 20-minute session to align your next move with local experts.',
+    ru: 'Запланируйте 20-минутную сессию и согласуйте следующий шаг с экспертами.'
+  },
+  guidesCtaButton: {
+    ka: 'კონსულტაციის დაჯავშნა',
+    en: 'Book consultation',
+    ru: 'Записаться на консультацию'
+  },
   // Short tagline under logo
   searchingHomes: {
     ka: 'სახლების ძიება',
