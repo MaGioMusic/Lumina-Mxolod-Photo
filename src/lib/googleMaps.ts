@@ -9,7 +9,7 @@ function getApiKey(): string {
   return process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 }
 
-export function ensureMapsLoader(): void {
+function ensureMapsLoader(): void {
   if (loaderInitialized) return;
   const apiKey = getApiKey();
   // თუ გასაღები არაა დაყენებული, ჩუმად გავჩერდეთ (დევში ერთი გაფრთხილება)
@@ -34,7 +34,7 @@ export async function loadMarker() {
   return (await importLibrary('marker')) as google.maps.MarkerLibrary;
 }
 
-export async function loadPlaces() {
+async function loadPlaces() {
   ensureMapsLoader();
   return (await importLibrary('places')) as google.maps.PlacesLibrary;
 }

@@ -84,12 +84,12 @@ export function getLocalImagePath(externalUrl: string): string {
 }
 
 // Helper function to validate image URLs
-export function isExternalUrl(url: string): boolean {
+function isExternalUrl(url: string): boolean {
   return url.startsWith('http://') || url.startsWith('https://');
 }
 
 // Helper function to replace external URLs in components
-export function replaceExternalImages(content: string): string {
+function replaceExternalImages(content: string): string {
   let updatedContent = content;
   
   Object.entries(imageMap).forEach(([externalUrl, localPath]) => {

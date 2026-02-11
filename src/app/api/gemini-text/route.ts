@@ -21,7 +21,7 @@ type VertexGenerateContentResponse = {
 
 export async function POST(req: NextRequest) {
   try {
-    const access = ensureRealtimeAccess(req);
+    const access = await ensureRealtimeAccess(req);
     enforceRateLimit(access.rateLimitKey, {
       limit: 20,
       windowMs: 60_000,
@@ -119,4 +119,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-

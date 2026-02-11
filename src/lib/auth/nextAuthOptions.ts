@@ -72,13 +72,13 @@ export const nextAuthOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async session({ session, user }) {
-      const luminaUser = (user as unknown as LuminaUser) ?? null;
-      if (session.user && luminaUser) {
+    async session({ session, token }) {
+      // JWT strategy: data comes from token, not user
+      if (session.user && token.sub) {
         const sessionUser = session.user as any;
-        sessionUser.id = luminaUser.id;
-        sessionUser.email = luminaUser.email;
-        sessionUser.accountRole = (luminaUser.accountRole as AccountRole) ?? 'USER';
+        sessionUser.id = token.sub;
+        sessionUser.email = token.email;
+        sessionUser.accountRole = (token.accountRole as AccountRole) ?? 'USER';
       }
       return session;
     },
@@ -86,6 +86,7 @@ export const nextAuthOptions: NextAuthOptions = {
       if (user) {
         const typedUser = user as LuminaUser;
         token.sub = typedUser.id;
+        token.email = typedUser.email;
         token.accountRole = (typedUser.accountRole as AccountRole) ?? 'USER';
       }
       return token;

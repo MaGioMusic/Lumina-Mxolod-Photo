@@ -3149,6 +3149,5 @@ export function useLanguage(): LanguageContextType {
   }
   return context;
 }
-
-export type { Language };
-export { translations }; 
+;
+; 

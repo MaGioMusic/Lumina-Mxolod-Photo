@@ -171,15 +171,15 @@ export default function PropertiesGrid({
   };
   
   // Get current page from URL params
-  const currentPage = parseInt(searchParams.get('page') || '1');
+  const currentPage = parseInt(searchParams?.get('page') || '1');
   // Prefer URL 'location', fallback to prop searchQuery
-  const locationParam = (searchParams.get('location') || injectedFilters.location || searchQuery || '').toString();
+  const locationParam = (searchParams?.get('location') || injectedFilters.location || searchQuery || '').toString();
   // URL-driven overrides for filters (so navigation with query applies filters even on first load)
-  const minParam = Number(searchParams.get('minPrice') || 'NaN');
-  const maxParam = Number(searchParams.get('maxPrice') || 'NaN');
-  const roomsParam = searchParams.get('rooms');
-  const statusParam = (searchParams.get('status') || '').toString().toLowerCase();
-  const propTypeParam = (searchParams.get('property_type') || '').toString().toLowerCase();
+  const minParam = Number(searchParams?.get('minPrice') || 'NaN');
+  const maxParam = Number(searchParams?.get('maxPrice') || 'NaN');
+  const roomsParam = searchParams?.get('rooms');
+  const statusParam = (searchParams?.get('status') || '').toString().toLowerCase();
+  const propTypeParam = (searchParams?.get('property_type') || '').toString().toLowerCase();
 
   // Normalize location to match internal district keys
   const districtKeys = ['vake', 'mtatsminda', 'saburtalo', 'isani', 'gldani'];
@@ -398,7 +398,7 @@ export default function PropertiesGrid({
   
   // Update URL without page reload
   const updateURL = (newParams: Record<string, string>) => {
-    const current = new URLSearchParams(searchParams.toString());
+    const current = new URLSearchParams(searchParams?.toString() || '');
     
     Object.entries(newParams).forEach(([key, value]) => {
       if (value) {

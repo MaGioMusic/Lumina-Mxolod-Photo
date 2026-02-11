@@ -452,17 +452,21 @@ model AuditLog {
 }
 
 model Image {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  propertyId String   @map("property_id") @db.Uuid
-  url        String
-  alt        String?
-  sortOrder  Int      @default(0) @map("sort_order")
-  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  propertyId   String   @map("property_id") @db.Uuid
+  url          String
+  alt          String?
+  sortOrder    Int      @default(0) @map("sort_order")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  isAiGenerated Boolean @default(false) @map("is_ai_generated")
+  prompt       String?  @db.Text
+  falJobId     String?  @map("fal_job_id") @db.VarChar(100)
 
   property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   @@unique([propertyId, sortOrder], name: "idx_images_property_sort")
   @@index([propertyId], name: "idx_images_property")
+  @@index([falJobId], name: "idx_images_fal_job_id")
   @@map("images")
 }
 

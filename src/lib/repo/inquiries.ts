@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { NotFoundError } from './errors';
 import { mapInquiry } from './mappers';
 
-export interface CreateInquiryInput {
+interface CreateInquiryInput {
   userId: string | null;
   propertyId: string;
   message: string;

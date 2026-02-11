@@ -66,7 +66,7 @@ export interface Event {
   tags?: string[];
 }
 
-export interface EventManagerProps {
+interface EventManagerProps {
   events?: Event[];
   onEventCreate?: (event: Omit<Event, 'id'>) => void;
   onEventUpdate?: (id: string, event: Partial<Event>) => void;

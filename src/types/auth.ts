@@ -2,12 +2,12 @@
 
 export type UserRole = 'guest' | 'user' | 'client' | 'agent' | 'investor' | 'admin';
 
-export interface Permission {
+interface Permission {
   resource: string;
   actions: string[];
 }
 
-export interface User {
+interface User {
   id: string;
   email: string;
   firstName: string;
@@ -24,14 +24,14 @@ export interface LoginCredentials {
   password: string;
 }
 
-export interface AuthState {
+interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
 }
 
-export type AuthAction = 
+type AuthAction = 
   | { type: 'AUTH_START' }
   | { type: 'AUTH_SUCCESS'; payload: User }
   | { type: 'AUTH_ERROR'; payload: string }
@@ -39,7 +39,7 @@ export type AuthAction =
   | { type: 'CLEAR_ERROR' };
 
 // Role-Based Access Control Matrix
-export const RBAC_MATRIX = {
+const RBAC_MATRIX = {
   guest: {
     properties: ['read'],
     agents: ['read']

@@ -14,7 +14,7 @@ export default function ComparePage() {
   const { remove } = useCompare();
 
   const ids = useMemo(() => {
-    const raw = params.get('id') || '';
+    const raw = params?.get('id') || '';
     return raw
       .split(',')
       .map((s) => parseInt(s.trim(), 10))

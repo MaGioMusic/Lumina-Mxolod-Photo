@@ -7,7 +7,7 @@ import { HttpError } from '@/lib/repo/errors';
 // This endpoint must run server-side with OPENAI_API_KEY set in the environment.
 export async function GET(req: NextRequest) {
   try {
-    const access = ensureRealtimeAccess(req);
+    const access = await ensureRealtimeAccess(req);
     enforceRateLimit(access.rateLimitKey, {
       limit: 10,
       windowMs: 60_000,
@@ -450,9 +450,7 @@ export async function GET(req: NextRequest) {
     }
     return new Response(JSON.stringify(payload), {
       status: 500,
-      headers: { 'content-type': 'application/json' },
-    });
+      headers: { 'content-type': 'application/json' } },
+    );
   }
 }
-
-

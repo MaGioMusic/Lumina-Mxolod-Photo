@@ -13,20 +13,17 @@ export default function LogoutPage() {
       try {
         await logout();
       } finally {
-        try {
-          // Extra hardening: clear any lingering app keys or caches
-          if (typeof window !== 'undefined') {
-            try { localStorage.removeItem('lumina_user'); } catch {}
-            try { localStorage.removeItem('adminAuth'); } catch {}
-            try { localStorage.removeItem('adminUser'); } catch {}
-            try { sessionStorage.removeItem('lumina_session'); } catch {}
-          }
-          // Navigate home, then ensure hard reload
-          router.replace('/');
-          if (typeof window !== 'undefined') {
-            window.location.replace('/');
-          }
-        } catch {}
+        // Clear any lingering app keys or caches
+        if (typeof window !== 'undefined') {
+          try { localStorage.removeItem('adminAuth'); } catch {}
+          try { localStorage.removeItem('adminUser'); } catch {}
+          try { sessionStorage.removeItem('lumina_session'); } catch {}
+        }
+        // Navigate home, then ensure hard reload
+        router.replace('/');
+        if (typeof window !== 'undefined') {
+          window.location.replace('/');
+        }
       }
     };
     run();
@@ -38,5 +35,3 @@ export default function LogoutPage() {
     </div>
   );
 }
-
-

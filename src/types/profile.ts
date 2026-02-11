@@ -1,6 +1,6 @@
 import type { CurrencyType } from '@prisma/client';
 
-export type ProfileRole = 'client' | 'agent' | 'investor' | 'admin';
+type ProfileRole = 'client' | 'agent' | 'investor' | 'admin';
 
 export interface ProfileUser {
   id: string;
@@ -20,7 +20,7 @@ export interface ProfileUser {
   assignedAgent?: ProfileAgentSummary | null;
 }
 
-export type ProfileTrend = 'up' | 'down' | 'steady';
+type ProfileTrend = 'up' | 'down' | 'steady';
 
 export interface ProfileStat {
   id: string;

@@ -39,9 +39,9 @@ export default function ChatPage() {
   const { t } = useLanguage();
   const searchParams = useSearchParams();
 
-  const contactId = searchParams.get('contactId') || undefined;
-  const contactName = searchParams.get('contactName') || undefined;
-  const contactAvatar = searchParams.get('contactAvatar') || undefined;
+  const contactId = searchParams?.get('contactId') || undefined;
+  const contactName = searchParams?.get('contactName') || undefined;
+  const contactAvatar = searchParams?.get('contactAvatar') || undefined;
 
   const [selectedChat, setSelectedChat] = useState<string>(contactId ?? 'giorgi-mamaladze');
   const [newMessage, setNewMessage] = useState('');

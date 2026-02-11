@@ -6,7 +6,7 @@ import { getVertexToken, type VertexToken } from '@/lib/vertexTokenClient';
 
 type ConnectionState = 'idle' | 'connecting' | 'connected' | 'stopped' | 'error';
 
-export interface UseGeminiLiveSessionOptions {
+interface UseGeminiLiveSessionOptions {
   enabled: boolean;
   isFunctionCallingEnabled?: boolean;
   handleFunctionCall?: (
@@ -19,7 +19,7 @@ export interface UseGeminiLiveSessionOptions {
   onError?: (message: string) => void;
 }
 
-export interface UseGeminiLiveSessionResult {
+interface UseGeminiLiveSessionResult {
   isListening: boolean;
   isMuted: boolean;
   isAiSpeaking: boolean;

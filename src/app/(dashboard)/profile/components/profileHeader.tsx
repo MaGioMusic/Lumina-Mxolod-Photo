@@ -19,7 +19,7 @@ import type { ProfileUser } from '@/types/profile';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 
-export type ProfileHeaderMetricKey = 'activeListings' | 'savedProperties' | 'openInquiries';
+type ProfileHeaderMetricKey = 'activeListings' | 'savedProperties' | 'openInquiries';
 
 export interface ProfileHeaderMetric {
   id: string;

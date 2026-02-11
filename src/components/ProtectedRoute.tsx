@@ -130,7 +130,7 @@ export default function ProtectedRoute({
 }
 
 // Higher-order component for easier usage
-export function withAuth<P extends object>(
+function withAuth<P extends object>(
   Component: React.ComponentType<P>,
   options?: Omit<ProtectedRouteProps, 'children'>
 ) {
@@ -144,22 +144,22 @@ export function withAuth<P extends object>(
 }
 
 // Utility functions for common protection patterns
-export const requireAgent = (children: ReactNode) => (
+const requireAgent = (children: ReactNode) => (
   <ProtectedRoute requiredRole="agent">{children}</ProtectedRoute>
 );
 
-export const requireClient = (children: ReactNode) => (
+const requireClient = (children: ReactNode) => (
   <ProtectedRoute requiredRole="client">{children}</ProtectedRoute>
 );
 
-export const requireInvestor = (children: ReactNode) => (
+const requireInvestor = (children: ReactNode) => (
   <ProtectedRoute requiredRole="investor">{children}</ProtectedRoute>
 );
 
-export const requireAdmin = (children: ReactNode) => (
+const requireAdmin = (children: ReactNode) => (
   <ProtectedRoute requiredRole="admin">{children}</ProtectedRoute>
 );
 
-export const requireAnyRole = (roles: UserRole[], children: ReactNode) => (
+const requireAnyRole = (roles: UserRole[], children: ReactNode) => (
   <ProtectedRoute requiredRoles={roles}>{children}</ProtectedRoute>
 ); 

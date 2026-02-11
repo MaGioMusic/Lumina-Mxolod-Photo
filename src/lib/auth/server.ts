@@ -1,56 +1,51 @@
 import type { NextRequest } from 'next/server';
 import type { UserRole } from '@prisma/client';
+import { getServerSession } from 'next-auth';
+import { nextAuthOptions } from '@/lib/auth/nextAuthOptions';
 import { prisma } from '@/lib/prisma';
 import { ForbiddenError, HttpError } from '@/lib/repo/errors';
 
 export interface AuthenticatedUser {
   id: string;
   role: UserRole;
-  mode: 'dev' | 'mock';
+  mode: 'session';
 }
 
-export interface RequireUserOptions {
+interface RequireUserOptions {
   allowedRoles?: UserRole[];
 }
 
 /**
- * Resolve the current user from the incoming request.
- *
- * Dev mode permits a small set of mock identities (header/cookie-based).
- * Production currently returns null until Supabase/real auth is wired.
- *
- * TODO: Replace with real session-based auth (Supabase/NextAuth) before production launch.
+ * Resolve the current user from the incoming request using NextAuth session.
+ * This validates the session cookie and retrieves the user from the database.
  */
-export const getCurrentUser = (request: NextRequest): AuthenticatedUser | null => {
-  const isDev = process.env.NODE_ENV !== 'production';
+export const getCurrentUser = async (request: NextRequest): Promise<AuthenticatedUser | null> => {
+  // Get the session from NextAuth
+  const session = await getServerSession(nextAuthOptions);
 
-  if (!isDev) {
-    // სანამ რეალურ სესიებს არ დავამატებთ, პროდაქშენში treated as unauthenticated.
+  if (!session?.user?.id) {
     return null;
   }
 
-  const headerUser = request.headers.get('x-lumina-dev-user');
-  const cookieUser = request.cookies.get('lumina_dev_token')?.value;
-  const userId = headerUser ?? cookieUser ?? null;
-  if (!userId) {
-    return null;
-  }
-
-  const headerRole = request.headers.get('x-lumina-dev-role') as UserRole | null;
-  const role = headerRole ?? 'client';
+  // Get user role from session (set by JWT callback in nextAuthOptions)
+  const role = (session.user.accountRole as UserRole) || 'client';
 
   return {
-    id: userId,
+    id: session.user.id as string,
     role,
-    mode: 'dev',
+    mode: 'session',
   };
 };
 
-export const requireUser = (
+/**
+ * Require a user to be authenticated. Throws HttpError(401) if not authenticated.
+ * Optionally checks if user has one of the allowed roles.
+ */
+export const requireUser = async (
   request: NextRequest,
   options?: RequireUserOptions,
-): AuthenticatedUser => {
-  const user = getCurrentUser(request);
+): Promise<AuthenticatedUser> => {
+  const user = await getCurrentUser(request);
   if (!user) {
     throw new HttpError('Unauthorized', 401, 'UNAUTHORIZED');
   }
@@ -62,7 +57,7 @@ export const requireUser = (
   return user;
 };
 
-export interface ActorContext {
+interface ActorContext {
   userId: string;
   agentId: string | null;
   isAdmin: boolean;
@@ -84,5 +79,3 @@ export const resolveActorContext = async (user: AuthenticatedUser): Promise<Acto
     isAdmin,
   };
 };
-
-

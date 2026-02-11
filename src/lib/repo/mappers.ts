@@ -40,6 +40,9 @@ export const mapImage = (record: Prisma.ImageGetPayload<Record<string, never>>) 
     alt: record.alt ?? null,
     sortOrder: record.sortOrder,
     createdAt: toISOString(record.createdAt),
+    isAiGenerated: record.isAiGenerated,
+    prompt: record.prompt ?? null,
+    falJobId: record.falJobId ?? null,
   });
 
 export const mapListing = (record: Prisma.ListingGetPayload<Record<string, never>>) =>
@@ -56,7 +59,7 @@ export const mapListing = (record: Prisma.ListingGetPayload<Record<string, never
     notes: record.notes ?? null,
   });
 
-export const mapAgent = (record: Prisma.AgentGetPayload<Record<string, never>>) =>
+const mapAgent = (record: Prisma.AgentGetPayload<Record<string, never>>) =>
   agentSchema.parse({
     id: record.id,
     userId: record.userId,
@@ -153,7 +156,7 @@ export const mapInquiry = (record: Prisma.InquiryGetPayload<Record<string, never
     respondedAt: toISOString(record.respondedAt),
   });
 
-export const mapReview = (record: Prisma.ReviewGetPayload<Record<string, never>>) =>
+const mapReview = (record: Prisma.ReviewGetPayload<Record<string, never>>) =>
   reviewSchema.parse({
     id: record.id,
     authorId: record.authorId,
@@ -166,7 +169,7 @@ export const mapReview = (record: Prisma.ReviewGetPayload<Record<string, never>>
     isVerified: record.isVerified,
   });
 
-export const mapSearchHistory = (record: Prisma.SearchHistoryGetPayload<Record<string, never>>) =>
+const mapSearchHistory = (record: Prisma.SearchHistoryGetPayload<Record<string, never>>) =>
   searchHistorySchema.parse({
     id: record.id,
     userId: record.userId,
@@ -177,7 +180,7 @@ export const mapSearchHistory = (record: Prisma.SearchHistoryGetPayload<Record<s
     isSaved: record.isSaved,
   });
 
-export const mapTransaction = (record: Prisma.TransactionGetPayload<Record<string, never>>) =>
+const mapTransaction = (record: Prisma.TransactionGetPayload<Record<string, never>>) =>
   transactionSchema.parse({
     id: record.id,
     propertyId: record.propertyId,
@@ -204,7 +207,7 @@ export const mapPropertyAnalytics = (record: Prisma.PropertyAnalyticsGetPayload<
     viewSources: record.viewSources ?? {},
   });
 
-export const mapNotification = (record: Prisma.NotificationGetPayload<Record<string, never>>) =>
+const mapNotification = (record: Prisma.NotificationGetPayload<Record<string, never>>) =>
   notificationSchema.parse({
     id: record.id,
     userId: record.userId,
@@ -216,7 +219,7 @@ export const mapNotification = (record: Prisma.NotificationGetPayload<Record<str
     metadata: record.metadata ?? {},
   });
 
-export const mapMortgageCalculation = (record: Prisma.MortgageCalculationGetPayload<Record<string, never>>) =>
+const mapMortgageCalculation = (record: Prisma.MortgageCalculationGetPayload<Record<string, never>>) =>
   mortgageCalculationSchema.parse({
     id: record.id,
     userId: record.userId,
@@ -230,7 +233,7 @@ export const mapMortgageCalculation = (record: Prisma.MortgageCalculationGetPayl
     isSaved: record.isSaved,
   });
 
-export const mapUserPreference = (record: Prisma.UserPreferenceGetPayload<Record<string, never>>) =>
+const mapUserPreference = (record: Prisma.UserPreferenceGetPayload<Record<string, never>>) =>
   userPreferenceSchema.parse({
     id: record.id,
     userId: record.userId,
@@ -267,7 +270,7 @@ export const mapOrganizationMembership = (
     updatedAt: toISOString(record.updatedAt),
   });
 
-export const mapPublicUser = (record: Prisma.UserGetPayload<Record<string, never>>) => {
+const mapPublicUser = (record: Prisma.UserGetPayload<Record<string, never>>) => {
   const user = userSchema.parse({
     id: record.id,
     email: record.email,

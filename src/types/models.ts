@@ -5,7 +5,7 @@ const timestampSchema = z.string().datetime({ offset: true });
 const uuidSchema = z.string().uuid();
 const jsonValueSchema = z.unknown();
 
-export const userRoleSchema = z.enum(['guest', 'client', 'agent', 'investor', 'admin']);
+const userRoleSchema = z.enum(['guest', 'client', 'agent', 'investor', 'admin']);
 export const currencyTypeSchema = z.enum(['GEL', 'USD', 'EUR', 'RUB']);
 export const propertyTypeSchema = z.enum([
   'apartment',
@@ -18,20 +18,20 @@ export const propertyTypeSchema = z.enum([
   'office',
 ]);
 export const transactionTypeSchema = z.enum(['sale', 'rent', 'lease']);
-export const propertyConditionSchema = z.enum(['new', 'excellent', 'good', 'needs_renovation']);
-export const furnishedTypeSchema = z.enum(['furnished', 'partially_furnished', 'unfurnished']);
-export const propertyStatusSchema = z.enum(['active', 'pending', 'sold', 'rented', 'inactive']);
-export const appointmentStatusSchema = z.enum(['scheduled', 'confirmed', 'completed', 'cancelled', 'no_show']);
+const propertyConditionSchema = z.enum(['new', 'excellent', 'good', 'needs_renovation']);
+const furnishedTypeSchema = z.enum(['furnished', 'partially_furnished', 'unfurnished']);
+const propertyStatusSchema = z.enum(['active', 'pending', 'sold', 'rented', 'inactive']);
+const appointmentStatusSchema = z.enum(['scheduled', 'confirmed', 'completed', 'cancelled', 'no_show']);
 export const appointmentTypeSchema = z.enum(['viewing', 'consultation', 'signing', 'inspection']);
-export const reviewTypeSchema = z.enum(['agent', 'property']);
-export const inquiryStatusSchema = z.enum(['new', 'in_progress', 'responded', 'closed']);
-export const notificationTypeSchema = z.enum(['new_property', 'price_change', 'appointment', 'review', 'system']);
-export const themeTypeSchema = z.enum(['light', 'dark']);
+const reviewTypeSchema = z.enum(['agent', 'property']);
+const inquiryStatusSchema = z.enum(['new', 'in_progress', 'responded', 'closed']);
+const notificationTypeSchema = z.enum(['new_property', 'price_change', 'appointment', 'review', 'system']);
+const themeTypeSchema = z.enum(['light', 'dark']);
 export const listingStatusSchema = z.enum(['active', 'expired', 'withdrawn', 'sold', 'rented']);
-export const transactionStatusSchema = z.enum(['pending', 'completed', 'cancelled']);
+const transactionStatusSchema = z.enum(['pending', 'completed', 'cancelled']);
 
 // Pre-Supabase: Organization
-export const orgRoleSchema = z.enum(['owner', 'admin', 'agent', 'member', 'viewer']);
+const orgRoleSchema = z.enum(['owner', 'admin', 'agent', 'member', 'viewer']);
 
 export const imageSchema = z.object({
   id: uuidSchema,
@@ -40,6 +40,9 @@ export const imageSchema = z.object({
   alt: z.string().nullable().optional(),
   sortOrder: z.number(),
   createdAt: timestampSchema,
+  isAiGenerated: z.boolean().default(false),
+  prompt: z.string().nullable().optional(),
+  falJobId: z.string().nullable().optional(),
 });
 export type Image = z.infer<typeof imageSchema>;
 
@@ -109,13 +112,13 @@ export const userSchema = z.object({
   isEmailVerified: z.boolean(),
   updatedAt: timestampSchema,
 });
-export type User = z.infer<typeof userSchema>;
+type User = z.infer<typeof userSchema>;
 
 export const publicUserSchema = userSchema.omit({
   passwordHash: true,
   emailVerificationToken: true,
 });
-export type PublicUser = z.infer<typeof publicUserSchema>;
+type PublicUser = z.infer<typeof publicUserSchema>;
 
 export const agentSchema = z.object({
   id: uuidSchema,
@@ -176,7 +179,7 @@ export const reviewSchema = z.object({
   createdAt: timestampSchema,
   isVerified: z.boolean(),
 });
-export type Review = z.infer<typeof reviewSchema>;
+type Review = z.infer<typeof reviewSchema>;
 
 export const inquirySchema = z.object({
   id: uuidSchema,
@@ -201,7 +204,7 @@ export const searchHistorySchema = z.object({
   searchName: z.string().nullable().optional(),
   isSaved: z.boolean(),
 });
-export type SearchHistory = z.infer<typeof searchHistorySchema>;
+type SearchHistory = z.infer<typeof searchHistorySchema>;
 
 export const transactionSchema = z.object({
   id: uuidSchema,
@@ -216,7 +219,7 @@ export const transactionSchema = z.object({
   commission: decimalSchema.nullable().optional(),
   notes: z.string().nullable().optional(),
 });
-export type Transaction = z.infer<typeof transactionSchema>;
+type Transaction = z.infer<typeof transactionSchema>;
 
 export const propertyAnalyticsSchema = z.object({
   id: uuidSchema,
@@ -240,7 +243,7 @@ export const notificationSchema = z.object({
   createdAt: timestampSchema,
   metadata: jsonValueSchema.optional(),
 });
-export type Notification = z.infer<typeof notificationSchema>;
+type Notification = z.infer<typeof notificationSchema>;
 
 export const mortgageCalculationSchema = z.object({
   id: uuidSchema,
@@ -254,7 +257,7 @@ export const mortgageCalculationSchema = z.object({
   calculatedAt: timestampSchema,
   isSaved: z.boolean(),
 });
-export type MortgageCalculation = z.infer<typeof mortgageCalculationSchema>;
+type MortgageCalculation = z.infer<typeof mortgageCalculationSchema>;
 
 export const userPreferenceSchema = z.object({
   id: uuidSchema,
@@ -266,9 +269,9 @@ export const userPreferenceSchema = z.object({
   currency: currencyTypeSchema,
   updatedAt: timestampSchema,
 });
-export type UserPreference = z.infer<typeof userPreferenceSchema>;
+type UserPreference = z.infer<typeof userPreferenceSchema>;
 
-export const auditLogSchema = z.object({
+const auditLogSchema = z.object({
   id: uuidSchema,
   tableName: z.string(),
   operation: z.string(),
@@ -277,7 +280,7 @@ export const auditLogSchema = z.object({
   userId: uuidSchema.nullable(),
   timestamp: timestampSchema,
 });
-export type AuditLog = z.infer<typeof auditLogSchema>;
+type AuditLog = z.infer<typeof auditLogSchema>;
 
 // --- Organization Types ---
 export const organizationSchema = z.object({

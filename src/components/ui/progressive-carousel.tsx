@@ -55,7 +55,7 @@ const ProgressSliderContext = createContext<
   ProgressSliderContextType | undefined
 >(undefined);
 
-export const useProgressSliderContext = (): ProgressSliderContextType => {
+const useProgressSliderContext = (): ProgressSliderContextType => {
   const context = useContext(ProgressSliderContext);
   if (!context) {
     throw new Error(

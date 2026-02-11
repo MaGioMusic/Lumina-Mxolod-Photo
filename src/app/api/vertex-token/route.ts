@@ -22,9 +22,9 @@ const SAFETY_WINDOW_MS = 60_000; // refresh 60s before expiry
 // Token endpoint for Gemini Live API (WebSocket) access.
 // Returns a short-lived access token plus region/model metadata.
 export async function GET(req: NextRequest) {
-  let access: ReturnType<typeof ensureRealtimeAccess> | null = null;
+  let access: Awaited<ReturnType<typeof ensureRealtimeAccess>> | null = null;
   try {
-    access = ensureRealtimeAccess(req);
+    access = await ensureRealtimeAccess(req);
   } catch (error) {
     if (error instanceof HttpError) {
       return json({ error: { code: error.code, message: error.message } }, { status: error.status });

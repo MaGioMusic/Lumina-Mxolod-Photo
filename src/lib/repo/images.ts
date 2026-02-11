@@ -11,7 +11,7 @@ export async function listImages(propertyId: string): Promise<Image[]> {
   return records.map(mapImage);
 }
 
-export interface CreateImageInput {
+interface CreateImageInput {
   propertyId: string;
   url: string;
   alt?: string | null;
@@ -46,7 +46,7 @@ export async function createImage(
   return mapImage(record);
 }
 
-export interface UpdateImageInput {
+interface UpdateImageInput {
   alt?: string | null;
   sortOrder?: number;
 }

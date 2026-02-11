@@ -5,7 +5,7 @@ type GtagWindow = {
   gtag?: (...args: unknown[]) => void;
 };
 
-export function gtag(...args: unknown[]) {
+function gtag(...args: unknown[]) {
   try {
     const w = window as unknown as GtagWindow;
     w.dataLayer = w.dataLayer || [];

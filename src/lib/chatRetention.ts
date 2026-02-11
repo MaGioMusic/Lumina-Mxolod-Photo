@@ -6,7 +6,7 @@ function clampInt(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, Math.trunc(value)));
 }
 
-export function getChatRetentionDays(): number {
+function getChatRetentionDays(): number {
   const raw = process.env.CHAT_RETENTION_DAYS;
   const parsed = raw ? Number.parseInt(raw, 10) : DEFAULT_CHAT_RETENTION_DAYS;
   return clampInt(parsed, 1, MAX_CHAT_RETENTION_DAYS);

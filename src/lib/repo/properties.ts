@@ -3,7 +3,7 @@ import type { Property, PropertyAnalytics, PublicAgent } from '@/types/models';
 import { prisma } from '@/lib/prisma';
 import { mapProperty, mapPropertyAnalytics, mapPublicAgent } from './mappers';
 
-export type PropertySortKey = 'createdAt' | 'price' | 'views';
+type PropertySortKey = 'createdAt' | 'price' | 'views';
 
 export interface PropertyListParams {
   page?: number;
@@ -74,7 +74,7 @@ const buildOrderBy = (
   }
 };
 
-export interface PropertyListResult {
+interface PropertyListResult {
   items: Property[];
   total: number;
   page: number;
@@ -102,7 +102,7 @@ export async function listProperties(params: PropertyListParams = {}): Promise<P
   };
 }
 
-export interface PropertyDetailResult {
+interface PropertyDetailResult {
   property: Property;
   agent: PublicAgent | null;
   analytics: PropertyAnalytics | null;
@@ -128,7 +128,7 @@ export async function getPropertyDetail(id: string): Promise<PropertyDetailResul
   return { property, agent, analytics };
 }
 
-export const __test = {
+const __test = {
   buildWhere,
   buildOrderBy,
 };

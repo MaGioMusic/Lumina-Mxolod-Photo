@@ -66,7 +66,7 @@ export default function AgentsPage() {
   const searchParams = useSearchParams();
   // const router = useRouter();
   
-  const activeTab = searchParams.get('tab') || 'dashboard';
+  const activeTab = searchParams?.get('tab') || 'dashboard';
   const [dateMenuOpen, setDateMenuOpen] = useState(false);
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const [dateRange, setDateRange] = useState<'Last 30 Days' | 'Last 12 Months' | 'Year to Date' | 'Custom Range'>('Last 12 Months');

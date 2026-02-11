@@ -15,7 +15,7 @@ interface Params {
 
 export async function PATCH(request: NextRequest, { params }: Params) {
   try {
-    const user = requireUser(request, ['agent', 'admin']);
+    const user = await requireUser(request, ['agent', 'admin']);
     const actor = await resolveActorContext(user);
     const body = await request.json();
     const payload = updateBodySchema.parse(body);
@@ -28,7 +28,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
 export async function DELETE(request: NextRequest, { params }: Params) {
   try {
-    const user = requireUser(request, ['agent', 'admin']);
+    const user = await requireUser(request, ['agent', 'admin']);
     const actor = await resolveActorContext(user);
     await deleteImage(params.id, actor);
     return jsonResponse(null, { status: 204 });

@@ -1,5 +1,5 @@
 // Sample property images for carousel demonstration
-export const samplePropertyImages = {
+const samplePropertyImages = {
   property1: [
     '/images/properties/property-1.jpg',
     '/images/properties/property-2.jpg',
@@ -38,7 +38,7 @@ export const samplePropertyImages = {
 };
 
 // Function to get random property images
-export const getRandomPropertyImages = (count: number = 3): string[] => {
+const getRandomPropertyImages = (count: number = 3): string[] => {
   const allImages = [
     '/images/properties/property-1.jpg',
     '/images/properties/property-2.jpg',

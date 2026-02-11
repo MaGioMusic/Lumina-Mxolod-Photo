@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { ConflictError, NotFoundError } from './errors';
 import { mapAppointment } from './mappers';
 
-export interface CreateAppointmentInput {
+interface CreateAppointmentInput {
   userId: string;
   propertyId: string;
   scheduledDate: Date;

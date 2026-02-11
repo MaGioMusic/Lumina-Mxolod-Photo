@@ -27,7 +27,7 @@ const fetchProfileFromApi = async (locale: string): Promise<UserProfile | null> 
   }
 };
 
-export interface GetUserProfileOptions {
+interface GetUserProfileOptions {
   locale?: string;
   forceMock?: boolean;
 }
@@ -41,7 +41,7 @@ export const getUserProfile = cache(async (options?: GetUserProfileOptions): Pro
   return getMockUserProfile({ locale });
 });
 
-export const getUserProfileClient = async (options?: GetUserProfileOptions): Promise<UserProfile> => {
+const getUserProfileClient = async (options?: GetUserProfileOptions): Promise<UserProfile> => {
   const locale = options?.locale ?? 'ka';
   if (!options?.forceMock && PROFILE_API_URL) {
     try {

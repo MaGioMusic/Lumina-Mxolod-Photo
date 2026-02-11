@@ -1,35 +1,15 @@
 import { NextRequest } from 'next/server';
 import { timingSafeEqual } from 'node:crypto';
 import type { UserRole } from '@prisma/client';
+import { getToken } from 'next-auth/jwt';
 import { HttpError } from '@/lib/repo/errors';
 
 interface GuardResult {
   userId: string;
   role: UserRole;
-  mode: 'dev' | 'internal';
+  mode: 'session' | 'internal';
   rateLimitKey: string;
 }
-
-const DEV_DEFAULT_USER: GuardResult = {
-  userId: 'dev-anonymous',
-  role: 'client',
-  mode: 'dev',
-  rateLimitKey: 'dev-anonymous',
-};
-
-const DEV_TOKEN_USERS: Record<
-  string,
-  {
-    userId: string;
-    role: UserRole;
-  }
-> = {
-  'demo-client': { userId: 'dev-client', role: 'client' },
-  'demo-agent': { userId: 'dev-agent', role: 'agent' },
-  'demo-admin': { userId: 'dev-admin', role: 'admin' },
-};
-
-const ALLOWED_DEV_ROLES: Set<UserRole> = new Set(['client', 'agent', 'investor', 'admin']);
 
 const getClientIp = (request: NextRequest) =>
   request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
@@ -53,15 +33,31 @@ const matchesSecret = (incoming: string, secret: string) => {
 };
 
 /**
- * Temporary guard for realtime endpoints.
+ * Guard for realtime endpoints.
  *
- * - Development: allows a small, known set of demo identities (or a safe default)
- *   so existing mocks continue to function. This must be replaced before launch.
- * - Production: blocks by default unless a pre-shared secret header is provided.
- *
- * TODO: Replace with real session-based auth (Supabase/NextAuth) before production launch.
+ * - Production: blocks by default unless a pre-shared secret header is provided
+ *   for internal service communication, OR a valid NextAuth session exists.
+ * - Development: allows access with valid NextAuth session.
  */
-export const ensureRealtimeAccess = (request: NextRequest): GuardResult => {
+export const ensureRealtimeAccess = async (request: NextRequest): Promise<GuardResult> => {
+  // First, try to authenticate via NextAuth JWT token
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+
+  if (token?.sub) {
+    // Valid session found
+    const role = (token.accountRole as UserRole) || 'client';
+    return {
+      userId: token.sub,
+      role,
+      mode: 'session',
+      rateLimitKey: toRateLimitKey(token.sub, request),
+    };
+  }
+
+  // No valid session - in production, check for internal secret
   if (process.env.NODE_ENV === 'production') {
     const secret = process.env.LUMINA_REALTIME_PRESHARED_SECRET;
     if (!secret) {
@@ -85,39 +81,6 @@ export const ensureRealtimeAccess = (request: NextRequest): GuardResult => {
     };
   }
 
-  const devToken =
-    request.headers.get('x-lumina-dev-token') ??
-    request.cookies.get('lumina_dev_token')?.value ??
-    null;
-
-  if (devToken && DEV_TOKEN_USERS[devToken]) {
-    const { userId, role } = DEV_TOKEN_USERS[devToken];
-    return {
-      userId,
-      role,
-      mode: 'dev',
-      rateLimitKey: toRateLimitKey(userId, request),
-    };
-  }
-
-  const headerId = request.headers.get('x-user-id');
-  const headerRole = request.headers.get('x-user-role');
-  if (headerId && headerRole && ALLOWED_DEV_ROLES.has(headerRole as UserRole)) {
-    return {
-      userId: headerId,
-      role: headerRole as UserRole,
-      mode: 'dev',
-      rateLimitKey: toRateLimitKey(headerId, request),
-    };
-  }
-
-  // Default fall-back keeps current dev experience working while clearly marking the path.
-  // TODO: require explicit dev token once front-end wiring is in place.
-  return {
-    ...DEV_DEFAULT_USER,
-    rateLimitKey: toRateLimitKey(DEV_DEFAULT_USER.userId, request),
-  };
+  // Development mode without session - unauthorized
+  throw new HttpError('Unauthorized', 401, 'UNAUTHORIZED');
 };
-
-
-

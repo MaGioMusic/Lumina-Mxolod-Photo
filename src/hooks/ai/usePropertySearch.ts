@@ -5,7 +5,7 @@ import { runtimeFlags } from '@/lib/flags';
 
 type ToolCallTransport = 'realtime' | 'websocket';
 
-export interface PropertySearchHookOptions {
+interface PropertySearchHookOptions {
   isChatOpen: boolean;
 }
 

@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { fragmentShader, vertexShader } from './glassOrbShader';
 
-export interface GlassOrbProps {
+interface GlassOrbProps {
   analyser: AnalyserNode | null;
   className?: string;
 }

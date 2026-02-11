@@ -37,12 +37,12 @@ export function errorResponse(error: unknown) {
   );
 }
 
-export type UserContext = AuthenticatedUser;
+type UserContext = AuthenticatedUser;
 
-export function requireUser(request: NextRequest, allowedRoles?: UserRole[]): UserContext {
+export async function requireUser(request: NextRequest, allowedRoles?: UserRole[]): Promise<UserContext> {
   return coreRequireUser(request, { allowedRoles });
 }
 
-export function getOptionalUser(request: NextRequest): UserContext | null {
+async function getOptionalUser(request: NextRequest): Promise<UserContext | null> {
   return resolveCurrentUser(request);
 }

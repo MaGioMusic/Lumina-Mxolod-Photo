@@ -10,7 +10,7 @@ interface GlowingShadowProps {
   style?: CSSProperties;
 }
 
-export function GlowingShadow({ children, className, contentClassName, style }: GlowingShadowProps) {
+function GlowingShadow({ children, className, contentClassName, style }: GlowingShadowProps) {
   return (
     <>
       <style jsx>{`

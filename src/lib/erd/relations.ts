@@ -6,21 +6,21 @@
   - Outputs: adjacency graph and Mermaid erDiagram string
 */
 
-export type Cardinality = '1:1' | '1:N' | 'N:1' | 'N:M';
+type Cardinality = '1:1' | '1:N' | 'N:1' | 'N:M';
 
-export interface Entity {
+interface Entity {
   name: string;
   fields: Record<string, string>;
   uniques?: string[]; // unique field or composite list (comma separated)
   primaryKey?: string; // defaults to 'id' if omitted
 }
 
-export interface FieldRef {
+interface FieldRef {
   entity: string;
   field: string;
 }
 
-export interface Relationship {
+interface Relationship {
   name: string;
   cardinality: Cardinality;
   from: FieldRef; // FK side
@@ -29,21 +29,21 @@ export interface Relationship {
   onDelete?: 'CASCADE' | 'SET NULL' | 'RESTRICT';
 }
 
-export interface ValidationIssue {
+interface ValidationIssue {
   level: 'error' | 'warning';
   code: string;
   message: string;
   meta?: Record<string, unknown>;
 }
 
-export interface ERDValidationResult {
+interface ERDValidationResult {
   issues: ValidationIssue[];
   adjacency: Record<string, string[]>; // entity -> connected entities
   mermaid: string;
 }
 
 // Minimal entity set based on LUMINA_DATABASE_SCHEMA.md
-export const ENTITIES: Entity[] = [
+const ENTITIES: Entity[] = [
   { name: 'users', fields: { id: 'uuid', email: 'string', role: 'enum' }, primaryKey: 'id' },
   { name: 'agents', fields: { id: 'uuid', user_id: 'uuid', license_number: 'string' }, uniques: ['user_id'], primaryKey: 'id' },
   { name: 'properties', fields: { id: 'uuid', agent_id: 'uuid', status: 'enum', price: 'decimal' }, primaryKey: 'id' },
@@ -60,7 +60,7 @@ export const ENTITIES: Entity[] = [
 ];
 
 // Relationships among entities
-export const RELATIONSHIPS: Relationship[] = [
+const RELATIONSHIPS: Relationship[] = [
   // 1:1
   { name: 'users_has_agents', cardinality: '1:1', from: { entity: 'agents', field: 'user_id' }, to: { entity: 'users', field: 'id' } },
   { name: 'users_has_user_preferences', cardinality: '1:1', from: { entity: 'user_preferences', field: 'user_id' }, to: { entity: 'users', field: 'id' } },
@@ -170,7 +170,7 @@ export function toMermaid(entities: Entity[] = ENTITIES, relations: Relationship
 }
 
 // Dev helper to run quick check from code
-export function runERDCheck(): void {
+function runERDCheck(): void {
   const { issues, adjacency, mermaid } = validateERD();
   // eslint-disable-next-line no-console
   console.table(issues);
@@ -179,7 +179,6 @@ export function runERDCheck(): void {
   // eslint-disable-next-line no-console
   console.log('Mermaid ERD:\n' + mermaid);
 }
-
-export type { Entity as ERDEntity, Relationship as ERDRelationship };
+;
 
 

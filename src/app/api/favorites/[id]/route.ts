@@ -8,7 +8,7 @@ interface Params {
 
 export async function DELETE(request: NextRequest, { params }: Params) {
   try {
-    const user = requireUser(request, ['client', 'agent', 'investor', 'admin']);
+    const user = await requireUser(request, ['client', 'agent', 'investor', 'admin']);
     await removeFavoriteById(params.id, user.id);
     return jsonResponse(null, { status: 204 });
   } catch (error) {

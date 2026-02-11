@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const user = requireUser(request, ['agent', 'admin']);
+    const user = await requireUser(request, ['agent', 'admin']);
     const actor = await resolveActorContext(user);
     const body = await request.json();
     const payload = createBodySchema.parse(body);

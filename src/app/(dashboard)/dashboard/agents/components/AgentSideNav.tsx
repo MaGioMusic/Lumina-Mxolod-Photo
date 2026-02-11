@@ -26,7 +26,7 @@ export default function AgentSideNav({
 }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
   const sp = useSearchParams();
-  const activeTab = sp.get('tab') || 'dashboard';
+  const activeTab = sp?.get('tab') || 'dashboard';
 
   const items: Item[] = useMemo(() => ([
     { key: 'dashboard', label: 'Dashboard', icon: House, tab: 'dashboard' },

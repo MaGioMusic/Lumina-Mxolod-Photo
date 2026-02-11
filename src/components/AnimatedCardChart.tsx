@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 // Card primitives
 type DivProps = React.HTMLAttributes<HTMLDivElement>;
 
-export function AnimatedCard({ className, ...props }: DivProps) {
+function AnimatedCard({ className, ...props }: DivProps) {
   return (
     <div
       role="region"
@@ -20,7 +20,7 @@ export function AnimatedCard({ className, ...props }: DivProps) {
   );
 }
 
-export function CardBody({ className, ...props }: DivProps) {
+function CardBody({ className, ...props }: DivProps) {
   return (
     <div
       role="group"
@@ -34,7 +34,7 @@ export function CardBody({ className, ...props }: DivProps) {
 }
 
 type CardTitleProps = React.HTMLAttributes<HTMLHeadingElement>;
-export function CardTitle({ className, ...props }: CardTitleProps) {
+function CardTitle({ className, ...props }: CardTitleProps) {
   return (
     <h3
       className={cn(
@@ -47,7 +47,7 @@ export function CardTitle({ className, ...props }: CardTitleProps) {
 }
 
 type CardDescriptionProps = React.HTMLAttributes<HTMLParagraphElement>;
-export function CardDescription({ className, ...props }: CardDescriptionProps) {
+function CardDescription({ className, ...props }: CardDescriptionProps) {
   return (
     <p
       className={cn("text-sm text-neutral-500 dark:text-neutral-400", className)}
@@ -56,7 +56,7 @@ export function CardDescription({ className, ...props }: CardDescriptionProps) {
   );
 }
 
-export function CardVisual({ className, ...props }: DivProps) {
+function CardVisual({ className, ...props }: DivProps) {
   return (
     <div className={cn("h-[180px] w-[356px] overflow-hidden", className)} {...props} />
   );
@@ -69,7 +69,7 @@ interface Visual3Props {
   gridColor?: string;
 }
 
-export function Visual3({
+function Visual3({
   mainColor = "#8b5cf6",
   secondaryColor = "#fbbf24",
   gridColor = "#80808015",
@@ -241,7 +241,7 @@ interface AnimatedCardChartProps {
   className?: string;
 }
 
-export function AnimatedCardChart({
+function AnimatedCardChart({
   title,
   description,
   mainColor = "#3B82F6",

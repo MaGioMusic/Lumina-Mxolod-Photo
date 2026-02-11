@@ -6,7 +6,7 @@ import { HttpError } from '@/lib/repo/errors';
 // Server-side proxy for SDP exchange to avoid browser CORS/network blocks
 export async function POST(req: NextRequest) {
   try {
-    const access = ensureRealtimeAccess(req);
+    const access = await ensureRealtimeAccess(req);
     enforceRateLimit(`${access.rateLimitKey}:sdp`, {
       limit: 15,
       windowMs: 60_000,
@@ -120,4 +120,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-

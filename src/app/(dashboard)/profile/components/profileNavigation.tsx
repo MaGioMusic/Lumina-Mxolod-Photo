@@ -83,7 +83,7 @@ export function ProfileNavigation({ user }: { user: ProfileUser }) {
             <div className="space-y-1">
               {section.items.map((item) => {
                 const IconComponent = item.icon;
-                const isActive = pathname === item.href || pathname.startsWith(item.href);
+                const isActive = pathname === item.href || pathname?.startsWith(item.href);
                 return (
                   <Link
                     key={item.key}

@@ -1,8 +1,7 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { createInquiry } from '@/lib/repo';
-import { errorResponse, jsonResponse } from '../utils';
-import { getCurrentUser as getOptionalUser } from '@/lib/auth/server';
+import { errorResponse, jsonResponse, getOptionalUser } from '../utils';
 
 const bodySchema = z.object({
   propertyId: z.string().uuid(),
@@ -13,7 +12,7 @@ const bodySchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const user = getOptionalUser(request);
+    const user = await getOptionalUser(request);
 
     const body = await request.json();
     const payload = bodySchema.parse(body);

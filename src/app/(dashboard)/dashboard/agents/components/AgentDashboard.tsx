@@ -26,7 +26,7 @@ export default function AgentDashboard() {
   const router = useRouter();
   
   // Get active tab from URL parameter, default to 'dashboard'
-  const activeTab = searchParams.get('tab') || 'dashboard';
+  const activeTab = searchParams?.get('tab') || 'dashboard';
 
   // Tasks state management
   const [tasks, setTasks] = useState([

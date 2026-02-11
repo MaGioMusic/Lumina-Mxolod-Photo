@@ -6,7 +6,7 @@ const buckets = new Map<string, Bucket>();
 
 const now = () => Date.now();
 
-export interface RateLimitOptions {
+interface RateLimitOptions {
   /**
    * Maximum number of requests allowed within the window.
    */

@@ -37,7 +37,7 @@ const formatDate = (iso: string, locale: string) => {
   return format(new Date(iso), 'PPP • HH:mm', { locale: loc });
 };
 
-export const MOCK_AGENTS: ProfileAgentSummary[] = [
+const MOCK_AGENTS: ProfileAgentSummary[] = [
   {
     id: 'agent-04',
     name: 'სოფო კალანდაძე',
@@ -58,11 +58,11 @@ export const MOCK_AGENTS: ProfileAgentSummary[] = [
   },
 ];
 
-export function getMockAgentById(id: string): ProfileAgentSummary | undefined {
+function getMockAgentById(id: string): ProfileAgentSummary | undefined {
   return MOCK_AGENTS.find((agent) => agent.id === id);
 }
 
-export function autoAssignAgentByDistrict(district?: string): ProfileAgentSummary {
+function autoAssignAgentByDistrict(district?: string): ProfileAgentSummary {
   if (!district) return MOCK_AGENTS[0];
   if (['vake', 'mtatsminda'].includes(district)) return MOCK_AGENTS[0];
   return MOCK_AGENTS[1] ?? MOCK_AGENTS[0];

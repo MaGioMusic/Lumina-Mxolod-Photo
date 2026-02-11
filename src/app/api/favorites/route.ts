@@ -9,7 +9,7 @@ const bodySchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const user = requireUser(request, ['client', 'agent', 'investor', 'admin']);
+    const user = await requireUser(request, ['client', 'agent', 'investor', 'admin']);
     const body = await request.json();
     const payload = bodySchema.parse(body);
 

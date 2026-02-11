@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { ForbiddenError, NotFoundError } from './errors';
 import { mapListing } from './mappers';
 
-export interface ListListingsParams {
+interface ListListingsParams {
   propertyId?: string;
   status?: ListingStatus;
   page?: number;
@@ -13,7 +13,7 @@ export interface ListListingsParams {
   dateTo?: Date;
 }
 
-export interface ListingListResult {
+interface ListingListResult {
   items: Listing[];
   total: number;
   page: number;
@@ -52,7 +52,7 @@ export async function listListings(params: ListListingsParams = {}): Promise<Lis
   };
 }
 
-export interface CreateListingInput {
+interface CreateListingInput {
   propertyId: string;
   userId: string;
   agentId?: string | null;

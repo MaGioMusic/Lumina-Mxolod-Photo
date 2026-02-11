@@ -3,13 +3,13 @@ import { prisma } from '@/lib/prisma';
 import { mapOrganization, mapOrganizationMembership } from './mappers';
 import type { Organization, OrganizationMembership } from '@/types/models';
 
-export interface CreateOrganizationInput {
+interface CreateOrganizationInput {
   name: string;
   slug: string;
   description?: string | null;
 }
 
-export async function createOrganization(input: CreateOrganizationInput): Promise<Organization> {
+async function createOrganization(input: CreateOrganizationInput): Promise<Organization> {
   const record = await prisma.organization.create({
     data: {
       name: input.name,
@@ -20,12 +20,12 @@ export async function createOrganization(input: CreateOrganizationInput): Promis
   return mapOrganization(record);
 }
 
-export async function getOrganizationBySlug(slug: string): Promise<Organization | null> {
+async function getOrganizationBySlug(slug: string): Promise<Organization | null> {
   const record = await prisma.organization.findUnique({ where: { slug } });
   return record ? mapOrganization(record) : null;
 }
 
-export async function listUserOrganizations(userId: string): Promise<Organization[]> {
+async function listUserOrganizations(userId: string): Promise<Organization[]> {
   const memberships = await prisma.organizationMembership.findMany({
     where: { userId },
     include: { organization: true },
@@ -34,13 +34,13 @@ export async function listUserOrganizations(userId: string): Promise<Organizatio
   return memberships.map(m => mapOrganization(m.organization));
 }
 
-export interface AddMembershipInput {
+interface AddMembershipInput {
   organizationId: string;
   userId: string;
   role?: OrgRole;
 }
 
-export async function addMembership(input: AddMembershipInput): Promise<OrganizationMembership> {
+async function addMembership(input: AddMembershipInput): Promise<OrganizationMembership> {
   const record = await prisma.organizationMembership.upsert({
     where: { organization_membership_unique: { organizationId: input.organizationId, userId: input.userId } },
     update: { role: input.role ?? OrgRole.member },
@@ -49,7 +49,7 @@ export async function addMembership(input: AddMembershipInput): Promise<Organiza
   return mapOrganizationMembership(record);
 }
 
-export async function setMemberRole(
+async function setMemberRole(
   organizationId: string,
   userId: string,
   role: OrgRole,
@@ -61,7 +61,7 @@ export async function setMemberRole(
   return mapOrganizationMembership(record);
 }
 
-export async function removeMembership(organizationId: string, userId: string): Promise<void> {
+async function removeMembership(organizationId: string, userId: string): Promise<void> {
   await prisma.organizationMembership.delete({
     where: { organization_membership_unique: { organizationId, userId } },
   });

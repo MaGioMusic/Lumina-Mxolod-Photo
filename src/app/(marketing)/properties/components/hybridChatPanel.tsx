@@ -8,7 +8,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 const GlassOrb = dynamic(() => import('@/components/voice/GlassOrb'), { ssr: false });
 
-export interface HybridChatPanelProps {
+interface HybridChatPanelProps {
   isOpen: boolean;
   onClose: () => void;
   panelRef?: React.RefObject<HTMLDivElement | null>;

@@ -25,7 +25,7 @@ export async function removeFavoriteById(id: string, userId: string): Promise<vo
   await prisma.favorite.delete({ where: { id } });
 }
 
-export async function removeFavoriteByProperty(propertyId: string, userId: string): Promise<void> {
+async function removeFavoriteByProperty(propertyId: string, userId: string): Promise<void> {
   const favorite = await prisma.favorite.findFirst({ where: { propertyId, userId } });
   if (!favorite) throw new NotFoundError('Favorite not found');
   await prisma.favorite.delete({ where: { id: favorite.id } });
