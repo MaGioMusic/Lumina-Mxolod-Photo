@@ -44,7 +44,7 @@ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="your-google-maps-key"
 OPENAI_API_KEY="your-openai-key"
 
 # Fal.ai (for AI photo generation)
-FAL_AI_API_KEY="your-fal-ai-key"
+FAL_AI_API_KEY="da990ede-08ed-47b1-bf4d-73c452e8c11a:255a04e3b3894df174bddff32380e72a"
 ```
 
 ### 4. Run Development Server
