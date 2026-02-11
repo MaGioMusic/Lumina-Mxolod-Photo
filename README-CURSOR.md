@@ -37,11 +37,16 @@ NEXT_PUBLIC_SUPABASE_URL="https://kyzpryqtorofjodfncgh.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
 SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
 
-# Google Maps (optional)
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="your-google-maps-key"
+# Google Maps
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="AIzaSyAUsNF-QKfS0I5XnkawC4dqcZO4-67-Yh8"
 
 # OpenAI (optional - for voice features)
 OPENAI_API_KEY="your-openai-key"
+
+# Gemini / GCP (for voice features)
+GEMINI_API_KEY="AIzaSyBF0tlozRwbeY9dmGhiUnlwg7VdkytGwK4"
+GCP_PROJECT_ID="gen-lang-client-0216641365"
+GCP_REGION="us-central1"
 
 # Fal.ai (for AI photo generation)
 FAL_AI_API_KEY="da990ede-08ed-47b1-bf4d-73c452e8c11a:255a04e3b3894df174bddff32380e72a"
