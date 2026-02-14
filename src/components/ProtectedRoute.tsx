@@ -2,6 +2,7 @@
 
 import React, { ReactNode, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { useAuth } from '@/contexts/AuthContext';
 import type { UserRole } from '@/types/auth';
 
@@ -14,6 +15,11 @@ interface ProtectedRouteProps {
     action: string;
   };
   fallbackRoute?: string;
+  /**
+   * When true (default), unauthenticated users are redirected to fallbackRoute.
+   * When false, we render an inline sign-in prompt instead of navigating away.
+   */
+  redirectUnauthenticated?: boolean;
   showError?: boolean;
 }
 
@@ -23,6 +29,7 @@ export default function ProtectedRoute({
   requiredRoles,
   requiredPermission,
   fallbackRoute = '/',
+  redirectUnauthenticated = true,
   showError = false
 }: ProtectedRouteProps) {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -34,7 +41,9 @@ export default function ProtectedRoute({
 
     // Check if user is authenticated
     if (!isAuthenticated) {
-      router.push(fallbackRoute);
+      if (redirectUnauthenticated) {
+        router.push(fallbackRoute);
+      }
       return;
     }
 
@@ -61,7 +70,8 @@ export default function ProtectedRoute({
     requiredRole, 
     requiredRoles, 
     requiredPermission, 
-    fallbackRoute, 
+    fallbackRoute,
+    redirectUnauthenticated,
     router, 
     user
   ]);
@@ -78,9 +88,34 @@ export default function ProtectedRoute({
     );
   }
 
-  // Don't render if not authenticated
+  // If not authenticated, either redirect (default) or render an inline sign-in prompt.
   if (!isAuthenticated) {
-    return null;
+    if (redirectUnauthenticated) return null;
+
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="w-full max-w-md rounded-xl border bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Sign in required</h2>
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+            Please sign in to view this page.
+          </p>
+          <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+            <button
+              onClick={() => signIn()}
+              className="inline-flex items-center justify-center rounded-lg bg-[#F08336] px-4 py-2 text-white hover:bg-[#E07428] transition-colors"
+            >
+              Sign in
+            </button>
+            <button
+              onClick={() => router.push(fallbackRoute)}
+              className="inline-flex items-center justify-center rounded-lg border px-4 py-2 text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:text-slate-200 dark:hover:bg-slate-900 transition-colors"
+            >
+              Back
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Check role access
