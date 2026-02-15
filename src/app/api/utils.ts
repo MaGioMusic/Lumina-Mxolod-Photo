@@ -43,6 +43,6 @@ export async function requireUser(request: NextRequest, allowedRoles?: UserRole[
   return coreRequireUser(request, { allowedRoles });
 }
 
-async function getOptionalUser(request: NextRequest): Promise<UserContext | null> {
+export async function getOptionalUser(request: NextRequest): Promise<UserContext | null> {
   return resolveCurrentUser(request);
 }

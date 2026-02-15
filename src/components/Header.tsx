@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -8,10 +8,10 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import { logger } from '@/lib/logger';
-import { 
-  List, X, House, Buildings, /* Users, */ AddressBook, Info,
+import {
+  List, X, House, Buildings, /* Users, */ AddressBook,
   /* MagnifyingGlass, */ Heart, Moon, Sun, SignIn, SignOut, Globe, Gear,
-  /* Bell, */ EnvelopeSimple, ChartLine, UserList, GridFour, CaretDown, MapTrifold
+  /* Bell, */ EnvelopeSimple, ChartLine, UserList, GridFour, CaretDown, MapTrifold, Info
 } from '@phosphor-icons/react';
 import IOSToggle from '@/app/(marketing)/properties/components/IOSToggle';
 import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
@@ -23,7 +23,6 @@ interface NavItem {
   name: string;
   href: string;
   icon?: any;
-  hasDropdown?: boolean;
 }
 
 export default function Header() {
@@ -38,8 +37,6 @@ export default function Header() {
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
   const [currentView, setCurrentView] = useState<'grid' | 'map'>('grid');
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isPagesOpen, setIsPagesOpen] = useState(false);
-  const pagesCloseTimeout = useRef<number | null>(null);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -53,30 +50,23 @@ export default function Header() {
   
   // Derived flags not used currently
 
-  // Motiff-style navigation with Lumina features
+  // Phase-1 navigation (freeze scope)
   const getNavItems = (): NavItem[] => {
-    return [
-    { name: t('home'), href: '/', icon: House },
-      { name: t('properties'), href: '/properties', icon: Buildings, hasDropdown: true },
-      { name: t('pages'), href: '/about', icon: Info, hasDropdown: true },
-      { name: t('blog'), href: '/blog', icon: AddressBook, hasDropdown: true },
-      { name: t('contact'), href: '/contact', icon: AddressBook, hasDropdown: true },
-      { name: t('roadmap'), href: '/roadmap', icon: MapTrifold }
+    const items: NavItem[] = [
+      { name: t('home'), href: '/', icon: House },
+      { name: t('properties'), href: '/properties', icon: Buildings },
+      { name: t('contact'), href: '/contact', icon: AddressBook },
+      { name: t('roadmap'), href: '/roadmap', icon: MapTrifold },
     ];
+
+    if (isAuthenticated) {
+      items.push({ name: t('profile'), href: '/profile', icon: GridFour });
+    }
+
+    return items;
   };
 
   const navItems = getNavItems();
-
-  // Dropdown items for "Pages" menu
-  const pagesDropdown = [
-    { name: 'Neighborhoods', href: '/neighborhoods' },
-    { name: 'Market Reports', href: '/market-reports' },
-    { name: 'Calculators', href: '/calculators' },
-    { name: 'New Developments', href: '/new-developments' },
-    { name: 'Guides', href: '/guides' },
-    { name: 'Investors', href: '/investors' },
-    { name: t('legal'), href: '/legal' }
-  ];
 
   // Menu sections with authentication logic (keeping Lumina functionality)
   const getMenuItems = () => {
@@ -136,7 +126,7 @@ export default function Header() {
         router.push('/favorites');
         break;
       case 'agentDashboard':
-        router.push('/agents/dashboard');
+        router.push('/profile');
         break;
       case 'agentChat':
         router.push('/agents/chat');
@@ -220,78 +210,17 @@ export default function Header() {
             {/* Desktop Navigation - Motiff Style */}
             <nav className="hidden lg:flex items-center space-x-9">
               {navItems.map((item) => (
-                <div
-                  key={item.name}
-                  className="relative"
-                  onMouseEnter={() => {
-                    if (item.hasDropdown && item.href === '/about') {
-                      if (pagesCloseTimeout.current) {
-                        window.clearTimeout(pagesCloseTimeout.current);
-                        pagesCloseTimeout.current = null;
-                      }
-                      setIsPagesOpen(true);
-                    }
-                  }}
-                  onMouseLeave={() => {
-                    if (item.hasDropdown && item.href === '/about') {
-                      if (pagesCloseTimeout.current) {
-                        window.clearTimeout(pagesCloseTimeout.current);
-                      }
-                      pagesCloseTimeout.current = window.setTimeout(() => setIsPagesOpen(false), 120);
-                    }
-                  }}
-                >
+                <div key={item.name} className="relative">
                   <Link
                     href={item.href}
-                    onClick={(e) => {
-                      if (item.hasDropdown && item.href === '/about') {
-                        e.preventDefault();
-                        setIsPagesOpen((v) => !v);
-                      }
-                    }}
                     className={`flex items-center gap-2 text-sm font-medium transition-colors duration-200 ${
-                      pathname === item.href 
-                        ? 'text-[#FFCB74]' 
+                      pathname === item.href
+                        ? 'text-[#FFCB74]'
                         : theme === 'dark' ? 'text-gray-300 hover:text-[#FFCB74]' : 'text-gray-700 hover:text-[#FFCB74]'
                     }`}
                   >
                     <span suppressHydrationWarning>{item.name}</span>
-                    {item.hasDropdown && (
-                      <CaretDown className="w-4 h-4 text-gray-400" />
-                    )}
                   </Link>
-                  {item.hasDropdown && item.href === '/about' && (
-                    <div
-                      className={`absolute left-0 mt-1 border rounded-lg shadow-xl z-40 ${
-                        theme === 'dark' ? 'bg-[#222222] border-gray-700' : 'bg-white border-gray-200'
-                      } ${isPagesOpen ? 'block' : 'hidden'}`}
-                      onMouseEnter={() => {
-                        if (pagesCloseTimeout.current) {
-                          window.clearTimeout(pagesCloseTimeout.current);
-                          pagesCloseTimeout.current = null;
-                        }
-                        setIsPagesOpen(true);
-                      }}
-                      onMouseLeave={() => {
-                        if (pagesCloseTimeout.current) {
-                          window.clearTimeout(pagesCloseTimeout.current);
-                        }
-                        pagesCloseTimeout.current = window.setTimeout(() => setIsPagesOpen(false), 120);
-                      }}
-                    >
-                      <div className="py-1 min-w-[200px]">
-                        {pagesDropdown.map((sub) => (
-                          <a
-                            key={sub.href}
-                            href={sub.href}
-                            className={`block px-4 py-2 text-sm ${theme === 'dark' ? 'text-gray-300 hover:bg-gray-800' : 'text-gray-700 hover:bg-gray-100'}`}
-                          >
-                            {sub.name}
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
               ))}
               {isPropertiesPage && (
