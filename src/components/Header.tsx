@@ -8,10 +8,11 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import { logger } from '@/lib/logger';
+import { runtimeFlags } from '@/lib/flags';
 import {
   List, X, House, Buildings, /* Users, */ AddressBook,
   /* MagnifyingGlass, */ Heart, Moon, Sun, SignIn, SignOut, Globe, Gear,
-  /* Bell, */ EnvelopeSimple, ChartLine, UserList, GridFour, CaretDown, MapTrifold, Info
+  /* Bell, */ EnvelopeSimple, ChartLine, UserList, GridFour, CaretDown, MapTrifold
 } from '@phosphor-icons/react';
 import IOSToggle from '@/app/(marketing)/properties/components/IOSToggle';
 import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
@@ -30,6 +31,7 @@ export default function Header() {
   const { theme, toggleTheme } = useTheme();
   const { user, isAuthenticated } = useAuth();
   const { getFavoritesCount } = useFavorites();
+  const isAgentsUiEnabled = runtimeFlags.enableAgentsUI;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isPropertyModalOpen, setIsPropertyModalOpen] = useState(false);
@@ -80,7 +82,7 @@ export default function Header() {
       // Add favorites for all authenticated users
       baseItems.splice(1, 0, { name: t('favorites'), icon: Heart, action: 'favorites' });
       // Add agent quick links for agent/admin
-      if (user?.role === 'agent' || user?.role === 'admin') {
+      if (isAgentsUiEnabled && (user?.role === 'agent' || user?.role === 'admin')) {
         baseItems.splice(1, 0, { name: t('agentDashboard'), icon: ChartLine, action: 'agentDashboard' });
         baseItems.splice(1, 0, { name: 'Agent Chat', icon: EnvelopeSimple, action: 'agentChat' });
       }
@@ -407,20 +409,6 @@ export default function Header() {
                           <span className="font-medium">{item.name}</span>
                         </Link>
               ))}
-
-              {/* Mobile: Pages submenu quick link(s) */}
-              <div className="px-3 pt-2">
-                <Link
-                  href="/investors"
-                  className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                    theme === 'dark' ? 'text-gray-300 hover:bg-gray-800' : 'text-gray-700 hover:bg-gray-50'
-                  }`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <Info className="w-5 h-5" />
-                  <span className="font-medium">Investors</span>
-                </Link>
-                  </div>
 
               {/* Mobile Language Switcher */}
               <div className="border-t border-gray-100 pt-4">

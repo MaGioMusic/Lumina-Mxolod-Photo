@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import * as React from "react"
 import Link from "next/link"
@@ -8,7 +8,6 @@ import {
   HelpCircleIcon,
   LayoutDashboardIcon,
   SettingsIcon,
-  SparklesIcon,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -35,11 +34,6 @@ const data = {
       title: "Dashboard",
       url: "/profile",
       icon: LayoutDashboardIcon,
-    },
-    {
-      title: "AI Tools",
-      url: "/profile/ai-tools",
-      icon: SparklesIcon,
     },
     {
       title: "Properties",

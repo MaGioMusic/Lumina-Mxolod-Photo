@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
 import type { ProfileAgentSummary } from '@/types/profile';
+import { runtimeFlags } from '@/lib/flags';
 
 interface AssignedAgentCardProps {
   agent?: ProfileAgentSummary | null;
@@ -102,7 +103,7 @@ function RatingStars({
 
 export default function AssignedAgentCard({ agent }: AssignedAgentCardProps) {
   const router = useRouter();
-  if (!agent) return null;
+  if (!runtimeFlags.enableAgentsUI || !agent) return null;
 
   const openChat = () => {
     const params = new URLSearchParams();

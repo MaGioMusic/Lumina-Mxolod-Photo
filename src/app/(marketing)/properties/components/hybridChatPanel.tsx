@@ -26,6 +26,7 @@ interface HybridChatPanelProps {
   onToggleMute: () => void;
 
   orbAnalyser: AnalyserNode | null;
+  showVoiceControls?: boolean;
 }
 
 export function HybridChatPanel({
@@ -43,8 +44,9 @@ export function HybridChatPanel({
   onStopVoice,
   onToggleMute,
   orbAnalyser,
+  showVoiceControls = true,
 }: HybridChatPanelProps) {
-  const voiceActive = isListening || isAiSpeaking;
+  const voiceActive = showVoiceControls && (isListening || isAiSpeaking);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const { t } = useLanguage();
 
@@ -144,16 +146,18 @@ export function HybridChatPanel({
                       </div>
 
                       <div className="right-buttons">
-                        <button
-                          type="button"
-                          aria-label={isListening ? t('chat_voice_stop') : t('chat_voice_start')}
-                          onClick={() => {
-                            if (isListening) void onStopVoice();
-                            else void onStartVoice();
-                          }}
-                        >
-                          <Microphone size={18} weight="fill" />
-                        </button>
+                        {showVoiceControls ? (
+                          <button
+                            type="button"
+                            aria-label={isListening ? t('chat_voice_stop') : t('chat_voice_start')}
+                            onClick={() => {
+                              if (isListening) void onStopVoice();
+                              else void onStartVoice();
+                            }}
+                          >
+                            <Microphone size={18} weight="fill" />
+                          </button>
+                        ) : null}
                         <button type="button" aria-label={t('chat_send')} onClick={() => onSend()} disabled={!value.trim()}>
                           <PaperPlaneRight size={18} weight="fill" />
                         </button>

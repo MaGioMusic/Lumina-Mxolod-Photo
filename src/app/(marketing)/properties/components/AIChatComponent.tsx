@@ -36,12 +36,13 @@ export default function AIChatComponent() {
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const [voiceSupported, setVoiceSupported] = useState(false);
 
-  // Voice feature flag: default from env, URL can disable with ?voice=0
+  // Voice feature flag: hidden by default in Phase-1, URL can still disable with ?voice=0 when enabled.
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+  const isVoiceUiEnabled = runtimeFlags.enableAIVoiceUI;
   const voiceDefaultOn = runtimeFlags.voiceDefaultOn;
-  const isVoiceEnabled = searchParams?.get('voice') === '0' ? false : voiceDefaultOn;
+  const isVoiceEnabled = isVoiceUiEnabled && (searchParams?.get('voice') === '0' ? false : voiceDefaultOn);
   // Function-calling: default from env, URL can disable with ?fc=0
   const fcDefaultOn = runtimeFlags.functionCallingDefaultOn;
   const isFunctionCallingEnabled = searchParams?.get('fc') === '0' ? false : fcDefaultOn;
@@ -111,18 +112,30 @@ export default function AIChatComponent() {
 
   useEffect(() => {
     mountedRef.current = true;
+    if (!isVoiceUiEnabled) {
+      setVoiceSupported(false);
+      setVoiceError(null);
+      return () => {
+        mountedRef.current = false;
+      };
+    }
+
     const supported =
       typeof window !== 'undefined' &&
       typeof navigator !== 'undefined' &&
       !!navigator.mediaDevices?.getUserMedia;
+
     setVoiceSupported(Boolean(supported));
-    if (!supported) {
+    if (!supported && isVoiceEnabled) {
       setVoiceError('Voice capture is not supported in this browser or context.');
+    } else {
+      setVoiceError(null);
     }
+
     return () => {
       mountedRef.current = false;
     };
-  }, []);
+  }, [isVoiceEnabled, isVoiceUiEnabled]);
 
   // Gemini hook (the only supported provider)
   const {
@@ -1776,6 +1789,7 @@ export default function AIChatComponent() {
         onStopVoice={stopVoice}
         onToggleMute={toggleGeminiMute}
         orbAnalyser={geminiPlaybackAnalyser}
+        showVoiceControls={isVoiceUiEnabled}
       />
     </>
   );
