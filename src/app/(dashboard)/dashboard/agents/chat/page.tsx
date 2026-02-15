@@ -77,8 +77,8 @@ export default function ChatPage() {
     { id: 'p2', title: `${t('saburtalo')} • 2 ${t('rooms')} • 78 ${t('sqm')}`, url: '/properties/102' },
     { id: 'p3', title: `${t('vera')} • 1 ${t('rooms')} • 52 ${t('sqm')}`, url: '/properties/103' },
   ];
-
-  const baseUsers: ChatUser[] = [
+  const baseUsers: ChatUser[] = useMemo(
+    () => [
     {
       id: 'giorgi-mamaladze',
       name: t('teamMember1Name'),
@@ -133,8 +133,9 @@ export default function ChatPage() {
       unreadCount: 0,
       isOnline: false
     }
-  ];
-
+    ],
+    [t]
+  );
   const dynamicContact: ChatUser | null = useMemo(() => {
     if (!contactId) return null;
     return {
@@ -333,8 +334,9 @@ export default function ChatPage() {
 
   // Clear pending timers on unmount
   useEffect(() => {
+    const timeoutId = replyTimeoutRef.current;
     return () => {
-      if (replyTimeoutRef.current) window.clearTimeout(replyTimeoutRef.current);
+      if (timeoutId) window.clearTimeout(timeoutId);
     };
   }, []);
 
