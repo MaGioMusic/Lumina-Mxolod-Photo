@@ -1,11 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Home, Search, ArrowLeft } from 'lucide-react';
-
-export const metadata = {
-  title: 'Page Not Found - Lumina Estate',
-  description: 'The page you are looking for does not exist.',
-};
 
 export default function NotFoundPage() {
   return (
