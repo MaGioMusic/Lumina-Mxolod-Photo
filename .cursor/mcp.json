@@ -1,8 +1,43 @@
-﻿{
+{
   "mcpServers": {
     "linear": {
       "command": "npx",
       "args": ["-y", "mcp-remote", "https://mcp.linear.app/sse"]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    },
+    "shadcn": {
+      "command": "npx",
+      "args": ["shadcn@latest", "mcp"]
+    },
+    "Magic MCP": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@21st-dev/magic@latest"],
+      "env": {
+        "API_KEY": "${MAGIC_MCP_API_KEY}"
+      }
+    },
+    "Ref": {
+      "type": "http",
+      "url": "https://api.ref.tools/mcp?apiKey=${REF_API_KEY}",
+      "headers": {}
+    },
+    "rube": {
+      "url": "https://rube.composio.dev/mcp?agent=cursor",
+      "headers": {}
+    },
+    "supabase": {
+      "url": "https://mcp.supabase.com/mcp?project_ref=${SUPABASE_PROJECT_REF}",
+      "headers": {}
     }
   }
 }
