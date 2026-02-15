@@ -50,6 +50,10 @@ export default function ChatPage() {
   const [isAssistantTyping, setIsAssistantTyping] = useState(false);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const replyTimeoutRef = useRef<number | null>(null);
+
+  const REPLY_DELAY_MS = 800;
+  const genId = () => globalThis.crypto?.randomUUID?.() ?? (Date.now() + Math.random()).toString(36);
+
   // Quick actions states
   const [pinnedIds] = useState<Set<string>>(new Set());
   // Removed unused notes/reminders/mute states
@@ -208,7 +212,7 @@ export default function ChatPage() {
   const handleSendMessage = () => {
     if (newMessage.trim()) {
       const message: Message = {
-        id: (globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)),
+        id: genId(),
         text: newMessage.trim(),
         timestamp: new Date().toLocaleTimeString(),
         isOwn: true,
@@ -229,7 +233,7 @@ export default function ChatPage() {
 
       replyTimeoutRef.current = window.setTimeout(() => {
         const reply: Message = {
-          id: (globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)),
+          id: genId(),
           text: 'მოგწერ დეტალებს მოკლე დროში.',
           timestamp: new Date().toLocaleTimeString(),
           isOwn: false,
@@ -240,7 +244,7 @@ export default function ChatPage() {
           [selectedChat]: [...(prev[selectedChat] || []), reply]
         }));
         setIsAssistantTyping(false);
-      }, 800);
+      }, REPLY_DELAY_MS);
     }
   };
 
@@ -307,7 +311,7 @@ export default function ChatPage() {
 
   const addSystemMessage = (text: string) => {
     const sys: Message = {
-      id: (Date.now() + Math.random()).toString(),
+      id: genId(),
       text,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       isOwn: true,
