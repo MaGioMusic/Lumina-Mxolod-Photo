@@ -47,8 +47,17 @@ export async function GET(req: NextRequest) {
   try {
     supabase = getSupabaseAdmin();
   } catch (e) {
-    return NextResponse.json(
+    // Graceful fallback: do not break UI when chat backend env is missing in local/dev.
+    const visitorId = req.cookies.get(COOKIE_VISITOR)?.value || createId();
+    const conversationId = req.cookies.get(COOKIE_CONVERSATION)?.value || createId();
+
+    const res = NextResponse.json(
       {
+        visitorId,
+        conversationId,
+        summary: '',
+        messages: [],
+        degraded: true,
         error: {
           code: 'SUPABASE_NOT_CONFIGURED',
           message:
@@ -57,8 +66,21 @@ export async function GET(req: NextRequest) {
               : 'Missing SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY',
         },
       },
-      { status: 503 },
+      { status: 200 },
     );
+
+    res.cookies.set(COOKIE_VISITOR, visitorId, {
+      path: '/',
+      maxAge: getChatRetentionMaxAgeSeconds(),
+      sameSite: 'lax',
+    });
+    res.cookies.set(COOKIE_CONVERSATION, conversationId, {
+      path: '/',
+      maxAge: getChatRetentionMaxAgeSeconds(),
+      sameSite: 'lax',
+    });
+
+    return res;
   }
 
   const url = new URL(req.url);
