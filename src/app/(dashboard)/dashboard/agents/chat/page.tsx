@@ -52,7 +52,16 @@ export default function ChatPage() {
   const replyTimeoutRef = useRef<number | null>(null);
 
   const REPLY_DELAY_MS = 800;
-  const genId = () => globalThis.crypto?.randomUUID?.() ?? (Date.now() + Math.random()).toString(36);
+  const genId = () => {
+    const c = globalThis.crypto;
+    if (c?.randomUUID) return c.randomUUID();
+    if (c?.getRandomValues) {
+      const buf = new Uint32Array(4);
+      c.getRandomValues(buf);
+      return Array.from(buf, n => n.toString(16).padStart(8, '0')).join('');
+    }
+    return (Date.now() + Math.random()).toString(36);
+  };
 
   // Quick actions states
   const [pinnedIds] = useState<Set<string>>(new Set());
