@@ -330,7 +330,7 @@ export default function AIChatComponent() {
                 } catch {}
                   router.push('/properties');
                 }
-  }, [message, isOpen, router]);
+  }, [message, isOpen, isListening, router]);
 
   // Additional fallback: navigate based on latest voice transcript
   useEffect(() => {
@@ -341,7 +341,7 @@ export default function AIChatComponent() {
                 } catch {}
                 router.push('/properties');
     }
-  }, [lastTranscript, isOpen, router]);
+  }, [lastTranscript, isOpen, isListening, router]);
 
   const startVoice = useCallback(async () => {
     if (!voiceSupported) {
