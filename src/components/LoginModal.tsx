@@ -40,15 +40,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     try {
       const success = await login(credentials.email, credentials.password);
       if (success) {
-        // Role-based redirect for demo accounts
-        const email = credentials.email.toLowerCase();
-        if (email === 'agent@lumina.ge') {
-          router.push('/agents/dashboard');
-        } else if (email === 'admin@lumina.ge') {
-          router.push('/admin/dashboard');
-        } else {
-          router.push('/profile');
-        }
+        // Redirect to profile dashboard after login
+        router.push('/profile');
         onClose();
         setCredentials({ email: '', password: '' });
       } else {

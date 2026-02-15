@@ -30,12 +30,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAuthenticated = status === 'authenticated' && !!session?.user;
 
   // Map NextAuth session user to our User type
+  // Prisma AccountRole is uppercase (USER, AGENT, ADMIN) but our UserRole is lowercase
+  const mapAccountRole = (accountRole: string | undefined): UserRole => {
+    if (!accountRole) return 'user';
+    const lower = accountRole.toLowerCase();
+    // Map Prisma roles to our app roles
+    const roleMap: Record<string, UserRole> = {
+      user: 'user',
+      agent: 'agent',
+      admin: 'admin',
+      developer: 'admin', // developers get admin access
+      client: 'client',
+      investor: 'investor',
+    };
+    return roleMap[lower] ?? 'user';
+  };
+
   const user: User | null = session?.user
     ? {
         id: session.user.id as string,
         email: session.user.email as string,
         name: session.user.name as string,
-        role: (session.user.accountRole as UserRole) || 'user',
+        role: mapAccountRole(session.user.accountRole as string),
       }
     : null;
 

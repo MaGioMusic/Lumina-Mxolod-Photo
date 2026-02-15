@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { signIn } from 'next-auth/react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { X, Eye, EyeSlash, UserPlus } from '@phosphor-icons/react';
@@ -82,9 +83,41 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
 
     setIsSubmitting(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+
+      // Call the real registration API
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          name: fullName,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        const message =
+          data?.error?.code === 'EMAIL_EXISTS'
+            ? 'An account with this email already exists.'
+            : data?.error?.message ?? 'Registration failed. Please try again.';
+        setErrors({ form: message });
+        return;
+      }
+
+      // Auto-login after successful registration
+      const signInResult = await signIn('credentials', {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
+      });
+
+      if (signInResult?.error) {
+        setErrors({ form: 'Account created but auto-login failed. Please log in manually.' });
+        return;
+      }
+
       // Success - close modal and reset form
       onClose();
       setFormData({
@@ -94,13 +127,14 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
         password: '',
         confirmPassword: '',
         phone: '',
-        agreeToTerms: false
+        agreeToTerms: false,
       });
       setErrors({});
-      
-      alert('Account created successfully! Please check your email to verify your account.');
+
+      // Reload to update session state
+      window.location.href = '/dashboard';
     } catch (error) {
-      alert('Registration failed. Please try again.');
+      setErrors({ form: 'Registration failed. Please try again.' });
     } finally {
       setIsSubmitting(false);
     }
@@ -175,6 +209,13 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* Form-level error */}
+          {errors.form && (
+            <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p className="text-sm text-red-600 dark:text-red-400">{errors.form}</p>
+            </div>
+          )}
+
           {/* Name Fields */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
