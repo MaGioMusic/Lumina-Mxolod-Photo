@@ -1,0 +1,5 @@
+# MCP env placeholders for .cursor/mcp.json
+GITHUB_PERSONAL_ACCESS_TOKEN=
+MAGIC_MCP_API_KEY=
+REF_API_KEY=
+SUPABASE_PROJECT_REF=
