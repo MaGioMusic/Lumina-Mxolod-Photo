@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { logger, sanitizeForLogging } from '@/lib/logger';
 import { z } from 'zod';
 
@@ -3113,20 +3113,23 @@ export function LanguageProvider({ children, initialLanguage }: LanguageProvider
     }
   };
 
-  // Translation function
-  const t = (key: string): string => {
-    try {
-      const translation = translations[key];
-      if (!translation) {
-        logger.warn(`Translation key "${key}" not found`);
-        return key; // Return key as fallback
+  // Translation function (stable reference; only changes when language changes)
+  const t = useCallback(
+    (key: string): string => {
+      try {
+        const translation = translations[key];
+        if (!translation) {
+          logger.warn(`Translation key "${key}" not found`);
+          return key; // Return key as fallback
+        }
+        return translation[language] || translation.en || key;
+      } catch (error) {
+        logger.error('Translation error:', sanitizeForLogging(error));
+        return key;
       }
-      return translation[language] || translation.en || key;
-    } catch (error) {
-      logger.error('Translation error:', sanitizeForLogging(error));
-      return key;
-    }
-  };
+    },
+    [language]
+  );
 
   const value: LanguageContextType = {
     language,
@@ -3148,6 +3151,4 @@ export function useLanguage(): LanguageContextType {
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;
-}
-;
-; 
+} 

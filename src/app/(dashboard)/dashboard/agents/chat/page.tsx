@@ -77,8 +77,8 @@ export default function ChatPage() {
     { id: 'p2', title: `${t('saburtalo')} • 2 ${t('rooms')} • 78 ${t('sqm')}`, url: '/properties/102' },
     { id: 'p3', title: `${t('vera')} • 1 ${t('rooms')} • 52 ${t('sqm')}`, url: '/properties/103' },
   ];
-
-  const baseUsers: ChatUser[] = [
+  const baseUsers: ChatUser[] = useMemo(
+    () => [
     {
       id: 'giorgi-mamaladze',
       name: t('teamMember1Name'),
@@ -133,8 +133,9 @@ export default function ChatPage() {
       unreadCount: 0,
       isOnline: false
     }
-  ];
-
+    ],
+    [t]
+  );
   const dynamicContact: ChatUser | null = useMemo(() => {
     if (!contactId) return null;
     return {
@@ -207,7 +208,7 @@ export default function ChatPage() {
   const handleSendMessage = () => {
     if (newMessage.trim()) {
       const message: Message = {
-        id: Math.random().toString(36).slice(2),
+        id: (globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)),
         text: newMessage.trim(),
         timestamp: new Date().toLocaleTimeString(),
         isOwn: true,
@@ -220,9 +221,15 @@ export default function ChatPage() {
       setNewMessage('');
       setIsAssistantTyping(true);
 
-      window.setTimeout(() => {
+      // Clear any existing pending reply timer before scheduling a new one
+      if (replyTimeoutRef.current) {
+        window.clearTimeout(replyTimeoutRef.current);
+        replyTimeoutRef.current = null;
+      }
+
+      replyTimeoutRef.current = window.setTimeout(() => {
         const reply: Message = {
-          id: Math.random().toString(36).slice(2),
+          id: (globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)),
           text: 'მოგწერ დეტალებს მოკლე დროში.',
           timestamp: new Date().toLocaleTimeString(),
           isOwn: false,
@@ -334,7 +341,10 @@ export default function ChatPage() {
   // Clear pending timers on unmount
   useEffect(() => {
     return () => {
-      if (replyTimeoutRef.current) window.clearTimeout(replyTimeoutRef.current);
+      if (replyTimeoutRef.current) {
+        window.clearTimeout(replyTimeoutRef.current);
+        replyTimeoutRef.current = null;
+      }
     };
   }, []);
 
@@ -576,7 +586,6 @@ export default function ChatPage() {
             className="w-24 h-24 rounded-full object-cover mx-auto border-4 border-white shadow-lg"
           />
           <h3 className={`mt-4 text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-            {selectedUser?.name || t('teamMember1Name')}
             {selectedUser?.name || t('teamMember1Name')}
           </h3>
           <div className="flex items-center justify-center gap-2 mt-2">
