@@ -261,6 +261,17 @@ export default function ChatPage() {
     }
   }, [contactId]);
 
+  // Clear pending reply timer when switching chats
+  useEffect(() => {
+    return () => {
+      if (replyTimeoutRef.current) {
+        window.clearTimeout(replyTimeoutRef.current);
+        replyTimeoutRef.current = null;
+        setIsAssistantTyping(false);
+      }
+    };
+  }, [selectedChat]);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [currentMessages.length]);
