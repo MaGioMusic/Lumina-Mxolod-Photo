@@ -113,7 +113,7 @@ export default function AssignedAgentCard({ agent }: AssignedAgentCardProps) {
   };
 
   return (
-    <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_12px_40px_rgба(15,23,42,0.08)] transition hover:shadow-[0_18px_55px_rgба(15,23,42,0.1)] dark:border-slate-800/70 dark:bg-slate-900/70">
+    <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_12px_40px_rgba(15,23,42,0.08)] transition hover:shadow-[0_18px_55px_rgba(15,23,42,0.1)] dark:border-slate-800/70 dark:bg-slate-900/70">
       <div className="flex items-start gap-4">
         <div className="relative h-16 w-16 overflow-hidden rounded-2xl border border-slate-100 shadow-sm dark:border-slate-700">
           {agent.avatarUrl ? (

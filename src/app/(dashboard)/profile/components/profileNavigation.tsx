@@ -73,7 +73,7 @@ export function ProfileNavigation({ user }: { user: ProfileUser }) {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-full min-w-[200px] flex-col justify-between rounded-[28px] border border-slate-100 bg-white px-4 py-6 shadow-[0_18px_70px_rgба(15,23,42,0.08)] dark:border-slate-800/50 dark:bg-slate-900/70">
+    <aside className="flex h-full min-w-[200px] flex-col justify-between rounded-[28px] border border-slate-100 bg-white px-4 py-6 shadow-[0_18px_70px_rgba(15,23,42,0.08)] dark:border-slate-800/50 dark:bg-slate-900/70">
       <div className="space-y-6">
         {sections.map((section) => (
           <nav key={section.heading} className="space-y-3">
@@ -110,7 +110,7 @@ export function ProfileNavigation({ user }: { user: ProfileUser }) {
         ))}
       </div>
 
-      <div className="rounded-3xl border border-slate-100 bg-white p-4 shadow-[0_14px_50px_rgба(15,23,42,0.08)] dark:border-slate-800/60 dark:bg-slate-900/75">
+      <div className="rounded-3xl border border-slate-100 bg-white p-4 shadow-[0_14px_50px_rgba(15,23,42,0.08)] dark:border-slate-800/60 dark:bg-slate-900/75">
         <div className="flex items-center gap-3">
           <div className="relative h-11 w-11 overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm dark:border-slate-700">
             {user.avatarUrl ? (

@@ -40,7 +40,7 @@ export function RemindersCard({ appointments, notifications }: RemindersCardProp
   const priceChange = notifications.find((notification) => notification.type === 'price_change');
 
   return (
-    <section className="space-y-4 rounded-[32px] border border-slate-100 bg-white p-6 shadow-[0_12px_45px_rgба(15,23,42,0.07)] dark:border-slate-800/60 dark:bg-slate-900/75 sm:p-7">
+    <section className="space-y-4 rounded-[32px] border border-slate-100 bg-white p-6 shadow-[0_12px_45px_rgba(15,23,42,0.07)] dark:border-slate-800/60 dark:bg-slate-900/75 sm:p-7">
       <header className="space-y-1">
         <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{copy.title[safeLanguage]}</h2>
         <p className="text-sm text-slate-500 dark:text-slate-400">{copy.subtitle[safeLanguage]}</p>
@@ -86,7 +86,7 @@ function ReminderRow({
   timestamp: string;
 }) {
   return (
-    <div className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-[0_12px_35px_rgба(15,23,42,0.07)] dark:border-slate-800/60 dark:bg-slate-900/70">
+    <div className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-[0_12px_35px_rgba(15,23,42,0.07)] dark:border-slate-800/60 dark:bg-slate-900/70">
       <div className="mt-1 flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-600 dark:bg-slate-800/60 dark:text-slate-200">
         {icon}
       </div>

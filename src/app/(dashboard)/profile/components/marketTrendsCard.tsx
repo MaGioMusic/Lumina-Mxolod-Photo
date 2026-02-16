@@ -53,7 +53,7 @@ export function MarketTrendsCard({ favorites }: MarketTrendsCardProps) {
   const maxAverage = Math.max(...grouped.map((item) => item.average), 1);
 
   return (
-    <section className="rounded-[32px] border border-slate-100 bg-white p-6 shadow-[0_12px_45px_rgબા(15,23,42,0.07)] dark:border-slate-800/60 dark:bg-slate-900/75 sm:p-7">
+    <section className="rounded-[32px] border border-slate-100 bg-white p-6 shadow-[0_12px_45px_rgba(15,23,42,0.07)] dark:border-slate-800/60 dark:bg-slate-900/75 sm:p-7">
       <header className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{copy.title[safeLanguage]}</h2>

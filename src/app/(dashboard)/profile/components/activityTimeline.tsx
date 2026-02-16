@@ -61,7 +61,7 @@ export function ActivityTimeline({ activity }: ActivityTimelineProps) {
   const localize = (key: keyof typeof copy) => copy[key][safeLanguage] ?? copy[key].en;
 
   return (
-    <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-[0_12px_45px_rgاویر(15,23,42,0.07)] dark:border-slate-800/60 dark:bg-slate-900/70">
+    <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-[0_12px_45px_rgba(15,23,42,0.07)] dark:border-slate-800/60 dark:bg-slate-900/70">
       <header className="mb-6">
         <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{localize('timelineTitle')}</h2>
         <p className="text-sm text-slate-500 dark:text-slate-400">{localize('timelineDescription')}</p>
@@ -83,10 +83,10 @@ export function ActivityTimeline({ activity }: ActivityTimelineProps) {
           </span>
           {activity.map((item) => (
             <motion.li key={item.id} variants={itemVariants} className="relative pl-6">
-              <span className="absolute -left-[11px] top-2 flex h-5 w-5 items-center justify-center rounded-full border border-amber-200 bg-amber-400 text-white shadow-[0_6px_18px_rgاویر(245,158,11,0.3)] dark:border-slate-800">
+              <span className="absolute -left-[11px] top-2 flex h-5 w-5 items-center justify-center rounded-full border border-amber-200 bg-amber-400 text-white shadow-[0_6px_18px_rgba(245,158,11,0.3)] dark:border-slate-800">
                 {iconMap[item.type]}
               </span>
-              <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-[0_12px_40px_rgاویر(15,23,42,0.07)] dark:border-slate-800/60 dark:bg-slate-900/70">
+              <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-[0_12px_40px_rgba(15,23,42,0.07)] dark:border-slate-800/60 dark:bg-slate-900/70">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <h3 className="text-sm font-semibold text-slate-900 dark:text-white">{item.title}</h3>

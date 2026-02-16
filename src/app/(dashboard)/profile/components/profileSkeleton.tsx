@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 export function ProfileSkeleton() {
   return (
     <div className="flex flex-col gap-8 xl:grid xl:grid-cols-[260px_minmax(0,1fr)]">
-      <div className="hidden xl:flex min-w-[200px] flex-col justify-between rounded-[28px] border border-slate-100 bg-white px-4 py-6 shadow-[0_18px_70px_rgба(15,23,42,0.08)] dark:border-slate-800/50 dark:bg-slate-900/70">
+      <div className="hidden xl:flex min-w-[200px] flex-col justify-between rounded-[28px] border border-slate-100 bg-white px-4 py-6 shadow-[0_18px_70px_rgba(15,23,42,0.08)] dark:border-slate-800/50 dark:bg-slate-900/70">
         <Skeleton className="h-8 w-32 rounded-full" />
         <div className="space-y-6">
           {Array.from({ length: 3 }).map((_, groupIdx) => (
@@ -30,7 +30,7 @@ export function ProfileSkeleton() {
       </div>
 
       <div className="space-y-8">
-        <div className="rounded-[42px] border border-slate-100 bg-white p-8 shadow-[0_24px_110px_rgба(15,23,42,0.12)] dark:border-slate-800/60 dark:bg-slate-900/75">
+        <div className="rounded-[42px] border border-slate-100 bg-white p-8 shadow-[0_24px_110px_rgba(15,23,42,0.12)] dark:border-slate-800/60 dark:bg-slate-900/75">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex items-start gap-5">
               <Skeleton className="h-24 w-24 rounded-3xl" />
@@ -82,7 +82,7 @@ export function ProfileSkeleton() {
 
         <div className="grid gap-6 2xl:grid-cols-[minmax(0,1.95fr)_minmax(0,1.05fr)]">
           <div className="space-y-6">
-            <div className="rounded-[36px] border border-slate-100 bg-white p-6 shadow-[0_20px_70px_rgба(15,23,42,0.1)] dark:border-slate-800/60 dark:bg-slate-900/75">
+            <div className="rounded-[36px] border border-slate-100 bg-white p-6 shadow-[0_20px_70px_rgba(15,23,42,0.1)] dark:border-slate-800/60 dark:bg-slate-900/75">
               <Skeleton className="h-6 w-40 rounded-full" />
               <Skeleton className="mt-2 h-4 w-64 rounded-full" />
               <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -92,13 +92,13 @@ export function ProfileSkeleton() {
               </div>
             </div>
 
-            <div className="rounded-[36px] border border-slate-100 bg-white p-6 shadow-[0_18px_65px_rgба(15,23,42,0.1)] dark:border-slate-800/60 dark:bg-slate-900/75">
+            <div className="rounded-[36px] border border-slate-100 bg-white p-6 shadow-[0_18px_65px_rgba(15,23,42,0.1)] dark:border-slate-800/60 dark:bg-slate-900/75">
               <Skeleton className="h-6 w-48 rounded-full" />
               <Skeleton className="mt-2 h-4 w-40 rounded-full" />
               <Skeleton className="mt-6 h-40 rounded-3xl" />
             </div>
 
-            <div className="rounded-[32px] border border-slate-100 bg-white p-6 shadow-[0_16px_60px_rgба(15,23,42,0.1)] dark:border-slate-800/60 dark:bg-slate-900/75">
+            <div className="rounded-[32px] border border-slate-100 bg-white p-6 shadow-[0_16px_60px_rgba(15,23,42,0.1)] dark:border-slate-800/60 dark:bg-slate-900/75">
               <Skeleton className="h-6 w-40 rounded-full" />
               <Skeleton className="mt-2 h-4 w-60 rounded-full" />
               <div className="mt-5 space-y-3">
@@ -121,7 +121,7 @@ export function ProfileSkeleton() {
             <Skeleton className="h-44 rounded-[32px]" />
             <Skeleton className="h-28 rounded-[32px]" />
             <Skeleton className="h-40 rounded-[32px]" />
-            <div className="rounded-[32px] border border-slate-100 bg-white p-6 shadow-[0_16px_60px_rgба(15,23,42,0.1)] dark:border-slate-800/60 dark:bg-slate-900/75">
+            <div className="rounded-[32px] border border-slate-100 bg-white p-6 shadow-[0_16px_60px_rgba(15,23,42,0.1)] dark:border-slate-800/60 dark:bg-slate-900/75">
               <Skeleton className="h-5 w-40 rounded-full" />
               <div className="mt-4 space-y-4">
                 {Array.from({ length: 4 }).map((_, idx) => (

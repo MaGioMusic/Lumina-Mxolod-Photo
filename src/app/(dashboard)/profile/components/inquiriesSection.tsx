@@ -43,7 +43,7 @@ export function InquiriesSection({ inquiries }: InquiriesSectionProps) {
   return (
     <section
       id="inquiries"
-      className="space-y-4 rounded-[32px] border border-slate-100 bg-white p-6 shadow-[0_12px_45px_rgба(15,23,42,0.07)] dark:border-slate-800/60 dark:bg-slate-900/75 sm:p-7"
+      className="space-y-4 rounded-[32px] border border-slate-100 bg-white p-6 shadow-[0_12px_45px_rgba(15,23,42,0.07)] dark:border-slate-800/60 dark:bg-slate-900/75 sm:p-7"
     >
       <header className="space-y-1">
         <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{copy.title[safeLanguage]}</h2>
@@ -62,7 +62,7 @@ export function InquiriesSection({ inquiries }: InquiriesSectionProps) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, ease: 'easeOut' }}
-              className="rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_12px_40px_rgба(15,23,42,0.08)] dark:border-slate-800/60 dark:bg-slate-900/70"
+              className="rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_12px_40px_rgba(15,23,42,0.08)] dark:border-slate-800/60 dark:bg-slate-900/70"
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
