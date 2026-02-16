@@ -12,7 +12,6 @@ interface GlassOrbProps {
 export default function GlassOrb({ analyser, className }: GlassOrbProps) {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef<number | null>(null);
-  const resizeRafRef = useRef<number | null>(null);
   const lastSizeRef = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
 
   const palette = useMemo(() => {
@@ -85,14 +84,10 @@ export default function GlassOrb({ analyser, className }: GlassOrbProps) {
     };
 
     resizeToHost();
-    const ro = new ResizeObserver(() => {
-      if (resizeRafRef.current) cancelAnimationFrame(resizeRafRef.current);
-      resizeRafRef.current = requestAnimationFrame(() => {
-        resizeRafRef.current = null;
-        resizeToHost();
-      });
-    });
-    ro.observe(host);
+    const onWindowResize = () => {
+      resizeToHost();
+    };
+    window.addEventListener('resize', onWindowResize);
 
     const tick = () => {
       rafRef.current = requestAnimationFrame(tick);
@@ -137,9 +132,7 @@ export default function GlassOrb({ analyser, className }: GlassOrbProps) {
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
-      if (resizeRafRef.current) cancelAnimationFrame(resizeRafRef.current);
-      resizeRafRef.current = null;
-      ro.disconnect();
+      window.removeEventListener('resize', onWindowResize);
       try { host.removeChild(renderer.domElement); } catch {}
       geometry.dispose();
       material.dispose();
