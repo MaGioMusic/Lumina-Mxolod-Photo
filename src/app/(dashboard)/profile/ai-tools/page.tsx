@@ -1129,12 +1129,17 @@ function ListingPipelineTab() {
 
   useEffect(() => {
     setPhotos((prev) => {
-      const prevByUrl = new Map(prev.map((p) => [p.url, p]));
-      return uploadedUrls.map((url, idx) => {
-        const existing = prevByUrl.get(url);
-        if (existing) return existing;
+      const prevById = new Map(prev.map((p) => [p.id, p]));
+      const urlToId = new Map(prev.map((p) => [p.url, p.id]));
+      
+      return uploadedUrls.map((url) => {
+        const existingId = urlToId.get(url);
+        if (existingId && prevById.has(existingId)) {
+          return prevById.get(existingId)!;
+        }
+        
         return {
-          id: `pipeline-${idx}-${url}`,
+          id: `photo-${Date.now()}-${Math.random().toString(36).substring(2, 9)}-${url.split('/').pop()?.substring(0, 8) || 'img'}`,
           url,
           room: 'other' as PipelineRoomType,
           enhanced: false,
@@ -1163,8 +1168,15 @@ function ListingPipelineTab() {
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
-  const selectRoom = (room: PipelineRoomType) => {
-    setSelectedIds(photos.filter((p) => p.room === room).map((p) => p.id));
+  const toggleRoomSelection = (room: PipelineRoomType) => {
+    const roomPhotoIds = photos.filter((p) => p.room === room).map((p) => p.id);
+    const allRoomSelected = roomPhotoIds.length > 0 && roomPhotoIds.every((id) => selectedIds.includes(id));
+    
+    if (allRoomSelected) {
+      setSelectedIds((prev) => prev.filter((id) => !roomPhotoIds.includes(id)));
+    } else {
+      setSelectedIds((prev) => [...new Set([...prev, ...roomPhotoIds])]);
+    }
   };
 
   const applyRoomToSelected = () => {
@@ -1183,10 +1195,15 @@ function ListingPipelineTab() {
       toast.error('Select photos first');
       return;
     }
+    const notMarked = photos.filter((p) => selectedIds.includes(p.id) && !p.selectedForListing);
+    if (notMarked.length === 0) {
+      toast.info('Selected photos are already marked for listing');
+      return;
+    }
     setPhotos((prev) =>
       prev.map((p) => (selectedIds.includes(p.id) ? { ...p, selectedForListing: true } : p))
     );
-    toast.success(`${selectedIds.length} photo(s) marked for listing`);
+    toast.success(`${notMarked.length} photo(s) marked for listing`);
   };
 
   const autoSortByFilename = () => {
@@ -1235,13 +1252,19 @@ function ListingPipelineTab() {
         body: JSON.stringify({ photos: selectedPhotos }),
       });
 
-      const data = (await response.json()) as ListingDraftResponse | { error?: { message?: string } };
+      const data = await response.json();
 
-      if (!response.ok || !(data as ListingDraftResponse).draft) {
-        throw new Error((data as { error?: { message?: string } }).error?.message || 'Failed to create listing draft');
+      if (!response.ok) {
+        const errorData = data as { error?: { code?: string; message?: string } };
+        throw new Error(errorData.error?.message || 'Failed to create listing draft');
       }
 
-      const draft = (data as ListingDraftResponse).draft;
+      const draftResponse = data as ListingDraftResponse;
+      if (!draftResponse.draft) {
+        throw new Error('Invalid API response: missing draft object');
+      }
+
+      const { draft } = draftResponse;
       if (typeof window !== 'undefined') {
         window.localStorage.setItem('lumina:listings:draft:last', JSON.stringify(draft));
       }
@@ -1320,6 +1343,11 @@ function ListingPipelineTab() {
               </Button>
             </div>
 
+            {listingReadyCount === 0 && photos.length > 0 && (
+              <p className="mt-2 text-xs text-amber-600">
+                💡 Mark at least one photo for listing to create a draft
+              </p>
+            )}
             <p className="mt-2 text-xs text-muted-foreground">
               Tip: select photos first, then apply bulk room/listing actions in one click.
             </p>
@@ -1334,8 +1362,13 @@ function ListingPipelineTab() {
               <CardTitle className="text-base flex items-center justify-between">
                 <span>{room.label}</span>
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" onClick={() => selectRoom(room.value)} disabled={roomPhotos.length === 0}>
-                    Select room
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => toggleRoomSelection(room.value)} 
+                    disabled={roomPhotos.length === 0}
+                  >
+                    {roomPhotos.length > 0 && roomPhotos.every(p => selectedIds.includes(p.id)) ? 'Deselect room' : 'Select room'}
                   </Button>
                   <Badge variant="secondary">{roomPhotos.length}</Badge>
                 </div>

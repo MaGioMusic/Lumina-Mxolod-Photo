@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       .filter((item) => item.count > 0);
 
     const draft = {
-      id: `draft_${Date.now()}`,
+      id: `draft_${Date.now()}_${crypto.randomUUID()}`,
       createdAt: new Date().toISOString(),
       totalSelected: selected.length,
       totalEnhanced: selected.filter((photo) => photo.enhanced).length,
