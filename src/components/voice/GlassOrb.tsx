@@ -12,6 +12,8 @@ interface GlassOrbProps {
 export default function GlassOrb({ analyser, className }: GlassOrbProps) {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef<number | null>(null);
+  const resizeRafRef = useRef<number | null>(null);
+  const lastSizeRef = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
 
   const palette = useMemo(() => {
     // Lumina palette (tuned to mimic glossy orb look)
@@ -72,13 +74,24 @@ export default function GlassOrb({ analyser, className }: GlassOrbProps) {
     const resizeToHost = () => {
       const w = Math.max(1, host.clientWidth);
       const h = Math.max(1, host.clientHeight);
+
+      const prev = lastSizeRef.current;
+      if (prev.w === w && prev.h === h) return;
+      lastSizeRef.current = { w, h };
+
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
     };
 
     resizeToHost();
-    const ro = new ResizeObserver(() => resizeToHost());
+    const ro = new ResizeObserver(() => {
+      if (resizeRafRef.current) cancelAnimationFrame(resizeRafRef.current);
+      resizeRafRef.current = requestAnimationFrame(() => {
+        resizeRafRef.current = null;
+        resizeToHost();
+      });
+    });
     ro.observe(host);
 
     const tick = () => {
@@ -124,6 +137,8 @@ export default function GlassOrb({ analyser, className }: GlassOrbProps) {
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
+      if (resizeRafRef.current) cancelAnimationFrame(resizeRafRef.current);
+      resizeRafRef.current = null;
       ro.disconnect();
       try { host.removeChild(renderer.domElement); } catch {}
       geometry.dispose();
