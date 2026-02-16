@@ -103,7 +103,7 @@ export default function LeafletMap({
       onBoundsChange({ north: b.getNorth(), south: b.getSouth(), east: b.getEast(), west: b.getWest() });
       hasFitBounds.current = true;
     } catch {}
-  }, [properties?.length]);
+  }, [onBoundsChange, properties]);
 
   const PropertyPin = ({ property }: { property: Property }) => {
     const isHovered = hoveredPropertyId === property.id;
