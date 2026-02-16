@@ -104,13 +104,6 @@ export default function AppliedFiltersChips({ searchQuery, filters, onRemove, on
     <div className="px-4 pb-2 -mt-2">
       <div className="flex flex-wrap gap-2 items-center">
         {chips}
-        <button
-          className="ml-auto text-sm underline text-gray-600 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 rounded"
-          onClick={onClearAll}
-          aria-label="clear all filters"
-        >
-          Clear all
-        </button>
       </div>
       <p aria-live="polite" className="sr-only">Filters changed</p>
     </div>

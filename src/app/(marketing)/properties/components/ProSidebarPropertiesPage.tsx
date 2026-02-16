@@ -228,7 +228,13 @@ const ProSidebarPropertiesPage: React.FC = () => {
       filters.bathrooms.length ||
       filters.area[0] > 0 ||
       filters.area[1] < 10000 ||
-      filters.amenities.length
+      filters.amenities.length ||
+      filters.transactionType !== '' ||
+      filters.constructionStatus !== '' ||
+      filters.floor !== '' ||
+      filters.furniture !== '' ||
+      (filters.dateAdded[0] !== null || filters.dateAdded[1] !== null) ||
+      filters.quality.length
     );
   }, [searchQuery, filters]);
 
@@ -286,14 +292,15 @@ const ProSidebarPropertiesPage: React.FC = () => {
           {/* Compact summary row */}
           <div className="sticky top-16 z-10 px-3 py-2 bg-white/90 dark:bg-[#111111]/95 backdrop-blur border-b border-black/5 dark:border-white/10">
             <div className="flex items-center justify-between gap-2">
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                {visibleCount.toLocaleString()} properties
+              <p className="text-sm text-gray-600 dark:text-gray-300" aria-live="polite" aria-atomic="true">
+                {visibleCount.toLocaleString()} properties{hasActiveFilters ? ' matching your filters' : ''}
               </p>
               {hasActiveFilters && (
                 <button
                   type="button"
                   onClick={handleClearAll}
                   className="text-xs px-3 py-1.5 rounded-full border border-orange-200 text-[#f08336] hover:bg-orange-50 dark:hover:bg-white/5 transition"
+                  aria-label={`Clear all filters. Currently showing ${visibleCount} properties.`}
                 >
                   Clear filters
                 </button>
@@ -302,6 +309,7 @@ const ProSidebarPropertiesPage: React.FC = () => {
           </div>
 
           {/* Applied Filters (compact) */}
+          {/* Sticky position = header(4rem) + summary(2.5rem) = 6.5rem */}
           {hasActiveFilters && (
             <div className="sticky top-[6.5rem] z-10 p-2 bg-white/80 dark:bg-[#111111]/90 backdrop-blur border-b border-black/5 dark:border-white/10 relative">
               <AppliedFiltersChips 
