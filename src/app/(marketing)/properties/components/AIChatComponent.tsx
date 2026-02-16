@@ -41,7 +41,8 @@ export default function AIChatComponent() {
   const router = useRouter();
   const pathname = usePathname();
   const voiceDefaultOn = runtimeFlags.voiceDefaultOn;
-  const isVoiceEnabled = searchParams?.get('voice') === '0' ? false : voiceDefaultOn;
+  const isVoiceFeatureEnabled = runtimeFlags.enableAIVoiceUI;
+  const isVoiceEnabled = isVoiceFeatureEnabled && (searchParams?.get('voice') === '0' ? false : voiceDefaultOn);
   // Function-calling: default from env, URL can disable with ?fc=0
   const fcDefaultOn = runtimeFlags.functionCallingDefaultOn;
   const isFunctionCallingEnabled = searchParams?.get('fc') === '0' ? false : fcDefaultOn;
