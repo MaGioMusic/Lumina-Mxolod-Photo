@@ -22,7 +22,7 @@ const QuickFilterButton: React.FC<{
 }> = ({ icon, label, active = false, onClick }) => (
   <button
     onClick={onClick}
-    className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-200 whitespace-nowrap ${
+    className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-200 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 ${
       active 
         ? 'bg-primary-500 text-white border-primary-500 shadow-md' 
         : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-primary-300 hover:text-primary-600 dark:hover:text-primary-400'
@@ -137,7 +137,7 @@ const SearchHeader: React.FC<SearchHeaderProps> = memo(({
         </div>
 
         {/* Quick Filters Row */}
-        <div className="flex flex-wrap gap-2 overflow-x-auto pb-1">
+        <div className="flex md:flex-wrap gap-2 overflow-x-auto md:overflow-visible pb-1 whitespace-nowrap md:whitespace-normal">
           {quickFilters.map((filter) => (
             <QuickFilterButton
               key={filter.id}
@@ -151,7 +151,7 @@ const SearchHeader: React.FC<SearchHeaderProps> = memo(({
           {/* Show More Filters Button */}
           <button
             onClick={onFiltersToggle}
-            className="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:border-primary-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 whitespace-nowrap"
+            className="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:border-primary-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400"
           >
             <SlidersHorizontal className="w-4 h-4" />
             <span className="text-sm font-medium">მეტი ფილტრი</span>
