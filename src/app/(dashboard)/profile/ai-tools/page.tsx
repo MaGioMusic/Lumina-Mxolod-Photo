@@ -1111,6 +1111,8 @@ const ROOM_OPTIONS: Array<{ value: RoomType; label: string }> = [
 function ListingPipelineTab() {
   const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
   const [photos, setPhotos] = useState<PipelinePhoto[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkRoom, setBulkRoom] = useState<RoomType>('other');
 
   useEffect(() => {
     setPhotos((prev) => {
@@ -1136,8 +1138,42 @@ function ListingPipelineTab() {
     }));
   }, [photos]);
 
+  useEffect(() => {
+    setSelectedIds((prev) => prev.filter((id) => photos.some((p) => p.id === id)));
+  }, [photos]);
+
   const updatePhoto = (id: string, patch: Partial<PipelinePhoto>) => {
     setPhotos((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
+  };
+
+  const toggleSelected = (id: string) => {
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  };
+
+  const selectRoom = (room: RoomType) => {
+    setSelectedIds(photos.filter((p) => p.room === room).map((p) => p.id));
+  };
+
+  const applyRoomToSelected = () => {
+    if (selectedIds.length === 0) {
+      toast.error('Select photos first');
+      return;
+    }
+    setPhotos((prev) =>
+      prev.map((p) => (selectedIds.includes(p.id) ? { ...p, room: bulkRoom } : p))
+    );
+    toast.success(`Assigned ${selectedIds.length} photo(s) to ${ROOM_OPTIONS.find((r) => r.value === bulkRoom)?.label}`);
+  };
+
+  const markSelectedForListing = () => {
+    if (selectedIds.length === 0) {
+      toast.error('Select photos first');
+      return;
+    }
+    setPhotos((prev) =>
+      prev.map((p) => (selectedIds.includes(p.id) ? { ...p, selectedForListing: true } : p))
+    );
+    toast.success(`${selectedIds.length} photo(s) marked for listing`);
   };
 
   const autoSortByFilename = () => {
@@ -1189,7 +1225,7 @@ function ListingPipelineTab() {
             placeholder="Drop many property photos here or click to upload"
           />
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 items-center">
             <Button variant="outline" onClick={autoSortByFilename} disabled={photos.length === 0}>
               <Layers3 className="mr-2 h-4 w-4" />
               Auto-sort rooms
@@ -1197,6 +1233,24 @@ function ListingPipelineTab() {
             <Button variant="outline" onClick={markAllEnhanced} disabled={photos.length === 0}>
               <Sparkles className="mr-2 h-4 w-4" />
               Mark all enhanced
+            </Button>
+
+            <Select value={bulkRoom} onValueChange={(v) => setBulkRoom(v as RoomType)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Bulk room" />
+              </SelectTrigger>
+              <SelectContent>
+                {ROOM_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Button variant="outline" onClick={applyRoomToSelected} disabled={selectedIds.length === 0}>
+              Assign room to selected ({selectedIds.length})
+            </Button>
+            <Button variant="outline" onClick={markSelectedForListing} disabled={selectedIds.length === 0}>
+              Mark selected for listing
             </Button>
             <Button onClick={createDraft} disabled={listingReadyCount === 0}>
               Create Listing Draft ({listingReadyCount})
@@ -1210,8 +1264,13 @@ function ListingPipelineTab() {
           <Card key={room.value}>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center justify-between">
-                {room.label}
-                <Badge variant="secondary">{roomPhotos.length}</Badge>
+                <span>{room.label}</span>
+                <div className="flex items-center gap-2">
+                  <Button variant="ghost" size="sm" onClick={() => selectRoom(room.value)} disabled={roomPhotos.length === 0}>
+                    Select room
+                  </Button>
+                  <Badge variant="secondary">{roomPhotos.length}</Badge>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -1219,47 +1278,72 @@ function ListingPipelineTab() {
                 <p className="text-sm text-muted-foreground">No photos assigned.</p>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-                  {roomPhotos.map((photo) => (
-                    <div key={photo.id} className="rounded-xl border p-3 bg-card/50 space-y-3">
-                      <img src={photo.url} alt="Uploaded property" className="w-full h-40 object-cover rounded-lg" />
-                      <div className="grid grid-cols-2 gap-2">
-                        <Select
-                          value={photo.room}
-                          onValueChange={(value) => updatePhoto(photo.id, { room: value as RoomType })}
-                        >
-                          <SelectTrigger className="col-span-2">
-                            <SelectValue placeholder="Room" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ROOM_OPTIONS.map((opt) => (
-                              <SelectItem key={opt.value} value={opt.value}>
-                                {opt.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                  {roomPhotos.map((photo) => {
+                    const isSelected = selectedIds.includes(photo.id);
+                    return (
+                      <div
+                        key={photo.id}
+                        className={`rounded-xl border p-3 bg-card/50 space-y-3 transition-all duration-200 ${
+                          isSelected ? 'ring-2 ring-primary/40 shadow-md scale-[1.01]' : 'hover:shadow-sm'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => toggleSelected(photo.id)}
+                              className="h-4 w-4 rounded border-border"
+                            />
+                            Select
+                          </label>
+                          <div className="flex items-center gap-1">
+                            {photo.enhanced && <Badge variant="secondary">Enhanced</Badge>}
+                            {photo.selectedForListing && <Badge>Listing</Badge>}
+                          </div>
+                        </div>
 
-                        <Button
-                          type="button"
-                          variant={photo.enhanced ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => updatePhoto(photo.id, { enhanced: !photo.enhanced })}
-                        >
-                          Enhanced
-                        </Button>
-                        <Button
-                          type="button"
-                          variant={photo.selectedForListing ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() =>
-                            updatePhoto(photo.id, { selectedForListing: !photo.selectedForListing })
-                          }
-                        >
-                          Listing
-                        </Button>
+                        <img src={photo.url} alt="Uploaded property" className="w-full h-40 object-cover rounded-lg" />
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <Select
+                            value={photo.room}
+                            onValueChange={(value) => updatePhoto(photo.id, { room: value as RoomType })}
+                          >
+                            <SelectTrigger className="col-span-2">
+                              <SelectValue placeholder="Room" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {ROOM_OPTIONS.map((opt) => (
+                                <SelectItem key={opt.value} value={opt.value}>
+                                  {opt.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+
+                          <Button
+                            type="button"
+                            variant={photo.enhanced ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => updatePhoto(photo.id, { enhanced: !photo.enhanced })}
+                          >
+                            Enhanced
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={photo.selectedForListing ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() =>
+                              updatePhoto(photo.id, { selectedForListing: !photo.selectedForListing })
+                            }
+                          >
+                            Listing
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </CardContent>
