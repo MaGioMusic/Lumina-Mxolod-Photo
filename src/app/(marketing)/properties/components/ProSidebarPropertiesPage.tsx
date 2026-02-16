@@ -260,6 +260,8 @@ const ProSidebarPropertiesPage: React.FC = () => {
     } catch {}
   }, [currentView]);
 
+  const visibleCount = filteredProperties.length;
+
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-[#111111]">
         {/* Sidebar (sticky) */}
@@ -281,9 +283,27 @@ const ProSidebarPropertiesPage: React.FC = () => {
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
+          {/* Compact summary row */}
+          <div className="sticky top-16 z-10 px-3 py-2 bg-white/90 dark:bg-[#111111]/95 backdrop-blur border-b border-black/5 dark:border-white/10">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                {visibleCount.toLocaleString()} properties
+              </p>
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={handleClearAll}
+                  className="text-xs px-3 py-1.5 rounded-full border border-orange-200 text-[#f08336] hover:bg-orange-50 dark:hover:bg-white/5 transition"
+                >
+                  Clear filters
+                </button>
+              )}
+            </div>
+          </div>
+
           {/* Applied Filters (compact) */}
           {hasActiveFilters && (
-            <div className="sticky top-16 z-10 p-2 bg-white/80 dark:bg-[#111111]/90 backdrop-blur border-b border-black/5 dark:border-white/10 relative">
+            <div className="sticky top-[6.5rem] z-10 p-2 bg-white/80 dark:bg-[#111111]/90 backdrop-blur border-b border-black/5 dark:border-white/10 relative">
               <AppliedFiltersChips 
                 searchQuery={searchQuery}
                 filters={filters}
