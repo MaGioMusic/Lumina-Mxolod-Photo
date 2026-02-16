@@ -218,6 +218,20 @@ const ProSidebarPropertiesPage: React.FC = () => {
     });
   }, []);
 
+  const hasActiveFilters = useMemo(() => {
+    return Boolean(
+      searchQuery.trim() ||
+      filters.priceRange[0] > 0 ||
+      filters.priceRange[1] < 1000000 ||
+      filters.propertyTypes.length ||
+      filters.bedrooms.length ||
+      filters.bathrooms.length ||
+      filters.area[0] > 0 ||
+      filters.area[1] < 10000 ||
+      filters.amenities.length
+    );
+  }, [searchQuery, filters]);
+
   // When switching to Map view, reset filters/search and clean URL filter params
   useEffect(() => {
     if (currentView !== 'map') return;
@@ -268,14 +282,16 @@ const ProSidebarPropertiesPage: React.FC = () => {
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
           {/* Applied Filters (compact) */}
-          <div className="sticky top-16 z-10 p-2 bg-white/70 dark:bg-[#111111]/90 backdrop-blur relative">
-            <AppliedFiltersChips 
-              searchQuery={searchQuery}
-              filters={filters}
-              onRemove={handleRemoveChip}
-              onClearAll={handleClearAll}
-            />
-          </div>
+          {hasActiveFilters && (
+            <div className="sticky top-16 z-10 p-2 bg-white/80 dark:bg-[#111111]/90 backdrop-blur border-b border-black/5 dark:border-white/10 relative">
+              <AppliedFiltersChips 
+                searchQuery={searchQuery}
+                filters={filters}
+                onRemove={handleRemoveChip}
+                onClearAll={handleClearAll}
+              />
+            </div>
+          )}
 
           {/* Content - Grid or Map */}
           <div className="flex-1">
