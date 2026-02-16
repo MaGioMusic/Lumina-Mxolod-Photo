@@ -282,34 +282,38 @@ export default function ChatPage() {
   }, [selectedChat]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
   }, [currentMessages.length]);
 
-  useEffect(() => {
-    const wrap = messagesWrapRef.current;
-    if (!wrap) return;
-    const onScroll = () => {
-      const threshold = 120;
-      const nearBottom = wrap.scrollHeight - wrap.scrollTop - wrap.clientHeight < threshold;
-      setShowScrollToBottom(!nearBottom);
-    };
-    onScroll();
-    wrap.addEventListener('scroll', onScroll);
-    return () => wrap.removeEventListener('scroll', onScroll);
-  }, []);
-
-  // Track scroll position to toggle scroll-to-bottom chip
+  // Stable scroll-to-bottom visibility tracking (single listener + guarded state updates)
   useEffect(() => {
     const el = messagesWrapRef.current;
     if (!el) return;
-    const onScroll = () => {
-      const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 48;
-      setShowScrollToBottom(!nearBottom);
+
+    let rafId: number | null = null;
+    const updateChipVisibility = () => {
+      const threshold = 72;
+      const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+      const next = !nearBottom;
+      setShowScrollToBottom((prev) => (prev === next ? prev : next));
     };
-    onScroll();
-    el.addEventListener('scroll', onScroll);
-    return () => el.removeEventListener('scroll', onScroll);
-  }, [selectedChat]);
+
+    const onScroll = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        updateChipVisibility();
+      });
+    };
+
+    updateChipVisibility();
+    el.addEventListener('scroll', onScroll, { passive: true });
+
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      el.removeEventListener('scroll', onScroll);
+    };
+  }, [selectedChat, currentMessages.length]);
 
   // Chat list sorting: pinned first
   const sortedChatUsers = [...chatUsers].sort((a, b) => {
