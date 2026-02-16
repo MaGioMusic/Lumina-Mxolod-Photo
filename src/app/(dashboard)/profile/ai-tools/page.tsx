@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { isAiToolsEnabled } from '@/lib/feature-flags';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -29,6 +29,8 @@ import {
   Home,
   Check,
   ArrowLeftRight,
+  Images,
+  Layers3,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageDropZone } from '@/components/ImageDropZone';
@@ -1087,6 +1089,187 @@ function StagingTab() {
   );
 }
 
+type RoomType = 'living-room' | 'bedroom' | 'kitchen' | 'bathroom' | 'exterior' | 'other';
+
+type PipelinePhoto = {
+  id: string;
+  url: string;
+  room: RoomType;
+  enhanced: boolean;
+  selectedForListing: boolean;
+};
+
+const ROOM_OPTIONS: Array<{ value: RoomType; label: string }> = [
+  { value: 'living-room', label: 'Living Room' },
+  { value: 'bedroom', label: 'Bedroom' },
+  { value: 'kitchen', label: 'Kitchen' },
+  { value: 'bathroom', label: 'Bathroom' },
+  { value: 'exterior', label: 'Exterior' },
+  { value: 'other', label: 'Other' },
+];
+
+function ListingPipelineTab() {
+  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
+  const [photos, setPhotos] = useState<PipelinePhoto[]>([]);
+
+  useEffect(() => {
+    setPhotos((prev) => {
+      const prevByUrl = new Map(prev.map((p) => [p.url, p]));
+      return uploadedUrls.map((url, idx) => {
+        const existing = prevByUrl.get(url);
+        if (existing) return existing;
+        return {
+          id: `pipeline-${idx}-${url}`,
+          url,
+          room: 'other' as RoomType,
+          enhanced: false,
+          selectedForListing: false,
+        };
+      });
+    });
+  }, [uploadedUrls]);
+
+  const grouped = useMemo(() => {
+    return ROOM_OPTIONS.map((room) => ({
+      room,
+      photos: photos.filter((p) => p.room === room.value),
+    }));
+  }, [photos]);
+
+  const updatePhoto = (id: string, patch: Partial<PipelinePhoto>) => {
+    setPhotos((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
+  };
+
+  const autoSortByFilename = () => {
+    const inferRoom = (url: string): RoomType => {
+      const name = url.toLowerCase();
+      if (name.includes('bed')) return 'bedroom';
+      if (name.includes('kitchen')) return 'kitchen';
+      if (name.includes('bath')) return 'bathroom';
+      if (name.includes('living') || name.includes('hall')) return 'living-room';
+      if (name.includes('ext') || name.includes('outdoor') || name.includes('facade')) return 'exterior';
+      return 'other';
+    };
+    setPhotos((prev) => prev.map((p) => ({ ...p, room: inferRoom(p.url) })));
+    toast.success('Photos auto-sorted by filename hints');
+  };
+
+  const markAllEnhanced = () => {
+    setPhotos((prev) => prev.map((p) => ({ ...p, enhanced: true })));
+    toast.success('All photos marked as enhanced');
+  };
+
+  const listingReadyCount = photos.filter((p) => p.selectedForListing).length;
+
+  const createDraft = () => {
+    if (listingReadyCount === 0) {
+      toast.error('Select at least one photo for listing');
+      return;
+    }
+    toast.success(`Listing draft prepared with ${listingReadyCount} photos`);
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Images className="h-5 w-5 text-primary" />
+            Listing Photo Pipeline
+          </CardTitle>
+          <CardDescription>
+            Upload in bulk, organize by room, mark enhanced photos, and prepare listing-ready media.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <MultiImageDropZone
+            value={uploadedUrls}
+            onChange={setUploadedUrls}
+            maxImages={40}
+            placeholder="Drop many property photos here or click to upload"
+          />
+
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" onClick={autoSortByFilename} disabled={photos.length === 0}>
+              <Layers3 className="mr-2 h-4 w-4" />
+              Auto-sort rooms
+            </Button>
+            <Button variant="outline" onClick={markAllEnhanced} disabled={photos.length === 0}>
+              <Sparkles className="mr-2 h-4 w-4" />
+              Mark all enhanced
+            </Button>
+            <Button onClick={createDraft} disabled={listingReadyCount === 0}>
+              Create Listing Draft ({listingReadyCount})
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid gap-4">
+        {grouped.map(({ room, photos: roomPhotos }) => (
+          <Card key={room.value}>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center justify-between">
+                {room.label}
+                <Badge variant="secondary">{roomPhotos.length}</Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {roomPhotos.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No photos assigned.</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                  {roomPhotos.map((photo) => (
+                    <div key={photo.id} className="rounded-xl border p-3 bg-card/50 space-y-3">
+                      <img src={photo.url} alt="Uploaded property" className="w-full h-40 object-cover rounded-lg" />
+                      <div className="grid grid-cols-2 gap-2">
+                        <Select
+                          value={photo.room}
+                          onValueChange={(value) => updatePhoto(photo.id, { room: value as RoomType })}
+                        >
+                          <SelectTrigger className="col-span-2">
+                            <SelectValue placeholder="Room" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {ROOM_OPTIONS.map((opt) => (
+                              <SelectItem key={opt.value} value={opt.value}>
+                                {opt.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        <Button
+                          type="button"
+                          variant={photo.enhanced ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => updatePhoto(photo.id, { enhanced: !photo.enhanced })}
+                        >
+                          Enhanced
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={photo.selectedForListing ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() =>
+                            updatePhoto(photo.id, { selectedForListing: !photo.selectedForListing })
+                          }
+                        >
+                          Listing
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Main Page ─── */
 
 export default function AIToolsPage() {
@@ -1114,7 +1297,7 @@ export default function AIToolsPage() {
 
       {/* Tabs */}
       <Tabs defaultValue="generate" className="w-full">
-        <TabsList className="grid w-full max-w-lg grid-cols-3">
+        <TabsList className="grid w-full max-w-2xl grid-cols-4">
           <TabsTrigger value="generate" className="flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Generate</span>
@@ -1126,6 +1309,10 @@ export default function AIToolsPage() {
           <TabsTrigger value="staging" className="flex items-center gap-1.5">
             <Sofa className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Staging</span>
+          </TabsTrigger>
+          <TabsTrigger value="pipeline" className="flex items-center gap-1.5">
+            <Images className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Pipeline</span>
           </TabsTrigger>
         </TabsList>
 
@@ -1178,6 +1365,10 @@ export default function AIToolsPage() {
               <StagingTab />
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="pipeline" className="mt-6">
+          <ListingPipelineTab />
         </TabsContent>
       </Tabs>
     </div>
