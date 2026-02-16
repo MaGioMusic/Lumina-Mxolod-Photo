@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { isAgentsSurfacesEnabled } from '@/lib/feature-flags';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -402,6 +404,17 @@ export default function AgentsPage() {
   };
 
   const { isStale, touch } = useStaleFlag('agents_filters_updated_at', 1000 * 60 * 60 * 24 * 7);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAgentsSurfacesEnabled()) {
+      router.replace('/profile');
+    }
+  }, [router]);
+
+  if (!isAgentsSurfacesEnabled()) {
+    return null;
+  }
 
   if (activeTab === 'analytics') {
     return (

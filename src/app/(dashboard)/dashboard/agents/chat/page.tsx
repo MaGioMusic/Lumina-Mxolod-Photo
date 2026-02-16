@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { isAgentsSurfacesEnabled } from '@/lib/feature-flags';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { FiSearch, FiPhone, FiPaperclip, FiImage, FiSend, FiUser, FiMapPin, FiMail, FiBell, FiCalendar, FiShare2, FiX, FiMessageCircle } from 'react-icons/fi';
@@ -35,6 +36,7 @@ interface Transaction {
 }
 
 export default function ChatPage() {
+  const router = useRouter();
   const { theme } = useTheme();
   const { t } = useLanguage();
   const searchParams = useSearchParams();
@@ -362,6 +364,16 @@ export default function ChatPage() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!isAgentsSurfacesEnabled()) {
+      router.replace('/profile');
+    }
+  }, [router]);
+
+  if (!isAgentsSurfacesEnabled()) {
+    return null;
+  }
 
   return (
     <>
