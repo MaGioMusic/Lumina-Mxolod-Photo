@@ -237,7 +237,7 @@ export default function PropertiesGoogleMap({
     })();
 
     return () => cleanup();
-  }, [apiKey, center, mapId, mapType, updateBounds]);
+  }, [apiKey, center, clearAiMarkers, mapId, mapType, updateBounds]);
 
   useEffect(() => {
     const map = mapRef.current;
