@@ -1089,17 +1089,29 @@ function StagingTab() {
   );
 }
 
-type RoomType = 'living-room' | 'bedroom' | 'kitchen' | 'bathroom' | 'exterior' | 'other';
+type PipelineRoomType = 'living-room' | 'bedroom' | 'kitchen' | 'bathroom' | 'exterior' | 'other';
 
 type PipelinePhoto = {
   id: string;
   url: string;
-  room: RoomType;
+  room: PipelineRoomType;
   enhanced: boolean;
   selectedForListing: boolean;
 };
 
-const ROOM_OPTIONS: Array<{ value: RoomType; label: string }> = [
+type ListingDraftResponse = {
+  draft: {
+    id: string;
+    createdAt: string;
+    totalSelected: number;
+    totalEnhanced: number;
+    coverImageUrl: string;
+    roomBreakdown: Array<{ room: PipelineRoomType; count: number }>;
+    photos: Array<{ id: string; url: string; room: PipelineRoomType; enhanced: boolean }>;
+  };
+};
+
+const ROOM_OPTIONS: Array<{ value: PipelineRoomType; label: string }> = [
   { value: 'living-room', label: 'Living Room' },
   { value: 'bedroom', label: 'Bedroom' },
   { value: 'kitchen', label: 'Kitchen' },
@@ -1112,7 +1124,8 @@ function ListingPipelineTab() {
   const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
   const [photos, setPhotos] = useState<PipelinePhoto[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [bulkRoom, setBulkRoom] = useState<RoomType>('other');
+  const [bulkRoom, setBulkRoom] = useState<PipelineRoomType>('other');
+  const [isCreatingDraft, setIsCreatingDraft] = useState(false);
 
   useEffect(() => {
     setPhotos((prev) => {
@@ -1123,7 +1136,7 @@ function ListingPipelineTab() {
         return {
           id: `pipeline-${idx}-${url}`,
           url,
-          room: 'other' as RoomType,
+          room: 'other' as PipelineRoomType,
           enhanced: false,
           selectedForListing: false,
         };
@@ -1150,7 +1163,7 @@ function ListingPipelineTab() {
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
-  const selectRoom = (room: RoomType) => {
+  const selectRoom = (room: PipelineRoomType) => {
     setSelectedIds(photos.filter((p) => p.room === room).map((p) => p.id));
   };
 
@@ -1177,7 +1190,7 @@ function ListingPipelineTab() {
   };
 
   const autoSortByFilename = () => {
-    const inferRoom = (url: string): RoomType => {
+    const inferRoom = (url: string): PipelineRoomType => {
       const name = url.toLowerCase();
       if (name.includes('bed')) return 'bedroom';
       if (name.includes('kitchen')) return 'kitchen';
@@ -1197,12 +1210,39 @@ function ListingPipelineTab() {
 
   const listingReadyCount = photos.filter((p) => p.selectedForListing).length;
 
-  const createDraft = () => {
+  const createDraft = async () => {
     if (listingReadyCount === 0) {
       toast.error('Select at least one photo for listing');
       return;
     }
-    toast.success(`Listing draft prepared with ${listingReadyCount} photos`);
+
+    const selectedPhotos = photos.filter((p) => p.selectedForListing);
+
+    setIsCreatingDraft(true);
+    try {
+      const response = await fetch('/api/listings/draft', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photos: selectedPhotos }),
+      });
+
+      const data = (await response.json()) as ListingDraftResponse | { error?: { message?: string } };
+
+      if (!response.ok || !(data as ListingDraftResponse).draft) {
+        throw new Error((data as { error?: { message?: string } }).error?.message || 'Failed to create listing draft');
+      }
+
+      const draft = (data as ListingDraftResponse).draft;
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('lumina:listings:draft:last', JSON.stringify(draft));
+      }
+
+      toast.success(`Listing draft created (${draft.totalSelected} photos)`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to create listing draft');
+    } finally {
+      setIsCreatingDraft(false);
+    }
   };
 
   return (
@@ -1225,36 +1265,48 @@ function ListingPipelineTab() {
             placeholder="Drop many property photos here or click to upload"
           />
 
-          <div className="flex flex-wrap gap-2 items-center">
-            <Button variant="outline" onClick={autoSortByFilename} disabled={photos.length === 0}>
-              <Layers3 className="mr-2 h-4 w-4" />
-              Auto-sort rooms
-            </Button>
-            <Button variant="outline" onClick={markAllEnhanced} disabled={photos.length === 0}>
-              <Sparkles className="mr-2 h-4 w-4" />
-              Mark all enhanced
-            </Button>
+          <div className="sticky top-2 z-10 rounded-xl border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 p-3 md:p-4 shadow-sm">
+            <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+              <Badge variant="secondary">Uploaded: {photos.length}</Badge>
+              <Badge variant="secondary">Selected: {selectedIds.length}</Badge>
+              <Badge variant="secondary">Listing-ready: {listingReadyCount}</Badge>
+            </div>
 
-            <Select value={bulkRoom} onValueChange={(v) => setBulkRoom(v as RoomType)}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Bulk room" />
-              </SelectTrigger>
-              <SelectContent>
-                {ROOM_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex flex-wrap gap-2 items-center">
+              <Button variant="outline" onClick={autoSortByFilename} disabled={photos.length === 0}>
+                <Layers3 className="mr-2 h-4 w-4" />
+                Auto-sort rooms
+              </Button>
+              <Button variant="outline" onClick={markAllEnhanced} disabled={photos.length === 0}>
+                <Sparkles className="mr-2 h-4 w-4" />
+                Mark all enhanced
+              </Button>
 
-            <Button variant="outline" onClick={applyRoomToSelected} disabled={selectedIds.length === 0}>
-              Assign room to selected ({selectedIds.length})
-            </Button>
-            <Button variant="outline" onClick={markSelectedForListing} disabled={selectedIds.length === 0}>
-              Mark selected for listing
-            </Button>
-            <Button onClick={createDraft} disabled={listingReadyCount === 0}>
-              Create Listing Draft ({listingReadyCount})
-            </Button>
+              <Select value={bulkRoom} onValueChange={(v) => setBulkRoom(v as PipelineRoomType)}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Bulk room" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ROOM_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Button variant="outline" onClick={applyRoomToSelected} disabled={selectedIds.length === 0}>
+                Assign room to selected ({selectedIds.length})
+              </Button>
+              <Button variant="outline" onClick={markSelectedForListing} disabled={selectedIds.length === 0}>
+                Mark selected for listing
+              </Button>
+              <Button onClick={createDraft} disabled={listingReadyCount === 0 || isCreatingDraft}>
+                {isCreatingDraft ? (
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Creating draft...</>
+                ) : (
+                  <>Create Listing Draft ({listingReadyCount})</>
+                )}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -1308,7 +1360,7 @@ function ListingPipelineTab() {
                         <div className="grid grid-cols-2 gap-2">
                           <Select
                             value={photo.room}
-                            onValueChange={(value) => updatePhoto(photo.id, { room: value as RoomType })}
+                            onValueChange={(value) => updatePhoto(photo.id, { room: value as PipelineRoomType })}
                           >
                             <SelectTrigger className="col-span-2">
                               <SelectValue placeholder="Room" />
