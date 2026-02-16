@@ -372,16 +372,13 @@ export default function ChatPage() {
     };
   }, []);
 
-<<<<<<< HEAD
-  // Early return if feature is disabled
-=======
   useEffect(() => {
     if (!isAgentsSurfacesEnabled()) {
       router.replace('/profile');
     }
   }, [router]);
 
->>>>>>> 9288512ad5a5bcefad005dba0334fd63f338d966
+  // Early return if feature is disabled
   if (!isAgentsSurfacesEnabled()) {
     return null;
   }
