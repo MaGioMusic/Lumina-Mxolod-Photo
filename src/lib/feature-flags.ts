@@ -1,6 +1,6 @@
 export const featureFlags = {
   agentsSurfacesEnabled: false,
-  aiToolsEnabled: false,
+  aiToolsEnabled: true,
 } as const;
 
 export const isAgentsSurfacesEnabled = () => featureFlags.agentsSurfacesEnabled;
