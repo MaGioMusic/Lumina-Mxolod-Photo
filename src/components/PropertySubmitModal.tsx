@@ -62,11 +62,14 @@ export default function PropertySubmitModal({ isOpen, onClose }: PropertySubmitM
   useEffect(() => {
     if (!isOpen) {
       // cleanup previews and reset form when closing
-      images.forEach((img) => URL.revokeObjectURL(img.url));
-      setImages([]);
+      setImages((prev) => {
+        if (prev.length === 0) return prev;
+        prev.forEach((img) => URL.revokeObjectURL(img.url));
+        return [];
+      });
       reset();
     }
-  }, [isOpen, images, reset]);
+  }, [isOpen, reset]);
 
   useEffect(() => {
     return () => {
