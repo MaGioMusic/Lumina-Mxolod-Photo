@@ -9,6 +9,7 @@ import {
   SettingsIcon,
   SparklesIcon,
 } from "lucide-react"
+import { isAiToolsEnabled } from "@/lib/feature-flags"
 
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
@@ -35,11 +36,15 @@ const data = {
       url: "/profile",
       icon: LayoutDashboardIcon,
     },
-    {
-      title: "AI Tools",
-      url: "/profile/ai-tools",
-      icon: SparklesIcon,
-    },
+    ...(isAiToolsEnabled()
+      ? [
+          {
+            title: "AI Tools",
+            url: "/profile/ai-tools",
+            icon: SparklesIcon,
+          },
+        ]
+      : []),
     {
       title: "Properties",
       url: "/properties",

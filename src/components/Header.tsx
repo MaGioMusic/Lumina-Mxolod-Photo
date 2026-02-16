@@ -17,6 +17,7 @@ import IOSToggle from '@/app/(marketing)/properties/components/IOSToggle';
 import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
 import LoginModal from '@/components/LoginModal';
 import PropertySubmitModal from '@/components/PropertySubmitModal';
+import { isAgentsSurfacesEnabled } from '@/lib/feature-flags';
 
 // Type definitions for navigation items
 interface NavItem {
@@ -79,8 +80,8 @@ export default function Header() {
     if (isAuthenticated) {
       // Add favorites for all authenticated users
       baseItems.splice(1, 0, { name: t('favorites'), icon: Heart, action: 'favorites' });
-      // Add agent quick links for agent/admin
-      if (user?.role === 'agent' || user?.role === 'admin') {
+      // Add agent quick links only when agents surfaces are enabled
+      if (isAgentsSurfacesEnabled() && (user?.role === 'agent' || user?.role === 'admin')) {
         baseItems.splice(1, 0, { name: t('agentDashboard'), icon: ChartLine, action: 'agentDashboard' });
         baseItems.splice(1, 0, { name: 'Agent Chat', icon: EnvelopeSimple, action: 'agentChat' });
       }
@@ -129,7 +130,9 @@ export default function Header() {
         router.push('/profile');
         break;
       case 'agentChat':
-        router.push('/agents/chat');
+        if (isAgentsSurfacesEnabled()) {
+          router.push('/agents/chat');
+        }
         break;
       case 'profile':
         router.push('/profile');

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Newsletter from './Newsletter';
+import { isAgentsSurfacesEnabled } from '@/lib/feature-flags';
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -13,16 +14,16 @@ export default function Footer() {
   const quickLinks = [
     { key: 'home', href: '/' },
     { key: 'properties', href: '/properties' },
-    { key: 'agents', href: '/agents' },
+    ...(isAgentsSurfacesEnabled() ? [{ key: 'agents', href: '/agents' }] : []),
     { key: 'about', href: '/about' },
     { key: 'contact', href: '/contact' }
   ];
 
   const services = [
     { key: 'buyProperty', href: '/properties?type=sale' },
-    { key: 'sellProperty', href: '/agents' },
+    { key: 'sellProperty', href: isAgentsSurfacesEnabled() ? '/agents' : '/contact' },
     { key: 'rentProperty', href: '/properties?type=rent' },
-    { key: 'propertyManagement', href: '/agents' }
+    { key: 'propertyManagement', href: isAgentsSurfacesEnabled() ? '/agents' : '/contact' }
   ];
 
   const socialLinks = [
