@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { isAgentsSurfacesEnabled } from '@/lib/feature-flags';
 import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
@@ -128,9 +130,20 @@ const AGENTS: Agent[] = [
 ];
 
 export default function AgentsPage() {
+  const router = useRouter();
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>('all');
+
+  useEffect(() => {
+    if (!isAgentsSurfacesEnabled()) {
+      router.replace('/properties');
+    }
+  }, [router]);
+
+  if (!isAgentsSurfacesEnabled()) {
+    return null;
+  }
 
   const specialties = ['all', ...new Set(AGENTS.flatMap(a => a.specialties))];
 

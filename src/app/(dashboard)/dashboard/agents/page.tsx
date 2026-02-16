@@ -64,7 +64,6 @@ export default function AgentsPage() {
   const { theme } = useTheme();
   const { /* t */ } = useLanguage();
   const searchParams = useSearchParams();
-  // const router = useRouter();
   
   const activeTab = searchParams?.get('tab') || 'dashboard';
   const [dateMenuOpen, setDateMenuOpen] = useState(false);
