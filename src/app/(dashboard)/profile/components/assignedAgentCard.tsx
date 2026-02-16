@@ -155,7 +155,8 @@ export default function AssignedAgentCard({ agent }: AssignedAgentCardProps) {
             <button
               type="button"
               onClick={openChat}
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-amber-300 hover:text-amber-600 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200"
+              aria-label="Send message to agent"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-amber-300 hover:text-amber-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 focus-visible:ring-offset-2 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200"
             >
               <EnvelopeSimple size={14} weight="bold" />
               Message

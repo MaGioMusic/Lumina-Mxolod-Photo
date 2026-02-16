@@ -87,7 +87,7 @@ export function ProfileSideCard({ user, onEditProfile }: ProfileSideCardProps) {
       {/* Actions */}
       <button
         onClick={onEditProfile}
-        className="group flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-2.5 text-sm font-semibold text-white transition-all hover:bg-slate-800 hover:shadow-lg active:scale-95 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
+        className="group flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-2.5 text-sm font-semibold text-white transition-all hover:bg-slate-800 hover:shadow-lg active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 focus-visible:ring-offset-2 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
       >
         <PencilSimple size={16} weight="bold" />
         <span>Edit Profile</span>

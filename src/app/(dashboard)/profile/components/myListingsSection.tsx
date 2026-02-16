@@ -58,7 +58,8 @@ export function MyListingsSection({ listings }: MyListingsSectionProps) {
           </span>
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-500 shadow-sm transition hover:border-slate-300 hover:text-slate-700 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-300"
+            aria-label={safeLanguage === 'ru' ? 'Фильтр объектов' : safeLanguage === 'en' ? 'Filter listings' : 'ფილტრი'}
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-500 shadow-sm transition hover:border-slate-300 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 focus-visible:ring-offset-2 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-300"
           >
             <DotsThreeOutline size={16} weight="bold" />
             {copy.filter[safeLanguage]}

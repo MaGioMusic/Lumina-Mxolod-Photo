@@ -109,14 +109,14 @@ export default function EditProfileModal({ open, onClose, initial, onSave }: Edi
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200"
+              className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 focus-visible:ring-offset-2 dark:bg-slate-800 dark:text-slate-200"
               disabled={isSubmitting}
             >
               გაუქმება
             </button>
             <button
               type="submit"
-              className="rounded-lg bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:brightness-105 disabled:opacity-70"
+              className="rounded-lg bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 focus-visible:ring-offset-2 disabled:opacity-70"
               disabled={isSubmitting}
             >
               შენახვა

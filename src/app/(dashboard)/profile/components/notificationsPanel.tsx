@@ -54,7 +54,7 @@ export function NotificationsPanel({ notifications }: { notifications: ProfileNo
         )}
       </div>
       
-      <button className="mt-auto pt-4 text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors w-full text-center border-t border-slate-100 dark:border-slate-800">
+      <button className="mt-auto pt-4 text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors w-full text-center border-t border-slate-100 dark:border-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 focus-visible:ring-offset-2">
         View all activity
       </button>
     </section>

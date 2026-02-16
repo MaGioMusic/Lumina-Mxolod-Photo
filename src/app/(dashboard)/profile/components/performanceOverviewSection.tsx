@@ -63,7 +63,10 @@ export function PerformanceOverviewSection({
           <h2 className="text-lg font-bold text-slate-900 dark:text-white">{copy.title[safeLanguage]}</h2>
           <p className="text-sm text-slate-500 dark:text-slate-400">{copy.subtitle[safeLanguage]}</p>
         </div>
-        <button className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-400 transition-colors hover:bg-white hover:text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700">
+        <button 
+          aria-label={safeLanguage === 'ru' ? 'Показать детали' : safeLanguage === 'en' ? 'View details' : 'დეტალები'}
+          className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-400 transition-colors hover:bg-white hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 focus-visible:ring-offset-2 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700"
+        >
            <ArrowRight size={14} weight="bold" />
         </button>
       </header>
