@@ -66,8 +66,7 @@ export default function PropertySubmitModal({ isOpen, onClose }: PropertySubmitM
       setImages([]);
       reset();
     }
-    // Intentionally exclude `images` to avoid re-running after setImages([])
-  }, [isOpen, reset]);
+  }, [isOpen, images, reset]);
 
   useEffect(() => {
     return () => {

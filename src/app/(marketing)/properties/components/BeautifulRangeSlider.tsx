@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface BeautifulRangeSliderProps {
@@ -47,7 +47,7 @@ const BeautifulRangeSlider: React.FC<BeautifulRangeSliderProps> = ({
     setIsDragging(type);
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
+  const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging || !sliderRef.current) return;
 
     const rect = sliderRef.current.getBoundingClientRect();
@@ -59,11 +59,11 @@ const BeautifulRangeSlider: React.FC<BeautifulRangeSliderProps> = ({
     } else {
       onChange([value[0], Math.max(newValue, value[0] + step)]);
     }
-  };
+  }, [isDragging, max, min, onChange, step, value]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(null);
-  };
+  }, []);
 
   useEffect(() => {
     if (isDragging) {
@@ -74,7 +74,7 @@ const BeautifulRangeSlider: React.FC<BeautifulRangeSliderProps> = ({
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging, value, min, max, step]);
+  }, [isDragging, handleMouseMove, handleMouseUp]);
 
   const handleInputChange = (type: 'min' | 'max', inputValue: string) => {
     const newValue = parseInt(inputValue) || 0;
