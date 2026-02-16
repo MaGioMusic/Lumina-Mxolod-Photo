@@ -270,12 +270,12 @@ const ProSidebarPropertiesPage: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-[#111111]">
-        {/* Sidebar (sticky) */}
-        <div className="flex-shrink-0 bg-white dark:bg-[#111111]">
-          <div
-            className="sticky top-16 h-[calc(100vh-4rem)] relative group overflow-y-auto overflow-x-hidden pr-2 bg-white dark:bg-[#111111]"
-            style={{ scrollbarGutter: 'stable' }}
-          >
+      {/* Sidebar (sticky) */}
+      <div className="flex-shrink-0 bg-white dark:bg-[#111111]">
+        <div
+          className="sticky top-20 h-[calc(100vh-5rem)] relative group overflow-y-auto overflow-x-hidden pr-2 bg-white dark:bg-[#111111]"
+          style={{ scrollbarGutter: 'stable' }}
+        >
             <ProSidebarFilter
               filters={filters}
               onFiltersChange={handleFiltersChange}
@@ -287,10 +287,10 @@ const ProSidebarPropertiesPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1 flex flex-col">
-          {/* Compact summary row */}
-          <div className="sticky top-16 z-20 px-3 py-2 bg-white/90 dark:bg-[#111111]/95 backdrop-blur border-b border-black/5 dark:border-white/10">
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Compact summary row */}
+        <div className="sticky top-20 z-20 px-3 py-2 bg-white/90 dark:bg-[#111111]/95 backdrop-blur border-b border-black/5 dark:border-white/10">
             <div className="flex items-center justify-between gap-2">
               <p className="text-sm text-gray-600 dark:text-gray-300" aria-live="polite" aria-atomic="true">
                 {visibleCount.toLocaleString()} properties{hasActiveFilters ? ' matching your filters' : ''}
@@ -308,10 +308,10 @@ const ProSidebarPropertiesPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Applied Filters (compact) */}
-          {/* Sticky position = header(4rem) + summary(2.5rem) = 6.5rem */}
-          {hasActiveFilters && (
-            <div className="relative md:sticky md:top-[6.5rem] z-10 p-2 bg-white/80 dark:bg-[#111111]/90 backdrop-blur border-b border-black/5 dark:border-white/10">
+        {/* Applied Filters (compact) */}
+        {/* Sticky position = header(5rem) + summary(2.5rem) = 7.5rem */}
+        {hasActiveFilters && (
+          <div className="sticky top-[7.5rem] md:top-[7.5rem] z-10 p-2 bg-white/80 dark:bg-[#111111]/90 backdrop-blur border-b border-black/5 dark:border-white/10">
               <AppliedFiltersChips 
                 searchQuery={searchQuery}
                 filters={filters}

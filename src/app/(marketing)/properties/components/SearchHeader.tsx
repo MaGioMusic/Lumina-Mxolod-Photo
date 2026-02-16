@@ -136,8 +136,9 @@ const SearchHeader: React.FC<SearchHeaderProps> = memo(({
           </div>
         </div>
 
-        {/* Quick Filters Row */}
-        <div className="flex md:flex-wrap gap-2 overflow-x-auto md:overflow-visible pb-1 whitespace-nowrap md:whitespace-normal">
+      {/* Quick Filters Row */}
+      <div className="relative">
+        <div className="flex md:flex-wrap gap-2 overflow-x-auto md:overflow-visible pb-1 whitespace-nowrap md:whitespace-normal scrollbar-hide">
           {quickFilters.map((filter) => (
             <QuickFilterButton
               key={filter.id}
@@ -157,6 +158,9 @@ const SearchHeader: React.FC<SearchHeaderProps> = memo(({
             <span className="text-sm font-medium">მეტი ფილტრი</span>
           </button>
         </div>
+        {/* Scroll fade indicator for mobile */}
+        <div className="md:hidden absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white dark:from-gray-900 to-transparent pointer-events-none" />
+      </div>
 
         {/* Active Filters Summary */}
         {activeQuickFilters.length > 0 && (
