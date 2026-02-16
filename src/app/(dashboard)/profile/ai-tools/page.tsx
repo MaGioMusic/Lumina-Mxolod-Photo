@@ -1209,6 +1209,15 @@ function ListingPipelineTab() {
   };
 
   const listingReadyCount = photos.filter((p) => p.selectedForListing).length;
+  const allSelected = photos.length > 0 && selectedIds.length === photos.length;
+
+  const toggleSelectAll = () => {
+    if (allSelected) {
+      setSelectedIds([]);
+      return;
+    }
+    setSelectedIds(photos.map((p) => p.id));
+  };
 
   const createDraft = async () => {
     if (listingReadyCount === 0) {
@@ -1273,6 +1282,9 @@ function ListingPipelineTab() {
             </div>
 
             <div className="flex flex-wrap gap-2 items-center">
+              <Button variant="outline" onClick={toggleSelectAll} disabled={photos.length === 0}>
+                {allSelected ? 'Clear selection' : 'Select all'}
+              </Button>
               <Button variant="outline" onClick={autoSortByFilename} disabled={photos.length === 0}>
                 <Layers3 className="mr-2 h-4 w-4" />
                 Auto-sort rooms
@@ -1307,6 +1319,10 @@ function ListingPipelineTab() {
                 )}
               </Button>
             </div>
+
+            <p className="mt-2 text-xs text-muted-foreground">
+              Tip: select photos first, then apply bulk room/listing actions in one click.
+            </p>
           </div>
         </CardContent>
       </Card>
