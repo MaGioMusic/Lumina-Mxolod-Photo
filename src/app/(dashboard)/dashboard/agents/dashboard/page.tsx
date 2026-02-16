@@ -5,20 +5,21 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useRouter } from 'next/navigation';
 import { Users, ChartLine, TrendUp, UserCheck } from '@phosphor-icons/react';
 import { useEffect } from 'react';
+import { isAgentsSurfacesEnabled } from '@/lib/feature-flags';
 
 export default function DashboardPage() {
   const { user, isAuthenticated } = useAuth();
   const { t } = useLanguage();
   const router = useRouter();
 
-  // Redirect if not authenticated or not an agent
+  // Redirect if feature disabled or not authenticated or not an agent
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== 'agent') {
+    if (!isAgentsSurfacesEnabled() || !isAuthenticated || user?.role !== 'agent') {
       router.push('/');
     }
   }, [isAuthenticated, user, router]);
 
-  if (!isAuthenticated || user?.role !== 'agent') {
+  if (!isAgentsSurfacesEnabled() || !isAuthenticated || user?.role !== 'agent') {
     return null;
   }
 

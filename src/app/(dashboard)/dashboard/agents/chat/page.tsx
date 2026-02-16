@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { FiSearch, FiPhone, FiPaperclip, FiImage, FiSend, FiUser, FiMapPin, FiMail, FiBell, FiCalendar, FiShare2, FiX, FiMessageCircle } from 'react-icons/fi';
 import { motion, MotionConfig } from 'framer-motion';
+import { isAgentsSurfacesEnabled } from '@/lib/feature-flags';
 
 interface ChatUser {
   id: string;
@@ -37,7 +38,15 @@ interface Transaction {
 export default function ChatPage() {
   const { theme } = useTheme();
   const { t } = useLanguage();
+  const router = useRouter();
   const searchParams = useSearchParams();
+
+  // Redirect if agents surfaces are disabled
+  useEffect(() => {
+    if (!isAgentsSurfacesEnabled()) {
+      router.replace('/');
+    }
+  }, [router]);
 
   const contactId = searchParams?.get('contactId') || undefined;
   const contactName = searchParams?.get('contactName') || undefined;
@@ -362,6 +371,11 @@ export default function ChatPage() {
       }
     };
   }, []);
+
+  // Early return if feature is disabled
+  if (!isAgentsSurfacesEnabled()) {
+    return null;
+  }
 
   return (
     <>
