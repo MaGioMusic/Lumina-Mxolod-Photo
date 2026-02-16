@@ -50,7 +50,7 @@ export function QuickActionsCard() {
   return (
     <section
       id="quick-actions"
-      className="rounded-[32px] border border-slate-100 bg-white p-6 shadow-[0_12px_45px_rgба(15,23,42,0.07)] dark:border-slate-800/60 dark:bg-slate-900/75 sm:p-7"
+      className="rounded-[32px] border border-slate-100 bg-white p-6 shadow-[0_12px_45px_rgba(15,23,42,0.07)] dark:border-slate-800/60 dark:bg-slate-900/75 sm:p-7"
     >
       <header className="space-y-1">
         <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{copy.title[safeLanguage]}</h2>
@@ -86,7 +86,7 @@ function ActionButton({
     'group inline-flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F08336]/60 focus-visible:ring-offset-2';
   const styling =
     variant === 'primary'
-      ? 'bg-[#F08336] text-white shadow-[0_16px_45px_rgба(240,131,54,0.25)] hover:bg-[#e0743a]'
+      ? 'bg-[#F08336] text-white shadow-[0_16px_45px_rgba(240,131,54,0.25)] hover:bg-[#e0743a]'
       : 'border border-slate-200 bg-white text-slate-600 hover:border-[#F08336]/40 hover:text-[#F08336] dark:border-slate-700 dark:bg-slate-800/75 dark:text-slate-200';
 
   const content = (
