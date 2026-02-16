@@ -174,14 +174,16 @@ export default function StatisticsSection() {
       }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+    const observedElement = sectionRef.current;
+    if (observedElement) {
+      observer.observe(observedElement);
     }
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
+      if (observedElement) {
+        observer.unobserve(observedElement);
       }
+      observer.disconnect();
     };
   }, []);
 

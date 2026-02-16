@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 interface CompareContextValue {
   ids: number[];
@@ -73,35 +73,60 @@ export function CompareProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const isSelected = (id: number) => ids.includes(id);
+  const isSelected = useCallback((id: number) => ids.includes(id), [ids]);
 
-  const add = (id: number) => {
-    if (ids.includes(id)) return;
-    if (ids.length >= MAX_COMPARE) {
-      console.warn('Compare: max 4 items reached');
-      return;
+  const add = useCallback((id: number) => {
+    let didAdd = false;
+    setIds((prev) => {
+      if (prev.includes(id)) return prev;
+      if (prev.length >= MAX_COMPARE) {
+        console.warn('Compare: max 4 items reached');
+        return prev;
+      }
+      didAdd = true;
+      return [...prev, id];
+    });
+    if (didAdd) {
+      console.log('analytics:event', 'compare_add', { id });
     }
-    const next = [...ids, id];
-    setIds(next);
-    console.log('analytics:event', 'compare_add', { id });
-  };
+  }, []);
 
-  const remove = (id: number) => {
-    const next = ids.filter((x) => x !== id);
-    setIds(next);
-    console.log('analytics:event', 'compare_remove', { id });
-  };
+  const remove = useCallback((id: number) => {
+    let didRemove = false;
+    setIds((prev) => {
+      const next = prev.filter((x) => x !== id);
+      didRemove = next.length !== prev.length;
+      return next;
+    });
+    if (didRemove) {
+      console.log('analytics:event', 'compare_remove', { id });
+    }
+  }, []);
 
-  const toggle = (id: number) => {
-    if (ids.includes(id)) remove(id); else add(id);
-  };
+  const toggle = useCallback((id: number) => {
+    setIds((prev) => {
+      if (prev.includes(id)) {
+        console.log('analytics:event', 'compare_remove', { id });
+        return prev.filter((x) => x !== id);
+      }
+      if (prev.length >= MAX_COMPARE) {
+        console.warn('Compare: max 4 items reached');
+        return prev;
+      }
+      console.log('analytics:event', 'compare_add', { id });
+      return [...prev, id];
+    });
+  }, []);
 
-  const clear = () => {
-    setIds([]);
-    console.log('analytics:event', 'compare_clear');
-  };
+  const clear = useCallback(() => {
+    setIds((prev) => {
+      if (prev.length === 0) return prev;
+      console.log('analytics:event', 'compare_clear');
+      return [];
+    });
+  }, []);
 
-  const value = useMemo<CompareContextValue>(() => ({ ids, isSelected, add, remove, toggle, clear, max: MAX_COMPARE }), [ids]);
+  const value = useMemo<CompareContextValue>(() => ({ ids, isSelected, add, remove, toggle, clear, max: MAX_COMPARE }), [ids, isSelected, add, remove, toggle, clear]);
 
   return (
     <CompareContext.Provider value={value}>
