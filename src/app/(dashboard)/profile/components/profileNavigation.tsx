@@ -30,7 +30,7 @@ const copy = {
   documents: { ka: 'დოკუმენტები', en: 'Documents', ru: 'Документы' },
   activity: { ka: 'აქტივობა', en: 'Activity', ru: 'Активность' },
   quickActions: { ka: 'სწრაფი ქმედებები', en: 'Quick actions', ru: 'Быстрые действия' },
-  agent: { ka: 'ჩემი აგენტი', en: 'Assigned agent', ru: 'Мой агент' },
+  agent: { ka: 'ჩემი კონტაქტი', en: 'Assigned contact', ru: 'Мой контакт' },
   viewProfile: { ka: 'პროფილის რედაქტირება', en: 'Edit profile', ru: 'Редактировать' },
 };
 

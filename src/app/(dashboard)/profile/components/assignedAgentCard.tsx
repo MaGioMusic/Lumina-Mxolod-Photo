@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
 import type { ProfileAgentSummary } from '@/types/profile';
+import { isAgentsSurfacesEnabled } from '@/lib/feature-flags';
 
 interface AssignedAgentCardProps {
   agent?: ProfileAgentSummary | null;
@@ -105,11 +106,18 @@ export default function AssignedAgentCard({ agent }: AssignedAgentCardProps) {
   if (!agent) return null;
 
   const openChat = () => {
-    const params = new URLSearchParams();
-    params.set('contactId', agent.id);
-    if (agent.name) params.set('contactName', agent.name);
-    if (agent.avatarUrl ?? '') params.set('contactAvatar', agent.avatarUrl as string);
-    router.push(`/agents/chat?${params.toString()}`);
+    if (isAgentsSurfacesEnabled()) {
+      const params = new URLSearchParams();
+      params.set('contactId', agent.id);
+      if (agent.name) params.set('contactName', agent.name);
+      if (agent.avatarUrl ?? '') params.set('contactAvatar', agent.avatarUrl as string);
+      router.push(`/agents/chat?${params.toString()}`);
+      return;
+    }
+
+    if (agent.email) {
+      window.location.href = `mailto:${agent.email}`;
+    }
   };
 
   return (
@@ -159,7 +167,7 @@ export default function AssignedAgentCard({ agent }: AssignedAgentCardProps) {
               className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-amber-300 hover:text-amber-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 focus-visible:ring-offset-2 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200"
             >
               <EnvelopeSimple size={14} weight="bold" />
-              Message
+              Contact
             </button>
           </div>
         </div>

@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { isAiToolsEnabled } from '@/lib/feature-flags';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -1088,6 +1090,18 @@ function StagingTab() {
 /* ─── Main Page ─── */
 
 export default function AIToolsPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAiToolsEnabled()) {
+      router.replace('/profile');
+    }
+  }, [router]);
+
+  if (!isAiToolsEnabled()) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6">
       {/* Header */}
