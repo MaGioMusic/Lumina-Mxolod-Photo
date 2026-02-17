@@ -118,11 +118,11 @@ export default function UploadPropertyModal({ isOpen, onClose }: UploadPropertyM
       // Simulate upload delay
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      alert('Property uploaded successfully!');
+      alert(t('propertyUploadSuccess'));
       onClose();
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Error uploading property. Please try again.');
+      alert(t('propertyUploadError'));
     } finally {
       setIsSubmitting(false);
     }

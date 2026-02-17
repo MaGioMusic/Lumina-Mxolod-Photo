@@ -7,7 +7,7 @@ import ContactMap from './ContactMap';
 import PageSnapshotEmitter, { emitPageSnapshotNow } from '@/app/components/PageSnapshotEmitter';
 
 export default function ContactPage() {
-  const { /* t */ } = useLanguage();
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -26,12 +26,12 @@ export default function ContactPage() {
     e.preventDefault();
     
     if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
-      alert('Please fill in all required fields');
+      alert(t('fillRequiredFields'));
       return;
     }
     
     if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      alert('Please enter a valid email address');
+      alert(t('validEmailAddress'));
       return;
     }
 
@@ -41,7 +41,7 @@ export default function ContactPage() {
     setTimeout(() => {
       setIsSubmitting(false);
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-      alert('Thank you! Your message has been sent successfully.');
+      alert(t('contactMessageSent'));
     }, 1500);
   };
 

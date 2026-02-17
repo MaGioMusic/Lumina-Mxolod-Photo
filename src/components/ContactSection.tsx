@@ -24,12 +24,12 @@ export default function ContactSection() {
     e.preventDefault();
     
     if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
-      alert('Please fill in all required fields');
+      alert(t('fillRequiredFields'));
       return;
     }
     
     if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      alert('Please enter a valid email address');
+      alert(t('validEmailAddress'));
       return;
     }
 
@@ -39,7 +39,7 @@ export default function ContactSection() {
     setTimeout(() => {
       setIsSubmitting(false);
       setFormData({ name: '', email: '', message: '' });
-      alert('Thank you! Your message has been sent successfully.');
+      alert(t('contactMessageSent'));
     }, 1500);
   };
 

@@ -35,7 +35,7 @@ export default function Newsletter({ className = '' }: NewsletterProps) {
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      alert('Please enter a valid email address');
+      alert(t('validEmailAddress'));
       return;
     }
 
