@@ -168,7 +168,7 @@ export default function ContactPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Name *
+                      {t('name')} *
                     </label>
                     <input
                       type="text"
@@ -177,12 +177,12 @@ export default function ContactPage() {
                       onChange={handleInputChange}
                       required
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                      placeholder="Your full name"
+                      placeholder={t('contactPlaceholderFullName')}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Email *
+                      {t('email')} *
                     </label>
                     <input
                       type="email"
@@ -191,7 +191,7 @@ export default function ContactPage() {
                       onChange={handleInputChange}
                       required
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                      placeholder="your.email@example.com"
+                      placeholder={t('contactPlaceholderEmail')}
                     />
                   </div>
                 </div>
@@ -199,7 +199,7 @@ export default function ContactPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Phone
+                      {t('phone')}
                     </label>
                     <input
                       type="tel"
@@ -212,7 +212,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Subject
+                      {t('subject')}
                     </label>
                     <select
                       name="subject"
@@ -220,19 +220,19 @@ export default function ContactPage() {
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                     >
-                      <option value="">Select a subject</option>
-                      <option value="buying">Buying Property</option>
-                      <option value="selling">Selling Property</option>
-                      <option value="renting">Renting Property</option>
-                      <option value="investment">Investment Consultation</option>
-                      <option value="other">Other</option>
+                      <option value="">{t('contactSelectSubject')}</option>
+                      <option value="buying">{t('contactSubjectBuying')}</option>
+                      <option value="selling">{t('contactSubjectSelling')}</option>
+                      <option value="renting">{t('contactSubjectRenting')}</option>
+                      <option value="investment">{t('contactSubjectInvestment')}</option>
+                      <option value="other">{t('other')}</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Message *
+                    {t('message')} *
                   </label>
                   <textarea
                     name="message"
@@ -241,7 +241,7 @@ export default function ContactPage() {
                     required
                     rows={6}
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                    placeholder="Tell us about your property needs..."
+                    placeholder={t('contactPlaceholderMessage')}
                   />
                 </div>
 
@@ -266,7 +266,7 @@ export default function ContactPage() {
                   onClick={() => emitPageSnapshotNow({ page: 'contact', title: 'Contact — Lumina Estate', summary: 'მიმდინარე საკონტაქტო სექციები', data: { hasForm: true } })}
                   className="px-3 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 text-sm"
                 >
-                  ამ გვერდის აღწერა
+                  {t('describe')}
                 </button>
               </div>
               
@@ -310,14 +310,14 @@ export default function ContactPage() {
                 <div className="relative h-48">
                   <Image
                     src={office.image}
-                    alt={`${office.city} Office`}
+                    alt={`${office.city} ${t('office')}`}
                     fill
                     className="object-cover"
                   />
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                    {office.city} Office
+                    {office.city} {t('office')}
                   </h3>
                   <div className="space-y-3 text-gray-600 dark:text-gray-300">
                     <div className="flex items-start gap-3">

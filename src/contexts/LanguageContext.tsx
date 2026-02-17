@@ -3075,6 +3075,17 @@ const translations: Translations = {
   contactHoursWeekdays: { ka: 'ორშ-პარ 09:00-18:00', en: 'Mon-Fri 9am-6pm', ru: 'Пн-Пт 9:00-18:00' },
   contactReply24h: { ka: '24 საათში გპასუხობთ', en: 'We reply within 24 hours', ru: 'Отвечаем в течение 24 часов' },
   contactVisitUs: { ka: 'მობრძანდი ჩვენთან', en: 'Visit us in person', ru: 'Приходите к нам в офис' },
+  name: { ka: 'სახელი', en: 'Name', ru: 'Имя' },
+  subject: { ka: 'თემა', en: 'Subject', ru: 'Тема' },
+  message: { ka: 'შეტყობინება', en: 'Message', ru: 'Сообщение' },
+  contactPlaceholderFullName: { ka: 'თქვენი სრული სახელი', en: 'Your full name', ru: 'Ваше полное имя' },
+  contactPlaceholderEmail: { ka: 'your.email@example.com', en: 'your.email@example.com', ru: 'your.email@example.com' },
+  contactSelectSubject: { ka: 'აირჩიე თემა', en: 'Select a subject', ru: 'Выберите тему' },
+  contactSubjectBuying: { ka: 'ქონების ყიდვა', en: 'Buying Property', ru: 'Покупка недвижимости' },
+  contactSubjectSelling: { ka: 'ქონების გაყიდვა', en: 'Selling Property', ru: 'Продажа недвижимости' },
+  contactSubjectRenting: { ka: 'ქონების ქირაობა', en: 'Renting Property', ru: 'Аренда недвижимости' },
+  contactSubjectInvestment: { ka: 'საინვესტიციო კონსულტაცია', en: 'Investment Consultation', ru: 'Инвестиционная консультация' },
+  contactPlaceholderMessage: { ka: 'გვიამბე შენი უძრავი ქონების საჭიროებების შესახებ...', en: 'Tell us about your property needs...', ru: 'Расскажите о ваших потребностях в недвижимости...' },
 
   // Filter Panel keys deduped above; removed duplicated definitions here
 };
