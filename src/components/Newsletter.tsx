@@ -79,7 +79,7 @@ export default function Newsletter({ className = '' }: NewsletterProps) {
       
       <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">
         {flags.enableCRONewsletter
-          ? (t('newsletterDescription') + ' ' + (t('noSpamMessage') || ''))
+          ? (t('newsletterDescription') + ' ' + t('noSpamMessage'))
           : t('newsletterDescription')}
       </p>
 

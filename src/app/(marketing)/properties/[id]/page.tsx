@@ -182,10 +182,10 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
               className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
             >
               <ArrowLeft className="w-5 h-5" />
-              <span>{t('back') ?? 'Back'}</span>
+              <span>{t('back')}</span>
             </button>
             <div className="h-5 w-px bg-gray-300" />
-            <h1 className="text-lg font-semibold text-gray-900">{t('propertyDetails') ?? 'Property Details'}</h1>
+            <h1 className="text-lg font-semibold text-gray-900">{t('propertyDetails')}</h1>
           </div>
           {/* Describe this page button */}
           <button
@@ -220,7 +220,7 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
             className="text-sm h-8 px-3 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
             title="Describe this page"
           >
-            {t('describe') ?? 'Describe this page'}
+            {t('describe')}
           </button>
         </div>
       </div>
@@ -248,25 +248,25 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
 
             {/* Key facts */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">{t('keyFacts') ?? 'Key Facts'}</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">{t('keyFacts')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('propertyType') ?? 'Property Type'}</p><p className="font-medium text-gray-900 capitalize">{data.type}</p></div>
-                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('area') ?? 'Area'}</p><p className="font-medium text-gray-900">{data.area} m²</p></div>
-                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('bedrooms') ?? 'Bedrooms'}</p><p className="font-medium text-gray-900">{data.bedrooms}</p></div>
-                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('bathrooms') ?? 'Bathrooms'}</p><p className="font-medium text-gray-900">{data.bathrooms}</p></div>
+                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('propertyType')}</p><p className="font-medium text-gray-900 capitalize">{data.type}</p></div>
+                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('area')}</p><p className="font-medium text-gray-900">{data.area} m²</p></div>
+                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('bedrooms')}</p><p className="font-medium text-gray-900">{data.bedrooms}</p></div>
+                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('bathrooms')}</p><p className="font-medium text-gray-900">{data.bathrooms}</p></div>
               </div>
             </div>
 
             {/* Description */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('description') ?? 'Description'}</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('description')}</h3>
               <p className="text-gray-600 leading-relaxed">{data.description}</p>
             </div>
 
             {/* Amenities */}
             {!!data.features?.length && (
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('amenities') ?? 'Amenities'}</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('amenities')}</h3>
                 <div className="flex flex-wrap gap-2">
                   {data.features.map((f, i) => (
                     <span key={i} className="px-3 py-1.5 rounded-full bg-gray-100 text-gray-800 text-sm font-medium">{f}</span>
@@ -277,13 +277,13 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
 
             {/* Floorplans (placeholder image using first) */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('floorplans') ?? 'Floorplans'}</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('floorplans')}</h3>
               <img src={data.images[0]} alt="floorplan" className="w-full aspect-video object-cover rounded-lg" />
             </div>
 
             {/* Location map */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('location') ?? 'Location'}</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('location')}</h3>
               <div className="h-80 rounded-lg overflow-hidden">
                 <SinglePropertyMap
                   coordinates={data.coordinates}
@@ -297,10 +297,10 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
 
             {/* Price history */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">{t('priceHistory') ?? 'Price History'}</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">{t('priceHistory')}</h3>
               <div className="flex items-baseline gap-4">
                 <p className="text-3xl font-bold text-gray-900">${data.price.toLocaleString()}</p>
-                <p className="text-gray-500 text-sm">{t('last12Months') ?? 'Last 12 Months'}</p>
+                <p className="text-gray-500 text-sm">{t('last12Months')}</p>
               </div>
               <div className="h-40 mt-4">
                 <ResponsiveContainer width="100%" height="100%">
@@ -321,7 +321,7 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
 
             {/* 3D tour placeholder */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('tour3d') ?? '3D Tour'}</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('tour3d')}</h3>
               <div className="relative bg-gray-900 rounded-lg overflow-hidden aspect-video flex items-center justify-center">
                 <img src={data.images[1] ?? data.images[0]} alt="3d" className="absolute inset-0 w-full h-full object-cover opacity-60" />
                 <button className="relative z-10 flex items-center justify-center w-16 h-16 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors">
@@ -336,7 +336,7 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
             <div className="sticky top-20 space-y-6">
               {/* Agent card */}
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <p className="text-sm text-gray-500">{t('contactAgent') ?? 'Contact Agent'}</p>
+                <p className="text-sm text-gray-500">{t('contactAgent')}</p>
                 <p className="text-lg font-bold text-gray-900">{data.agent.name}</p>
                 <div className="mt-3 space-y-2 text-sm text-gray-700">
                   <div className="flex items-center gap-2"><Phone className="w-4 h-4" /><a className="hover:underline" href={`tel:${data.agent.phone}`}>{data.agent.phone}</a></div>
@@ -346,8 +346,8 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
 
               {/* Schedule tour */}
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{t('scheduleTour') ?? 'Schedule a Tour'}</h3>
-                <p className="text-sm text-gray-500 mb-4">{t('selectPreferredTime') ?? 'Select a preferred date and time.'}</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">{t('scheduleTour')}</h3>
+                <p className="text-sm text-gray-500 mb-4">{t('selectPreferredTime')}</p>
                 <form className="space-y-4">
                   <div>
                     <label className="sr-only" htmlFor="tour-date">Date</label>
@@ -363,7 +363,7 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
                       <option>3:00 PM</option>
                     </select>
                   </div>
-                  <button type="submit" className="w-full rounded-md h-10 bg-primary-400 text-white font-semibold hover:bg-primary-500 transition-colors">{t('bookTour') ?? 'Book Tour'}</button>
+                  <button type="submit" className="w-full rounded-md h-10 bg-primary-400 text-white font-semibold hover:bg-primary-500 transition-colors">{t('bookTour')}</button>
                 </form>
               </div>
             </div>

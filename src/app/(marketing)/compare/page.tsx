@@ -79,7 +79,7 @@ export default function ComparePage() {
   const rows: Row[] = [
     {
       key: 'photo',
-      label: t('photo') || 'Photo',
+      label: t('photo'),
       always: true,
       value: (p) => String(p.image),
       render: (p) => (
@@ -90,36 +90,36 @@ export default function ComparePage() {
     },
     {
       key: 'price',
-      label: t('price') || 'Price',
+      label: t('price'),
       value: (p) => `$${p.price?.toLocaleString?.()}`,
       render: (p) => <span>{'$'}{p.price.toLocaleString()}</span>
     },
     {
       key: 'ppsqm',
-      label: t('pricePerSqm') || 'Price / m²',
+      label: t('pricePerSqm'),
       value: (p) => pricePerSqm(p),
       render: (p) => <span>{'$'}{pricePerSqm(p).toLocaleString()}</span>
     },
     {
       key: 'monthly',
-      label: t('estimatedMonthly') || 'Estimated monthly',
+      label: t('estimatedMonthly'),
       value: (p) => estimatedMonthly(p),
-      render: (p) => <span>{'$'}{estimatedMonthly(p).toLocaleString()} {t('perMonth') || '/mo'}</span>
+      render: (p) => <span>{'$'}{estimatedMonthly(p).toLocaleString()} {t('perMonth')}</span>
     },
     {
       key: 'sqft',
-      label: t('area') || 'Area (m²)',
+      label: t('area'),
       value: (p) => p.sqft,
       render: (p) => <span>{p.sqft} m²</span>
     },
-    { key: 'bedrooms', label: t('bedrooms') || 'Beds', value: (p) => p.bedrooms, render: (p) => <span>{p.bedrooms}</span> },
-    { key: 'bathrooms', label: t('bathrooms') || 'Baths', value: (p) => p.bathrooms, render: (p) => <span>{p.bathrooms}</span> },
-    { key: 'floor', label: t('floor') || 'Floor', value: (p) => p.floor ?? '-', render: (p) => <span>{p.floor ?? '-'}</span> },
-    { key: 'year', label: t('year') || 'Year', value: (p) => p.year ?? '-', render: (p) => <span>{p.year ?? '-'}</span> },
-    { key: 'address', label: t('address') || 'Address', value: (p) => p.address, render: (p) => <span>{p.address}</span> },
+    { key: 'bedrooms', label: t('bedrooms'), value: (p) => p.bedrooms, render: (p) => <span>{p.bedrooms}</span> },
+    { key: 'bathrooms', label: t('bathrooms'), value: (p) => p.bathrooms, render: (p) => <span>{p.bathrooms}</span> },
+    { key: 'floor', label: t('floor'), value: (p) => p.floor ?? '-', render: (p) => <span>{p.floor ?? '-'}</span> },
+    { key: 'year', label: t('year'), value: (p) => p.year ?? '-', render: (p) => <span>{p.year ?? '-'}</span> },
+    { key: 'address', label: t('address'), value: (p) => p.address, render: (p) => <span>{p.address}</span> },
     {
       key: 'energy',
-      label: t('energyClass') || 'Energy Class',
+      label: t('energyClass'),
       value: (p) => energyClass(p),
       render: (p) => {
         const ec = energyClass(p);
@@ -129,7 +129,7 @@ export default function ComparePage() {
     },
     {
       key: 'amenities',
-      label: t('amenities') || 'Amenities',
+      label: t('amenities'),
       value: (p) => amenityChips(p).join(','),
       render: (p) => (
         <div className="flex flex-wrap gap-1">
@@ -139,7 +139,7 @@ export default function ComparePage() {
         </div>
       )
     },
-    { key: 'status', label: t('status') || 'Status', value: (p) => p.status, render: (p) => <span>{p.status === 'for-sale' ? (t('forSale')||'For Sale') : (t('forRent')||'For Rent')}</span> },
+    { key: 'status', label: t('status'), value: (p) => p.status, render: (p) => <span>{p.status === 'for-sale' ? (t('forSale')) : (t('forRent'))}</span> },
   ];
 
   // Calculate identical vs different row counts to inform the UI.
@@ -159,10 +159,10 @@ export default function ComparePage() {
   if (ids.length === 0 || items.length === 0) {
     return (
       <div className="max-w-5xl mx-auto px-4 py-12 text-center">
-        <h1 className="text-2xl font-semibold mb-2">{t('compare') || 'Compare'}</h1>
-        <p className="text-gray-600 dark:text-gray-300 mb-6">{t('compareEmptyState') || 'არჩევა სცადე'}</p>
+        <h1 className="text-2xl font-semibold mb-2">{t('compare')}</h1>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">{t('compareEmptyState')}</p>
         <button onClick={() => router.push('/properties')} className="px-4 py-2 bg-[#F08336] text-white rounded-md">
-          {t('browseProperties') || 'Browse properties'}
+          {t('browseProperties')}
         </button>
       </div>
     );
@@ -172,15 +172,15 @@ export default function ComparePage() {
     <div className="w-full px-2 sm:px-4 lg:px-8 py-6">
       <div className="sticky top-20 z-10 bg-white/80 dark:bg-gray-900/80 backdrop-blur border-b border-gray-200 dark:border-gray-800">
         <div className="flex items-center justify-between px-3 py-2">
-          <div className="text-sm font-medium text-gray-600">{t('compare') || 'Compare'}</div>
+          <div className="text-sm font-medium text-gray-600">{t('compare')}</div>
           <label className="flex items-center gap-3 text-sm text-gray-600">
             <input type="checkbox" checked={showDiffOnly} onChange={(e) => setShowDiffOnly(e.target.checked)} />
-            {t('showDifferences') || 'Show only differences'}
+            {t('showDifferences')}
             <span className="text-xs text-gray-500">{sameCount > 0 ? `(hiding ${sameCount})` : `(no identical rows)`}</span>
           </label>
         </div>
         <div className="grid" style={{ gridTemplateColumns: `200px repeat(${items.length}, minmax(160px, 1fr))` }}>
-          <div className="p-3 font-medium text-gray-500">{t('attribute') || 'Attribute'}</div>
+          <div className="p-3 font-medium text-gray-500">{t('attribute')}</div>
           {items.map((it) => (
             <div key={it!.id} className="p-3 font-semibold">
               <div className="flex items-center gap-2">
@@ -189,7 +189,7 @@ export default function ComparePage() {
                 </div>
                 <div className="text-sm text-gray-800 dark:text-gray-100">{'$'}{it!.price.toLocaleString()}</div>
                 <button onClick={() => remove(it!.id)} className="ml-auto text-xs text-red-500 hover:underline">
-                  {t('remove') || 'Remove'}
+                  {t('remove')}
                 </button>
               </div>
             </div>
