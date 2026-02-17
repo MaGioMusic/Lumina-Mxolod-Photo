@@ -34,9 +34,10 @@ interface PropertyDetailsData {
 
 export default function PropertyDetails({ params }: PropertyDetailsProps) {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const [data, setData] = useState<PropertyDetailsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const locale = language === 'ka' ? 'ka-GE' : language === 'ru' ? 'ru-RU' : 'en-US';
 
   useEffect(() => {
     let active = true;
@@ -56,9 +57,9 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
         if (!res.ok || !payload?.property) {
           setData({
             id: resolved.id,
-            title: 'Property',
+            title: t('property'),
             price: 250000,
-            location: 'Tbilisi, Georgia',
+            location: t('addressValue'),
             type: 'apartment',
             bedrooms: 3,
             bathrooms: 2,
@@ -66,7 +67,7 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
             description: '—',
             images: getPropertyImages(resolved.id),
             coordinates: { lat: 41.7151, lng: 44.7661 },
-            agent: { name: 'Agent', phone: '+995 555 000 000', email: 'agent@example.com' },
+            agent: { name: t('agent'), phone: '+995 555 000 000', email: 'agent@example.com' },
             features: [],
             currency: 'GEL',
           });
@@ -90,12 +91,12 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
 
         setData({
           id: property.id,
-          title: property.title ?? 'Property',
+          title: property.title ?? t('property'),
           price: Number.isFinite(priceValue) ? priceValue : 0,
           location:
             property.location ||
             [property.city, property.district].filter(Boolean).join(', ') ||
-            'Tbilisi, Georgia',
+            t('addressValue'),
           type: property.propertyType ?? 'apartment',
           bedrooms: property.bedrooms ?? 0,
           bathrooms: property.bathrooms ?? 0,
@@ -104,7 +105,7 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
           images: imageUrls,
           coordinates: { lat: latitude, lng: longitude },
           agent: {
-            name: agent?.companyName ?? agent?.id ?? 'Agent',
+            name: agent?.companyName ?? agent?.id ?? t('agent'),
             phone: agent ? agent.userId ?? '+995 555 000 000' : '+995 555 000 000',
             email: agent ? `${agent.id}@lumina.ge` : 'agent@lumina.ge',
           },
@@ -118,9 +119,9 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
         console.warn('Failed to load property detail, using fallback', e);
         setData({
           id: resolved.id,
-          title: 'Property',
+          title: t('property'),
           price: 250000,
-          location: 'Tbilisi, Georgia',
+          location: t('addressValue'),
           type: 'apartment',
           bedrooms: 3,
           bathrooms: 2,
@@ -128,7 +129,7 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
           description: '—',
           images: getPropertyImages(resolved.id),
           coordinates: { lat: 41.7151, lng: 44.7661 },
-          agent: { name: 'Agent', phone: '+995 555 000 000', email: 'agent@example.com' },
+          agent: { name: t('agent'), phone: '+995 555 000 000', email: 'agent@example.com' },
           features: [],
           currency: 'GEL',
         });
@@ -139,16 +140,25 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
     return () => {
       active = false;
     };
-  }, [params]);
+  }, [params, t]);
 
   const priceSeries = useMemo(() => {
     // simple synthetic 12-months price history based on price
     const base = data?.price || 200000;
+    const monthFormatter = new Intl.DateTimeFormat(locale, { month: 'short' });
     return Array.from({ length: 12 }).map((_, i) => ({
-      m: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][i],
+      m: monthFormatter.format(new Date(2024, i, 1)),
       v: Math.round(base * (0.95 + Math.sin(i / 2.5) * 0.03 + i * 0.002))
     }));
-  }, [data?.price]);
+  }, [data?.price, locale]);
+
+  const tourTimeOptions = useMemo(() => {
+    const formatter = new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: '2-digit' });
+    return [10, 11, 13, 14, 15].map((hour) => ({
+      value: `${hour}:00`,
+      label: formatter.format(new Date(2024, 0, 1, hour, 0)),
+    }));
+  }, [locale]);
 
   if (loading || !data) {
     return (
@@ -182,10 +192,10 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
               className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
             >
               <ArrowLeft className="w-5 h-5" />
-              <span>{t('back') ?? 'Back'}</span>
+              <span>{t('back')}</span>
             </button>
             <div className="h-5 w-px bg-gray-300" />
-            <h1 className="text-lg font-semibold text-gray-900">{t('propertyDetails') ?? 'Property Details'}</h1>
+            <h1 className="text-lg font-semibold text-gray-900">{t('propertyDetails')}</h1>
           </div>
           {/* Describe this page button */}
           <button
@@ -218,9 +228,9 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
               } catch {}
             }}
             className="text-sm h-8 px-3 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
-            title="Describe this page"
+            title={t('describeThisPage')}
           >
-            {t('describe') ?? 'Describe this page'}
+            {t('describeThisPage')}
           </button>
         </div>
       </div>
@@ -240,7 +250,7 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
                 <div>
                   <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{data.title}</h2>
                   <p className="text-gray-600 mt-1 flex items-center gap-2"><MapPin className="w-4 h-4" />{data.location}</p>
-                  <p className="text-gray-500 mt-1">{data.bedrooms} Beds | {data.bathrooms} Baths | {data.area} m²</p>
+                  <p className="text-gray-500 mt-1">{data.bedrooms} {t('bedsShort')} | {data.bathrooms} {t('bathsShort')} | {data.area} m²</p>
                 </div>
                 <div className="text-3xl font-bold text-gray-900">${data.price.toLocaleString()}</div>
               </div>
@@ -248,25 +258,25 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
 
             {/* Key facts */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">{t('keyFacts') ?? 'Key Facts'}</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">{t('keyFacts')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('propertyType') ?? 'Property Type'}</p><p className="font-medium text-gray-900 capitalize">{data.type}</p></div>
-                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('area') ?? 'Area'}</p><p className="font-medium text-gray-900">{data.area} m²</p></div>
-                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('bedrooms') ?? 'Bedrooms'}</p><p className="font-medium text-gray-900">{data.bedrooms}</p></div>
-                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('bathrooms') ?? 'Bathrooms'}</p><p className="font-medium text-gray-900">{data.bathrooms}</p></div>
+                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('propertyType')}</p><p className="font-medium text-gray-900 capitalize">{t(String(data.type).toLowerCase())}</p></div>
+                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('area')}</p><p className="font-medium text-gray-900">{data.area} m²</p></div>
+                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('bedrooms')}</p><p className="font-medium text-gray-900">{data.bedrooms}</p></div>
+                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('bathrooms')}</p><p className="font-medium text-gray-900">{data.bathrooms}</p></div>
               </div>
             </div>
 
             {/* Description */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('description') ?? 'Description'}</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('description')}</h3>
               <p className="text-gray-600 leading-relaxed">{data.description}</p>
             </div>
 
             {/* Amenities */}
             {!!data.features?.length && (
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('amenities') ?? 'Amenities'}</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('amenities')}</h3>
                 <div className="flex flex-wrap gap-2">
                   {data.features.map((f, i) => (
                     <span key={i} className="px-3 py-1.5 rounded-full bg-gray-100 text-gray-800 text-sm font-medium">{f}</span>
@@ -277,13 +287,13 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
 
             {/* Floorplans (placeholder image using first) */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('floorplans') ?? 'Floorplans'}</h3>
-              <img src={data.images[0]} alt="floorplan" className="w-full aspect-video object-cover rounded-lg" />
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('floorplans')}</h3>
+              <img src={data.images[0]} alt={t('floorplanAlt')} className="w-full aspect-video object-cover rounded-lg" />
             </div>
 
             {/* Location map */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('location') ?? 'Location'}</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('locationLabel')}</h3>
               <div className="h-80 rounded-lg overflow-hidden">
                 <SinglePropertyMap
                   coordinates={data.coordinates}
@@ -297,10 +307,10 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
 
             {/* Price history */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">{t('priceHistory') ?? 'Price History'}</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">{t('priceHistory')}</h3>
               <div className="flex items-baseline gap-4">
                 <p className="text-3xl font-bold text-gray-900">${data.price.toLocaleString()}</p>
-                <p className="text-gray-500 text-sm">{t('last12Months') ?? 'Last 12 Months'}</p>
+                <p className="text-gray-500 text-sm">{t('last12Months')}</p>
               </div>
               <div className="h-40 mt-4">
                 <ResponsiveContainer width="100%" height="100%">
@@ -321,9 +331,9 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
 
             {/* 3D tour placeholder */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('tour3d') ?? '3D Tour'}</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('tour3d')}</h3>
               <div className="relative bg-gray-900 rounded-lg overflow-hidden aspect-video flex items-center justify-center">
-                <img src={data.images[1] ?? data.images[0]} alt="3d" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+                <img src={data.images[1] ?? data.images[0]} alt={t('tour3dAlt')} className="absolute inset-0 w-full h-full object-cover opacity-60" />
                 <button className="relative z-10 flex items-center justify-center w-16 h-16 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors">
                   ▶
                 </button>
@@ -336,7 +346,7 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
             <div className="sticky top-20 space-y-6">
               {/* Agent card */}
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <p className="text-sm text-gray-500">{t('contactAgent') ?? 'Contact Agent'}</p>
+                <p className="text-sm text-gray-500">{t('contactAgent')}</p>
                 <p className="text-lg font-bold text-gray-900">{data.agent.name}</p>
                 <div className="mt-3 space-y-2 text-sm text-gray-700">
                   <div className="flex items-center gap-2"><Phone className="w-4 h-4" /><a className="hover:underline" href={`tel:${data.agent.phone}`}>{data.agent.phone}</a></div>
@@ -346,24 +356,22 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
 
               {/* Schedule tour */}
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{t('scheduleTour') ?? 'Schedule a Tour'}</h3>
-                <p className="text-sm text-gray-500 mb-4">{t('selectPreferredTime') ?? 'Select a preferred date and time.'}</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">{t('scheduleTour')}</h3>
+                <p className="text-sm text-gray-500 mb-4">{t('selectPreferredTime')}</p>
                 <form className="space-y-4">
                   <div>
-                    <label className="sr-only" htmlFor="tour-date">Date</label>
+                    <label className="sr-only" htmlFor="tour-date">{t('scheduleDate')}</label>
                     <input id="tour-date" name="tour-date" type="date" className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-400" />
                   </div>
                   <div>
-                    <label className="sr-only" htmlFor="tour-time">Time</label>
+                    <label className="sr-only" htmlFor="tour-time">{t('scheduleTime')}</label>
                     <select id="tour-time" name="tour-time" className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-400">
-                      <option>10:00 AM</option>
-                      <option>11:00 AM</option>
-                      <option>1:00 PM</option>
-                      <option>2:00 PM</option>
-                      <option>3:00 PM</option>
+                      {tourTimeOptions.map((option) => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
                     </select>
                   </div>
-                  <button type="submit" className="w-full rounded-md h-10 bg-primary-400 text-white font-semibold hover:bg-primary-500 transition-colors">{t('bookTour') ?? 'Book Tour'}</button>
+                  <button type="submit" className="w-full rounded-md h-10 bg-primary-400 text-white font-semibold hover:bg-primary-500 transition-colors">{t('bookTour')}</button>
                 </form>
               </div>
             </div>

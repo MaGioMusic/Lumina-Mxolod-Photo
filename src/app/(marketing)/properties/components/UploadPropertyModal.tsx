@@ -118,11 +118,11 @@ export default function UploadPropertyModal({ isOpen, onClose }: UploadPropertyM
       // Simulate upload delay
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      alert('Property uploaded successfully!');
+      alert(t('propertyUploadSuccess'));
       onClose();
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Error uploading property. Please try again.');
+      alert(t('propertyUploadError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -246,7 +246,7 @@ export default function UploadPropertyModal({ isOpen, onClose }: UploadPropertyM
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {t('area')} (მ²)
+                  {t('area')}
                 </label>
                 <input
                   type="number"
@@ -405,7 +405,7 @@ export default function UploadPropertyModal({ isOpen, onClose }: UploadPropertyM
                   <div key={index} className="relative">
                     <img
                       src={URL.createObjectURL(image)}
-                      alt={`Property ${index + 1}`}
+                      alt={`${t('property')} ${index + 1}`}
                       className="w-full h-24 object-cover rounded-lg"
                     />
                     <button
