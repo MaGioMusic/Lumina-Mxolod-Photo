@@ -371,7 +371,7 @@ export default function PropertyDetailsMap({ selectedPropertyId, filters, search
       try {
         return new Intl.NumberFormat(locale, { style: 'currency', currency: 'GEL', maximumFractionDigits: 0 }).format(value);
       } catch {
-        return `${new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(value)} ₾`;
+        return `${new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(value)} ₾`;
       }
     },
     [language]

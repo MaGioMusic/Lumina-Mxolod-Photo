@@ -288,17 +288,17 @@ export function EventManager({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
           <h2 className="text-xl font-semibold sm:text-2xl">
             {view === 'month' &&
-              currentDate.toLocaleDateString('en-US', {
+              currentDate.toLocaleDateString(undefined, {
                 month: 'long',
                 year: 'numeric',
               })}
             {view === 'week' &&
-              `Week of ${currentDate.toLocaleDateString('en-US', {
+              `Week of ${currentDate.toLocaleDateString(undefined, {
                 month: 'short',
                 day: 'numeric',
               })}`}
             {view === 'day' &&
-              currentDate.toLocaleDateString('en-US', {
+              currentDate.toLocaleDateString(undefined, {
                 weekday: 'long',
                 month: 'long',
                 day: 'numeric',
@@ -1003,7 +1003,7 @@ function EventCard({
   const tooltipAlignClass = align === 'right' ? 'right-0' : 'left-0';
 
   const formatTime = (date: Date) =>
-    date.toLocaleTimeString('en-US', {
+    date.toLocaleTimeString(undefined, {
       hour: '2-digit',
       minute: '2-digit',
     });
@@ -1355,13 +1355,13 @@ function WeekView({
             className="border-r p-2 text-center text-xs font-medium last:border-r-0 sm:text-sm"
           >
             <div className="hidden sm:block">
-              {day.toLocaleDateString('en-US', { weekday: 'short' })}
+              {day.toLocaleDateString(undefined, { weekday: 'short' })}
             </div>
             <div className="sm:hidden">
-              {day.toLocaleDateString('en-US', { weekday: 'narrow' })}
+              {day.toLocaleDateString(undefined, { weekday: 'narrow' })}
             </div>
             <div className="text-[10px] text-muted-foreground sm:text-xs">
-              {day.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              {day.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
             </div>
           </div>
         ))}
@@ -1488,7 +1488,7 @@ function ListView({
   );
 
   const groupedEvents = sortedEvents.reduce<Record<string, Event[]>>((acc, event) => {
-    const dateKey = event.startTime.toLocaleDateString('en-US', {
+    const dateKey = event.startTime.toLocaleDateString(undefined, {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -1541,12 +1541,12 @@ function ListView({
                         <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] text-muted-foreground sm:gap-4 sm:text-xs">
                           <div className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />
-                            {event.startTime.toLocaleTimeString('en-US', {
+                            {event.startTime.toLocaleTimeString(undefined, {
                               hour: '2-digit',
                               minute: '2-digit',
                             })}
                             {' - '}
-                            {event.endTime.toLocaleTimeString('en-US', {
+                            {event.endTime.toLocaleTimeString(undefined, {
                               hour: '2-digit',
                               minute: '2-digit',
                             })}

@@ -120,7 +120,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                     {property.bedrooms} ს. {property.bathrooms} ს/წ · {property.sqft} მ²
                   </div>
                   <div style={{ fontSize: 12, color: '#0f172a' }}>
-                    {property.price.toLocaleString('en-US')} ₾
+                    {property.price.toLocaleString(undefined)} ₾
                   </div>
                 </div>
               </div>
