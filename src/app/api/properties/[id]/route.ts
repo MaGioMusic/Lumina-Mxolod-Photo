@@ -4,15 +4,17 @@ import { getMockPropertyById } from '@/lib/mockProperties';
 import { jsonResponse, errorResponse } from '../../utils';
 
 interface Params {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export async function GET(_request: NextRequest, { params }: Params) {
   try {
+    const { id } = await params;
+
     // Demo/mock support: /api/properties returns ids like "mock-7".
     // Make /api/properties/:id resolve those ids to distinct mock details,
     // so clicking any card opens the correct property.
-    const rawId = String(params.id || '');
+    const rawId = String(id || '');
     const mockMatch = /^mock-(\d+)$/.exec(rawId);
     const numericMatch = /^\d+$/.exec(rawId);
     const mockNumericId = mockMatch ? Number(mockMatch[1]) : numericMatch ? Number(rawId) : null;
@@ -60,7 +62,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
       }
     }
 
-    const detail = await getPropertyDetail(params.id);
+    const detail = await getPropertyDetail(id);
     if (!detail) {
       return jsonResponse(
         {
