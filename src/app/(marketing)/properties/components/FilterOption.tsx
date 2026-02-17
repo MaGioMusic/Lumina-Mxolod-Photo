@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, CaretDown } from '@phosphor-icons/react';
 import { AnimatePresence } from 'framer-motion';

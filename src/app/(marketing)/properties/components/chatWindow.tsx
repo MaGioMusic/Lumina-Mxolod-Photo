@@ -104,7 +104,6 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                     background: '#fafafa',
                   }}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={property.image}
                     alt={property.type}

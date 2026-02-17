@@ -1,6 +1,7 @@
-"use client"
+﻿"use client"
 
 import * as React from "react"
+import Link from "next/link"
 import {
   ArrowUpCircleIcon,
   FolderIcon,
@@ -59,7 +60,7 @@ const data = {
     },
     {
       title: "Get Help",
-      url: "#",
+      url: "/contact",
       icon: HelpCircleIcon,
     },
   ],
@@ -75,10 +76,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
+              <Link href="/">
                 <ArrowUpCircleIcon className="h-5 w-5" />
                 <span className="text-base font-semibold">Lumina Estate</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

@@ -172,13 +172,9 @@ export function toMermaid(entities: Entity[] = ENTITIES, relations: Relationship
 // Dev helper to run quick check from code
 function runERDCheck(): void {
   const { issues, adjacency, mermaid } = validateERD();
-  // eslint-disable-next-line no-console
   console.table(issues);
-  // eslint-disable-next-line no-console
   console.log('Adjacency:', adjacency);
-  // eslint-disable-next-line no-console
   console.log('Mermaid ERD:\n' + mermaid);
 }
-;
 
 
