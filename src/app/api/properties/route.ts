@@ -62,6 +62,17 @@ export async function GET(request: NextRequest) {
       sortDir: params.sortDir,
     };
 
+    // Graceful fallback for environments where DB is not wired yet
+    if (!process.env.DATABASE_URL) {
+      console.warn('DATABASE_URL is not set; returning empty properties result.');
+      return NextResponse.json({
+        items: [],
+        total: 0,
+        page: params.page ?? 1,
+        pageSize: params.pageSize ?? 20,
+      });
+    }
+
     // Query the database via Prisma
     const result = await listProperties(listParams);
 
