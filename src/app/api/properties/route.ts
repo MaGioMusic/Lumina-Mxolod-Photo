@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { propertyTypeSchema, transactionTypeSchema } from '@/types/models';
 import { listProperties, PropertyListParams } from '@/lib/repo/properties';
 import { PropertyType, TransactionType } from '@prisma/client';
+import { getMockProperties } from '@/lib/mockProperties';
 
 const querySchema = z.object({
   page: z.coerce.number().int().min(1).optional(),
@@ -64,12 +65,71 @@ export async function GET(request: NextRequest) {
 
     // Graceful fallback for environments where DB is not wired yet
     if (!process.env.DATABASE_URL) {
-      console.warn('DATABASE_URL is not set; returning empty properties result.');
+      console.warn('DATABASE_URL is not set; returning mock properties result.');
+
+      const mock = getMockProperties(100);
+      const search = (params.search ?? '').toLowerCase().trim();
+      const page = params.page ?? 1;
+      const pageSize = params.pageSize ?? 20;
+
+      const filtered = mock.filter((p) => {
+        if (search) {
+          const hay = `${p.address} ${p.type} ${p.status}`.toLowerCase();
+          if (!hay.includes(search)) return false;
+        }
+        if (params.transactionType) {
+          const target = params.transactionType === 'rent' ? 'for-rent' : 'for-sale';
+          if (p.status !== target) return false;
+        }
+        if (params.propertyType && p.type !== params.propertyType.toLowerCase()) return false;
+        if (typeof params.priceMin === 'number' && p.price < params.priceMin) return false;
+        if (typeof params.priceMax === 'number' && p.price > params.priceMax) return false;
+        if (typeof params.bedrooms === 'number' && p.bedrooms < params.bedrooms) return false;
+        if (typeof params.bathrooms === 'number' && p.bathrooms < params.bathrooms) return false;
+        return true;
+      });
+
+      const start = (page - 1) * pageSize;
+      const paged = filtered.slice(start, start + pageSize);
+
+      const items = paged.map((p) => ({
+        id: `mock-${p.id}`,
+        agentId: null,
+        title: `Property #${p.id}`,
+        description: null,
+        price: p.price,
+        currency: 'GEL',
+        location: `Tbilisi ${p.address}`,
+        district: p.address,
+        city: 'Tbilisi',
+        country: 'Georgia',
+        propertyType: p.type,
+        transactionType: p.status === 'for-rent' ? 'rent' : 'sale',
+        bedrooms: p.bedrooms,
+        bathrooms: p.bathrooms,
+        area: p.sqft,
+        floor: p.floor ?? null,
+        totalFloors: null,
+        constructionYear: p.year ?? null,
+        condition: 'good',
+        furnished: 'furnished',
+        amenities: p.amenities ?? [],
+        imageUrls: p.images ?? [p.image],
+        latitude: null,
+        longitude: null,
+        status: 'active',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        isFeatured: Boolean(p.isNew),
+        featuredUntil: null,
+        viewsCount: 0,
+      }));
+
       return NextResponse.json({
-        items: [],
-        total: 0,
-        page: params.page ?? 1,
-        pageSize: params.pageSize ?? 20,
+        items,
+        total: filtered.length,
+        page,
+        pageSize,
       });
     }
 
