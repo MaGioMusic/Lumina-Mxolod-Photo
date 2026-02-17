@@ -176,7 +176,7 @@ export default function ComparePage() {
           <label className="flex items-center gap-3 text-sm text-gray-600">
             <input type="checkbox" checked={showDiffOnly} onChange={(e) => setShowDiffOnly(e.target.checked)} />
             {t('showDifferences')}
-            <span className="text-xs text-gray-500">{sameCount > 0 ? `(hiding ${sameCount})` : `(no identical rows)`}</span>
+            <span className="text-xs text-gray-500">{sameCount > 0 ? `${t('hiding')} ${sameCount}` : t('noIdenticalRows')}</span>
           </label>
         </div>
         <div className="grid" style={{ gridTemplateColumns: `200px repeat(${items.length}, minmax(160px, 1fr))` }}>
@@ -185,7 +185,7 @@ export default function ComparePage() {
             <div key={it!.id} className="p-3 font-semibold">
               <div className="flex items-center gap-2">
                 <div className="relative w-10 h-10 rounded overflow-hidden border border-gray-200 dark:border-gray-700">
-                  <Image src={it!.image} alt={`Property ${it!.id}`} fill className="object-cover" />
+                  <Image src={it!.image} alt={`${t('photo')} ${it!.id}`} fill className="object-cover" />
                 </div>
                 <div className="text-sm text-gray-800 dark:text-gray-100">{'$'}{it!.price.toLocaleString()}</div>
                 <button onClick={() => remove(it!.id)} className="ml-auto text-xs text-red-500 hover:underline">

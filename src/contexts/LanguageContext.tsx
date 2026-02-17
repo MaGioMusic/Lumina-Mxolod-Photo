@@ -1263,10 +1263,12 @@ const translations: Translations = {
   remove: { ka: 'წაშლა', en: 'Remove', ru: 'Удалить' },
   browseProperties: { ka: 'ქონებების დათვალიერება', en: 'Browse properties', ru: 'Смотреть объекты' },
   pricePerSqm: { ka: 'ფასი / მ²', en: 'Price / m²', ru: 'Цена / м²' },
-  estimatedMonthly: { ka: 'MONTHLY', en: 'Estimated monthly', ru: 'Ежемесячный платёж' },
+  estimatedMonthly: { ka: 'თვიური', en: 'Estimated monthly', ru: 'Ежемесячный платёж' },
   perMonth: { ka: '/თვეში', en: '/mo', ru: '/мес' },
   energyClass: { ka: 'ენერგო კლასი', en: 'Energy Class', ru: 'Класс энергоэфф.' },
   showDifferences: { ka: 'მაჩვენე განსხვავებები', en: 'Show only differences', ru: 'Показывать отличия' },
+  hiding: { ka: 'დამალულია', en: 'hiding', ru: 'скрыто' },
+  noIdenticalRows: { ka: 'იგივე რიგები არ არის', en: 'no identical rows', ru: 'нет одинаковых строк' },
   darkMode: {
     ka: 'მუქი რეჟიმი',
     en: 'Dark Mode',
