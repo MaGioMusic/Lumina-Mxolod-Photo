@@ -52,9 +52,9 @@ export default function ContactPage() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
         </svg>
       ),
-      title: 'Phone',
+      title: t('phone'),
       value: '+995 555 123 456',
-      description: 'Mon-Fri 9am-6pm'
+      description: t('contactHoursWeekdays')
     },
     {
       icon: (
@@ -62,9 +62,9 @@ export default function ContactPage() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
       ),
-      title: 'Email',
+      title: t('email'),
       value: 'info@luminaestate.ge',
-      description: 'We reply within 24 hours'
+      description: t('contactReply24h')
     },
     {
       icon: (
@@ -73,9 +73,9 @@ export default function ContactPage() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
       ),
-      title: 'Office',
+      title: t('office'),
       value: 'Rustaveli Avenue 12, Tbilisi',
-      description: 'Visit us in person'
+      description: t('contactVisitUs')
     }
   ];
 
@@ -118,11 +118,10 @@ export default function ContactPage() {
         <div className="container mx-auto px-6 max-w-6xl relative z-10">
           <div className="max-w-3xl">
             <h1 className="text-5xl font-bold text-white mb-4 leading-tight">
-              Contact Us
+              {t('contactUs')}
             </h1>
             <p className="text-xl text-white/90 leading-relaxed">
-              Ready to find your dream property? Get in touch with our expert team today. 
-              We're here to help you every step of the way.
+              {t('contactHeroSubtitle')}
             </p>
           </div>
         </div>
@@ -159,10 +158,10 @@ export default function ContactPage() {
             {/* Contact Form */}
             <div>
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-                Send us a Message
+                {t('contactSendMessage')}
               </h2>
               <p className="text-gray-600 dark:text-gray-300 mb-8">
-                Fill out the form below and we'll get back to you as soon as possible.
+                {t('contactFormSubtitle')}
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -251,7 +250,7 @@ export default function ContactPage() {
                   disabled={isSubmitting}
                   className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold py-4 px-6 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                  {isSubmitting ? t('sending') : t('sendMessage')}
                 </button>
               </form>
             </div>
@@ -259,7 +258,7 @@ export default function ContactPage() {
             {/* Map Placeholder */}
             <div>
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-                Find Us
+                {t('findUs')}
               </h2>
               <ContactMap />
               <div className="mt-4">
@@ -272,19 +271,19 @@ export default function ContactPage() {
               </div>
               
               <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Office Hours</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('officeHours')}</h3>
                 <div className="space-y-2 text-gray-600 dark:text-gray-300">
                   <div className="flex justify-between">
-                    <span>Monday - Friday</span>
-                    <span>9:00 AM - 6:00 PM</span>
+                    <span>{t('mondayFriday')}</span>
+                    <span>{t('officeHoursWeekdays')}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Saturday</span>
-                    <span>10:00 AM - 4:00 PM</span>
+                    <span>{t('saturday')}</span>
+                    <span>{t('officeHoursSaturday')}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Sunday</span>
-                    <span>Closed</span>
+                    <span>{t('sunday')}</span>
+                    <span>{t('closed')}</span>
                   </div>
                 </div>
               </div>
@@ -298,10 +297,10 @@ export default function ContactPage() {
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
-              Our Offices
+              {t('ourOffices')}
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Visit us at any of our convenient locations across Georgia
+              {t('ourOfficesSubtitle')}
             </p>
           </div>
 
