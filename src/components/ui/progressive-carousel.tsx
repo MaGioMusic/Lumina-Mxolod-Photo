@@ -6,7 +6,6 @@ import React, {
   useState,
   useEffect,
   useRef,
-  useCallback,
   ReactNode,
   FC,
 } from 'react';
@@ -95,14 +94,27 @@ export const ProgressSlider: FC<ProgressSliderProps> = ({
     }
   }, [children]);
 
-  const animate = useCallback((now: number) => {
+  useEffect(() => {
+    if (sliderValues.length > 0) {
+      firstFrameTime.current = performance.now();
+      frame.current = requestAnimationFrame(animate);
+    }
+    return () => {
+      cancelAnimationFrame(frame.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- animate is a stable RAF loop; adding it would cause infinite re-fires
+  }, [sliderValues, active, isFastForward]);
+
+  const animate = (now: number) => {
     const currentDuration = isFastForward ? fastDuration : duration;
     const elapsedTime = now - firstFrameTime.current;
     const timeFraction = elapsedTime / currentDuration;
 
     if (timeFraction <= 1) {
-      setProgress((prev) =>
-        isFastForward ? prev + (100 - prev) * timeFraction : timeFraction * 100
+      setProgress(
+        isFastForward
+          ? progress + (100 - progress) * timeFraction
+          : timeFraction * 100
       );
       frame.current = requestAnimationFrame(animate);
     } else {
@@ -120,17 +132,7 @@ export const ProgressSlider: FC<ProgressSliderProps> = ({
       setProgress(0);
       firstFrameTime.current = performance.now();
     }
-  }, [active, duration, fastDuration, isFastForward, sliderValues]);
-
-  useEffect(() => {
-    if (sliderValues.length > 0) {
-      firstFrameTime.current = performance.now();
-      frame.current = requestAnimationFrame(animate);
-    }
-    return () => {
-      cancelAnimationFrame(frame.current);
-    };
-  }, [animate, sliderValues.length]);
+  };
 
   const handleButtonClick = (value: string) => {
     if (value !== active) {
