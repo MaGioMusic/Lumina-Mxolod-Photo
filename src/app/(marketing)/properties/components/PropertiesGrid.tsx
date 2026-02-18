@@ -292,6 +292,19 @@ export default function PropertiesGrid({
       })
       .then((payload) => {
         const mapped = payload.items.map((item, index) => convertProperty(item, index));
+
+        // Dev UX safeguard: if DB is empty and user has no active search/filters,
+        // keep showing local fallback cards instead of swapping to a blank list.
+        const hasActiveQueryOrFilters = Boolean(
+          searchQuery.trim() || propertyTypeKey || transactionTypeKey || bedroomsKey || minPrice > 0 || maxPrice < 1_000_000,
+        );
+        if (mapped.length === 0 && !hasActiveQueryOrFilters) {
+          setApiProperties(null);
+          setApiTotal(null);
+          setFetchError(null);
+          return;
+        }
+
         setApiProperties(mapped);
         setApiTotal(payload.total ?? mapped.length);
         setFetchError(null);
