@@ -193,6 +193,27 @@ export function useGeminiLiveSession({
     return handleFunctionCall;
   }, [handleFunctionCall, isFunctionCallingEnabled]);
 
+  const onTranscriptRef = useRef(onTranscript);
+  const onResponseTextRef = useRef(onResponseText);
+  const onErrorRef = useRef(onError);
+  const toolHandlerRef = useRef(toolHandler);
+
+  useEffect(() => {
+    onTranscriptRef.current = onTranscript;
+  }, [onTranscript]);
+
+  useEffect(() => {
+    onResponseTextRef.current = onResponseText;
+  }, [onResponseText]);
+
+  useEffect(() => {
+    onErrorRef.current = onError;
+  }, [onError]);
+
+  useEffect(() => {
+    toolHandlerRef.current = toolHandler;
+  }, [toolHandler]);
+
   const closeAll = useCallback(async () => {
     setIsListening(false);
     setConnectionState('stopped');
@@ -390,7 +411,7 @@ export function useGeminiLiveSession({
               activity_handling: 'START_OF_ACTIVITY_INTERRUPTS',
             },
             // Tools (function calling)
-            ...(toolHandler
+            ...(toolHandlerRef.current
               ? {
                   tools: [
                     {
@@ -616,13 +637,13 @@ export function useGeminiLiveSession({
           try {
             const name = String((err as any)?.name || '');
             if (name === 'NotFoundError') {
-              onError?.(
+              onErrorRef.current?.(
                 'No microphone detected (0 input devices). Check Windows Sound → Input and Windows Privacy → Microphone access, then reload.',
               );
             } else if (name === 'NotAllowedError' || name === 'SecurityError') {
-              onError?.('Microphone permission is blocked. Allow mic access in the browser/site settings and retry.');
+              onErrorRef.current?.('Microphone permission is blocked. Allow mic access in the browser/site settings and retry.');
             } else {
-              onError?.('Microphone is unavailable. Check your input device and permissions, then retry.');
+              onErrorRef.current?.('Microphone is unavailable. Check your input device and permissions, then retry.');
             }
           } catch {}
           setConnectionState('error');
@@ -698,7 +719,7 @@ export function useGeminiLiveSession({
                   const prev = lastOutputTranscriptRef.current;
                   const delta = outTr.startsWith(prev) ? outTr.slice(prev.length) : outTr;
                   lastOutputTranscriptRef.current = outTr;
-                  if (delta) onResponseText?.(delta);
+                  if (delta) onResponseTextRef.current?.(delta);
                 }
                 const parts = data?.serverContent?.modelTurn?.parts || [];
                 for (const part of parts) {
@@ -708,10 +729,10 @@ export function useGeminiLiveSession({
                     const rate = m ? Number(m[1]) : 24000;
                     void handleAudioOut(part.inlineData.data, rate);
                   }
-                  if (part?.text) onResponseText?.(part.text);
+                  if (part?.text) onResponseTextRef.current?.(part.text);
                 }
                 const inTr = data?.inputTranscription?.text;
-                if (inTr) onTranscript?.(inTr);
+                if (inTr) onTranscriptRef.current?.(inTr);
               } catch (e) {
                 console.error('[Gemini] message parse error', e);
               }
@@ -739,11 +760,12 @@ export function useGeminiLiveSession({
             const prev = lastOutputTranscriptRef.current;
             const delta = outTr.startsWith(prev) ? outTr.slice(prev.length) : outTr;
             lastOutputTranscriptRef.current = outTr;
-            if (delta) onResponseText?.(delta);
+            if (delta) onResponseTextRef.current?.(delta);
           }
 
           // Tool calling (if enabled)
-          if (toolHandler) {
+          const activeToolHandler = toolHandlerRef.current;
+          if (activeToolHandler) {
             // Different transports/SDKs may wrap tool calls differently.
             const toolCall =
               (data?.toolCall ||
@@ -778,7 +800,7 @@ export function useGeminiLiveSession({
                 const args = call?.args ?? call?.arguments ?? call?.argsText ?? call?.args_text ?? '{}';
                 const argsText = typeof args === 'string' ? args : JSON.stringify(args);
                 if (!name) continue;
-                const res = toolHandler(name, argsText, { transport: 'realtime' });
+                const res = activeToolHandler(name, argsText, { transport: 'realtime' });
                 const sendToolResponse = (result: PropertyFunctionCallResult) => {
                   if (!result?.handled) return;
                   try {
@@ -833,11 +855,11 @@ export function useGeminiLiveSession({
               void handleAudioOut(part.inlineData.data, rate);
             }
             if (part?.text) {
-              onResponseText?.(part.text);
+              onResponseTextRef.current?.(part.text);
             }
           }
           const inTr = data?.inputTranscription?.text;
-          if (inTr) onTranscript?.(inTr);
+          if (inTr) onTranscriptRef.current?.(inTr);
           const done =
             data?.serverContent?.generationComplete ||
             data?.serverContent?.turnComplete ||
@@ -861,7 +883,7 @@ export function useGeminiLiveSession({
           url: ws.url,
           readyState: ws.readyState,
         });
-        try { onError?.('Voice connection error. Please retry.'); } catch {}
+        try { onErrorRef.current?.('Voice connection error. Please retry.'); } catch {}
         setConnectionState('error');
         // Allow immediate retry if the socket gets stuck in a bad state.
         try { if (wsRef.current === ws) wsRef.current = null; } catch {}
@@ -894,8 +916,7 @@ export function useGeminiLiveSession({
       await closeAll();
       setConnectionState('error');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- onError/stopPlaybackNow/toolHandler are caller-stable but not memoized; adding them causes reconnect loops
-  }, [closeAll, enabled, handleAudioOut, onResponseText, onTranscript]);
+  }, [closeAll, enabled, handleAudioOut, stopPlaybackNow]);
 
   const startText = useCallback(async () => {
     if (wsRef.current) return;
@@ -975,7 +996,7 @@ export function useGeminiLiveSession({
             system_instruction: {
               parts: [{ text: systemPrompt }],
             },
-            ...(toolHandler
+            ...(toolHandlerRef.current
               ? {
                   tools: [
                     {
@@ -1182,7 +1203,7 @@ export function useGeminiLiveSession({
                   const prev = lastOutputTranscriptRef.current;
                   const delta = outTr.startsWith(prev) ? outTr.slice(prev.length) : outTr;
                   lastOutputTranscriptRef.current = outTr;
-                  if (delta) onResponseText?.(delta);
+                  if (delta) onResponseTextRef.current?.(delta);
                 }
                 const parts = data?.serverContent?.modelTurn?.parts || [];
                 for (const part of parts) {
@@ -1192,10 +1213,10 @@ export function useGeminiLiveSession({
                     const rate = m ? Number(m[1]) : 24000;
                     void handleAudioOut(part.inlineData.data, rate);
                   }
-                  if (part?.text) onResponseText?.(part.text);
+                  if (part?.text) onResponseTextRef.current?.(part.text);
                 }
                 const inTr = data?.inputTranscription?.text;
-                if (inTr) onTranscript?.(inTr);
+                if (inTr) onTranscriptRef.current?.(inTr);
               } catch (e) {
                 console.error('[Gemini] message parse error', e);
               }
@@ -1223,11 +1244,12 @@ export function useGeminiLiveSession({
             const prev = lastOutputTranscriptRef.current;
             const delta = outTr.startsWith(prev) ? outTr.slice(prev.length) : outTr;
             lastOutputTranscriptRef.current = outTr;
-            if (delta) onResponseText?.(delta);
+            if (delta) onResponseTextRef.current?.(delta);
           }
 
           // Tool calling (if enabled)
-          if (toolHandler) {
+          const activeToolHandler = toolHandlerRef.current;
+          if (activeToolHandler) {
             // Different transports/SDKs may wrap tool calls differently.
             const toolCall =
               (data?.toolCall ||
@@ -1262,7 +1284,7 @@ export function useGeminiLiveSession({
                 const args = call?.args ?? call?.arguments ?? call?.argsText ?? call?.args_text ?? '{}';
                 const argsText = typeof args === 'string' ? args : JSON.stringify(args);
                 if (!name) continue;
-                const res = toolHandler(name, argsText, { transport: 'realtime' });
+                const res = activeToolHandler(name, argsText, { transport: 'realtime' });
                 const sendToolResponse = (result: PropertyFunctionCallResult) => {
                   if (!result?.handled) return;
                   try {
@@ -1314,11 +1336,11 @@ export function useGeminiLiveSession({
               void handleAudioOut(part.inlineData.data, rate);
             }
             if (part?.text) {
-              onResponseText?.(part.text);
+              onResponseTextRef.current?.(part.text);
             }
           }
           const inTr = data?.inputTranscription?.text;
-          if (inTr) onTranscript?.(inTr);
+          if (inTr) onTranscriptRef.current?.(inTr);
         } catch (error) {
           console.error('[Gemini] message parse error', error);
         }
@@ -1335,7 +1357,7 @@ export function useGeminiLiveSession({
           readyState: ws.readyState,
         });
         try {
-          onError?.('Connection error. Please retry.');
+          onErrorRef.current?.('Connection error. Please retry.');
         } catch {}
         setConnectionState('error');
         try {
@@ -1377,8 +1399,7 @@ export function useGeminiLiveSession({
       await closeAll();
       setConnectionState('error');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- handleAudioOut/onError/stopPlaybackNow are caller-stable but not memoized; adding them causes reconnect loops
-  }, [closeAll, onResponseText, onTranscript, toolHandler]);
+  }, [closeAll, handleAudioOut, stopPlaybackNow]);
 
   const sendText = useCallback(
     async (text: string) => {
@@ -1444,3 +1465,7 @@ export function useGeminiLiveSession({
     audioRef,
   };
 }
+
+
+
+
