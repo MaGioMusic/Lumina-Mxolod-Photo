@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Sidebar, Menu, SubMenu } from 'react-pro-sidebar';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useThemeValue } from '@/contexts/ThemeContext';
 import ToggleSwitch from './ToggleSwitch';
 import BeautifulRangeSlider from './BeautifulRangeSlider';
 import MiniCalendar from './MiniCalendar';
@@ -41,7 +41,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
   searchQuery,
   onSearchChange,
 }) => {
-  const { theme } = useTheme(); // Dark mode detection
+  const theme = useThemeValue(); // Dark mode detection
   const [showCollapsedSearch, setShowCollapsedSearch] = useState(false);
   // Prevent "slow slide-in" on initial mount caused by width transitions.
   const [hasMounted, setHasMounted] = useState(false);
@@ -1012,6 +1012,6 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
   );
 };
 
-export default ProSidebarFilter;
+export default React.memo(ProSidebarFilter);
 
 // Dark mode styling now handled by global CSS overrides in globals.css 

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useThemeToggle, useThemeValue } from '@/contexts/ThemeContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
@@ -28,7 +28,8 @@ interface NavItem {
 
 export default function Header() {
   const { language, setLanguage: updateLanguage, t } = useLanguage();
-  const { theme, toggleTheme } = useTheme();
+  const theme = useThemeValue();
+  const toggleTheme = useThemeToggle();
   const { user, isAuthenticated } = useAuth();
   const { getFavoritesCount } = useFavorites();
   const isAgentsUiEnabled = runtimeFlags.enableAgentsUI;

@@ -17,7 +17,7 @@ interface PropertyCardProps {
   title?: string;
   area?: string;
   isHighlighted?: boolean;
-  onHighlight?: () => void;
+  onHighlight?: (propertyId: number | null) => void;
 }
 
 export default function PropertyCard(props: PropertyCardProps) {

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useThemeValue } from '@/contexts/ThemeContext';
 
 interface ToggleSwitchProps {
   id: string;
@@ -11,7 +11,7 @@ interface ToggleSwitchProps {
 }
 
 const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ id, checked, onChange, label }) => {
-  const { theme } = useTheme();
+  const theme = useThemeValue();
 
   // Enhanced color scheme
   const colors = {

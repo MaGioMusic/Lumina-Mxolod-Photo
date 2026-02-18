@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { DayPicker } from 'react-day-picker';
 import { format, startOfToday, subDays, subMonths } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useThemeValue } from '@/contexts/ThemeContext';
 
 interface MiniCalendarProps {
   selectedDateRange: [Date | null, Date | null];
@@ -22,7 +22,7 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const inputRef = useRef<HTMLButtonElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
-  const { theme } = useTheme(); // Dark mode detection
+  const theme = useThemeValue(); // Dark mode detection
 
   const today = startOfToday();
   const [startDate, setStartDate] = useState<Date | null>(selectedDateRange[0]);

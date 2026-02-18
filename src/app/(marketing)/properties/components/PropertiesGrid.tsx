@@ -541,7 +541,7 @@ export default function PropertiesGrid({
             status={property.status}
             isNew={property.isNew}
             isHighlighted={highlightedPropertyId === property.id}
-            onHighlight={() => onPropertyHighlight?.(property.id)}
+            onHighlight={onPropertyHighlight}
           />
           );
         })}

@@ -30,7 +30,7 @@ const chipBase =
 const closeBtn =
   'ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full bg-white/20 hover:bg-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white';
 
-export default function AppliedFiltersChips({ searchQuery, filters, onRemove, onClearAll }: AppliedFiltersChipsProps) {
+function AppliedFiltersChips({ searchQuery, filters, onRemove, onClearAll }: AppliedFiltersChipsProps) {
   const chips: React.ReactNode[] = [];
 
   if (searchQuery.trim()) {
@@ -116,5 +116,7 @@ export default function AppliedFiltersChips({ searchQuery, filters, onRemove, on
     </div>
   );
 }
+
+export default React.memo(AppliedFiltersChips);
 
 

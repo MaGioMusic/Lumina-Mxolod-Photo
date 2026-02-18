@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { memo, useState, type MouseEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useThemeHydration } from '@/contexts/ThemeContext';
 import { useFavorites, FavoriteProperty } from '@/contexts/FavoritesContext';
 import { Bed, Bath, Maximize2, Heart, GitCompare } from 'lucide-react';
 import PropertyImageCarousel from './PropertyImageCarousel';
@@ -28,11 +28,11 @@ interface PropertyCardProps {
   title?: string;
   area?: string;
   isHighlighted?: boolean;
-  onHighlight?: () => void;
+  onHighlight?: (propertyId: number | null) => void;
   onFavoriteToggle?: (property: FavoriteProperty, nextIsFavorite: boolean) => void;
 }
 
-export default function PropertyCard({
+function PropertyCard({
   id,
   slug,
   image,
@@ -53,13 +53,15 @@ export default function PropertyCard({
   onFavoriteToggle
 }: PropertyCardProps) {
   const { t } = useLanguage();
-  const { isHydrated } = useTheme();
+  const isHydrated = useThemeHydration();
   const { isFavorite, addToFavorites, removeFromFavorites } = useFavorites();
   const { toggle: toggleCompare, isSelected: isCompared } = useCompare();
   const router = useRouter();
   const [isHovered, setIsHovered] = useState(false);
   const [heartClick, setHeartClick] = useState(false);
   const propertyId = slug ?? id;
+  const numericCardId = Number.parseInt(id, 10);
+  const isCardCompared = Number.isFinite(numericCardId) && isCompared(numericCardId);
   
   // Generate multiple images for carousel if not provided
   const propertyImages = images || [image, ...getPropertyImages(id).slice(0, 4)];
@@ -69,7 +71,7 @@ export default function PropertyCard({
 
   // Note: do not auto-scroll on hover highlight to avoid jumpy UX.
 
-  const handleFavoriteClick = (e: React.MouseEvent) => {
+  const handleFavoriteClick = (e: MouseEvent) => {
     e.stopPropagation();
     setHeartClick(true);
     setTimeout(() => setHeartClick(false), 300);
@@ -104,11 +106,10 @@ export default function PropertyCard({
 
   // Details view button currently unused
 
-  const handleCompareClick = (e: React.MouseEvent) => {
+  const handleCompareClick = (e: MouseEvent) => {
     e.stopPropagation();
-    const numericId = parseInt(id, 10);
-    if (!Number.isFinite(numericId)) return;
-    toggleCompare(numericId);
+    if (!Number.isFinite(numericCardId)) return;
+    toggleCompare(numericCardId);
   };
 
   const handleCardClick = () => {
@@ -134,7 +135,9 @@ export default function PropertyCard({
         onClick={handleCardClick}
         onMouseEnter={() => {
           setIsHovered(true);
-          onHighlight?.();
+          if (Number.isFinite(numericCardId)) {
+            onHighlight?.(numericCardId);
+          }
         }}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -175,16 +178,16 @@ export default function PropertyCard({
 
           {/* Actions top-right */}
           {/* Compare button - shows on hover for desktop */}
-          <div className={`absolute top-2 right-10 z-20 ${isCompared(parseInt(id,10)) ? 'opacity-100' : 'opacity-80 md:opacity-0 md:group-hover:opacity-100'} transition-opacity duration-200`}>
+          <div className={`absolute top-2 right-10 z-20 ${isCardCompared ? 'opacity-100' : 'opacity-80 md:opacity-0 md:group-hover:opacity-100'} transition-opacity duration-200`}>
             <button
               onClick={handleCompareClick}
               className={`w-6 h-6 rounded-full bg-white/80 dark:bg-gray-800/80 
                 hover:bg-white dark:hover:bg-gray-700 transition-all duration-200 
                 flex items-center justify-center shadow-sm hover:shadow-md
-                ${isCompared(parseInt(id,10)) ? 'text-[#F08336]' : 'text-gray-600 dark:text-gray-400'}`}
-              aria-pressed={isCompared(parseInt(id,10))}
-              aria-label={isCompared(parseInt(id,10)) ? (t('addedToCompare') || 'Added to compare') : (t('addToCompare') || 'Add to compare')}
-              title={isCompared(parseInt(id,10)) ? (t('added') || 'Added') : (t('addToCompare') || 'Add to compare')}
+                ${isCardCompared ? 'text-[#F08336]' : 'text-gray-600 dark:text-gray-400'}`}
+              aria-pressed={isCardCompared}
+              aria-label={isCardCompared ? (t('addedToCompare') || 'Added to compare') : (t('addToCompare') || 'Add to compare')}
+              title={isCardCompared ? (t('added') || 'Added') : (t('addToCompare') || 'Add to compare')}
             >
               <GitCompare size={12} />
             </button>
@@ -290,4 +293,6 @@ export default function PropertyCard({
       {cardInner}
     </GlowingShadow>
   ) : cardInner;
-} 
+}
+
+export default memo(PropertyCard);

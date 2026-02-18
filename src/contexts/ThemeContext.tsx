@@ -1,8 +1,14 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
-// Simple theme types
 type Theme = 'light' | 'dark';
 
 interface ThemeContextType {
@@ -11,7 +17,9 @@ interface ThemeContextType {
   isHydrated: boolean;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const ThemeValueContext = createContext<Theme | undefined>(undefined);
+const ThemeToggleContext = createContext<(() => void) | undefined>(undefined);
+const ThemeHydrationContext = createContext<boolean | undefined>(undefined);
 
 function setThemeCookie(value: Theme) {
   try {
@@ -19,61 +27,92 @@ function setThemeCookie(value: Theme) {
   } catch {}
 }
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return 'light';
-    const stored = localStorage.getItem('theme') as Theme | null;
+function readInitialTheme(): Theme {
+  if (typeof window === 'undefined') return 'light';
+  try {
+    const stored = localStorage.getItem('theme');
     if (stored === 'dark' || stored === 'light') return stored;
-    return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-  });
+  } catch {}
+  return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+}
+
+function applyThemeToDocument(nextTheme: Theme) {
+  if (typeof document === 'undefined') return;
+  const root = document.documentElement;
+  const isDark = nextTheme === 'dark';
+  root.classList.toggle('dark', isDark);
+  root.style.colorScheme = isDark ? 'dark' : 'light';
+}
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setTheme] = useState<Theme>(readInitialTheme);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme | null;
-    const initialTheme = savedTheme || (document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-
-    setTheme(initialTheme as Theme);
-    
-    // Apply theme to document
-    if (initialTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    
-    // Match browser color scheme to theme
-    document.documentElement.style.colorScheme = initialTheme === 'dark' ? 'dark' : 'light';
-    setThemeCookie(initialTheme as Theme);
-    
+    const initialTheme = readInitialTheme();
+    setTheme((currentTheme) => (
+      currentTheme === initialTheme ? currentTheme : initialTheme
+    ));
+    // Ensure cookie + DOM class are in sync after hydration.
+    applyThemeToDocument(initialTheme);
+    setThemeCookie(initialTheme);
     setIsHydrated(true);
   }, []);
 
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-    setThemeCookie(newTheme);
-    
-    if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-      document.documentElement.style.colorScheme = 'dark';
-    } else {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.style.colorScheme = 'light';
-    }
-  };
+  const toggleTheme = useCallback(() => {
+    setTheme((currentTheme) => {
+      const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+      try {
+        localStorage.setItem('theme', nextTheme);
+      } catch {}
+      setThemeCookie(nextTheme);
+      applyThemeToDocument(nextTheme);
+      return nextTheme;
+    });
+  }, []);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, isHydrated }}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeToggleContext.Provider value={toggleTheme}>
+      <ThemeValueContext.Provider value={theme}>
+        <ThemeHydrationContext.Provider value={isHydrated}>
+          {children}
+        </ThemeHydrationContext.Provider>
+      </ThemeValueContext.Provider>
+    </ThemeToggleContext.Provider>
   );
 }
 
-export function useTheme() {
-  const context = useContext(ThemeContext);
+export function useThemeValue(): Theme {
+  const context = useContext(ThemeValueContext);
   if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error('useThemeValue must be used within a ThemeProvider');
   }
   return context;
-} 
+}
+
+export function useThemeToggle(): () => void {
+  const context = useContext(ThemeToggleContext);
+  if (context === undefined) {
+    throw new Error('useThemeToggle must be used within a ThemeProvider');
+  }
+  return context;
+}
+
+export function useThemeHydration(): boolean {
+  const context = useContext(ThemeHydrationContext);
+  if (context === undefined) {
+    throw new Error('useThemeHydration must be used within a ThemeProvider');
+  }
+  return context;
+}
+
+export function useTheme(): ThemeContextType {
+  const theme = useThemeValue();
+  const toggleTheme = useThemeToggle();
+  const isHydrated = useThemeHydration();
+
+  return useMemo(
+    () => ({ theme, toggleTheme, isHydrated }),
+    [theme, toggleTheme, isHydrated]
+  );
+}

@@ -5,7 +5,7 @@ import { Moon, Sun } from "lucide-react";
 import { flushSync } from "react-dom";
 
 import { cn } from "@/lib/utils";
-import { useTheme } from "@/contexts/ThemeContext";
+import { useThemeToggle, useThemeValue } from "@/contexts/ThemeContext";
 
 interface AnimatedThemeTogglerProps extends React.ComponentPropsWithoutRef<"button"> {
   duration?: number;
@@ -23,7 +23,8 @@ export const AnimatedThemeToggler = ({
   duration = 400,
   ...props
 }: AnimatedThemeTogglerProps) => {
-  const { theme, toggleTheme } = useTheme();
+  const theme = useThemeValue();
+  const toggleTheme = useThemeToggle();
   const isDark = theme === "dark";
   const buttonRef = React.useRef<HTMLButtonElement>(null);
 

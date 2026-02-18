@@ -26,6 +26,21 @@ interface FiltersState {
 
 import PropertyDetailsMap from './PropertyDetailsMap';
 
+const createDefaultFiltersState = (): FiltersState => ({
+  priceRange: [0, 1000000],
+  bedrooms: [],
+  bathrooms: [],
+  propertyTypes: [],
+  transactionType: '',
+  constructionStatus: '',
+  floor: '',
+  furniture: '',
+  area: [0, 10000],
+  amenities: [],
+  dateAdded: [null, null],
+  quality: [],
+});
+
 const ProSidebarPropertiesPage: React.FC = () => {
   const searchParams = useSearchParams();
   const allowAiToolSideEffects = process.env.NEXT_PUBLIC_AI_TOOL_SIDEEFFECTS === '1';
@@ -34,21 +49,12 @@ const ProSidebarPropertiesPage: React.FC = () => {
   const [currentView, setCurrentView] = useState<'grid' | 'map'>('grid');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [highlightedPropertyId, setHighlightedPropertyId] = useState<number | null>(null);
-  const [filters, setFilters] = useState<FiltersState>({
-    priceRange: [0, 1000000],
-    bedrooms: [],
-    bathrooms: [],
-    propertyTypes: [],
-    transactionType: '',
-    constructionStatus: '',
-    floor: '',
-    furniture: '',
-    area: [0, 10000],
-    amenities: [],
-    // Initialize new filters
-    dateAdded: [null, null],
-    quality: [],
-  });
+  const [filters, setFilters] = useState<FiltersState>(createDefaultFiltersState);
+  const handleToggleSidebarCollapse = useCallback(() => {}, []);
+  const sidebarScrollerStyle = useMemo<React.CSSProperties>(
+    () => ({ scrollbarGutter: 'stable' } as React.CSSProperties),
+    []
+  );
 
   // Debounced inputs for smoother filtering
   const debouncedQuery = useDebounced(searchQuery, 200);
@@ -194,9 +200,9 @@ const ProSidebarPropertiesPage: React.FC = () => {
   // Inline handler now passed directly where needed
 
 
-  const handleFiltersChange = (newFilters: FiltersState) => {
+  const handleFiltersChange = useCallback((newFilters: FiltersState) => {
     setFilters(newFilters);
-  };
+  }, []);
 
   const handleRemoveChip = useCallback((keyOrObj: keyof FiltersState | 'search' | { arrayKey: keyof FiltersState; value: string }) => {
     if (keyOrObj === 'search') {
@@ -219,20 +225,7 @@ const ProSidebarPropertiesPage: React.FC = () => {
 
   const handleClearAll = useCallback(() => {
     setSearchQuery('');
-    setFilters({
-      priceRange: [0, 1000000],
-      bedrooms: [],
-      bathrooms: [],
-      propertyTypes: [],
-      transactionType: '',
-      constructionStatus: '',
-      floor: '',
-      furniture: '',
-      area: [0, 10000],
-      amenities: [],
-      dateAdded: [null, null],
-      quality: [],
-    });
+    setFilters(createDefaultFiltersState());
   }, []);
 
   const hasActiveFilters = useMemo(() => {
@@ -255,20 +248,7 @@ const ProSidebarPropertiesPage: React.FC = () => {
     try {
       // Clear local UI state
       setSearchQuery('');
-      setFilters({
-        priceRange: [0, 1000000],
-        bedrooms: [],
-        bathrooms: [],
-        propertyTypes: [],
-        transactionType: '',
-        constructionStatus: '',
-        floor: '',
-        furniture: '',
-        area: [0, 10000],
-        amenities: [],
-        dateAdded: [null, null],
-        quality: [],
-      });
+      setFilters(createDefaultFiltersState());
       // Clean URL query of filter params, keep view=map
       const u = new URL(window.location.href);
       ['location','minPrice','maxPrice','rooms','status','property_type','sort'].forEach((k) => u.searchParams.delete(k));
@@ -283,13 +263,13 @@ const ProSidebarPropertiesPage: React.FC = () => {
         <div className="flex-shrink-0 bg-white dark:bg-[#111111]">
           <div
             className="sticky top-16 h-[calc(100vh-4rem)] relative group overflow-y-auto overflow-x-hidden pr-2 bg-white dark:bg-[#111111]"
-            style={{ scrollbarGutter: 'stable' }}
+            style={sidebarScrollerStyle}
           >
             <ProSidebarFilter
               filters={filters}
               onFiltersChange={handleFiltersChange}
               isCollapsed={false}
-              onToggleCollapse={() => {}}
+              onToggleCollapse={handleToggleSidebarCollapse}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
             />

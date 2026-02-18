@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useThemeValue } from '@/contexts/ThemeContext';
 
 interface BeautifulRangeSliderProps {
   min: number;
@@ -26,7 +26,7 @@ const BeautifulRangeSlider: React.FC<BeautifulRangeSliderProps> = ({
 }) => {
   const [isDragging, setIsDragging] = useState<'min' | 'max' | null>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
-  const { theme } = useTheme(); // Dark mode detection
+  const theme = useThemeValue(); // Dark mode detection
 
   // Dynamic colors based on theme
   const colors = {
