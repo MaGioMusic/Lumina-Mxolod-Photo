@@ -11,6 +11,15 @@
   mix-blend-mode: normal;
 }
 
+/* Perf: during theme flip, suppress costly transitions/animations briefly.
+   Helps reduce perceived jank on large pages (/properties). */
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after {
+  transition: none !important;
+  animation: none !important;
+}
+
 /* Earth Tones Color Palette Variables */
 :root {
   /* Natural Earth Tones Palette */

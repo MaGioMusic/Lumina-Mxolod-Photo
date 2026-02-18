@@ -2,7 +2,6 @@
 
 import React, {
   createContext,
-  startTransition,
   useCallback,
   useContext,
   useEffect,
@@ -61,16 +60,28 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const toggleTheme = useCallback(() => {
-    const nextTheme = theme === 'light' ? 'dark' : 'light';
-    try {
-      localStorage.setItem('theme', nextTheme);
-    } catch {}
-    setThemeCookie(nextTheme);
-    applyThemeToDocument(nextTheme);
-    startTransition(() => {
-      setTheme(nextTheme);
+    setTheme((currentTheme) => {
+      const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+      try {
+        localStorage.setItem('theme', nextTheme);
+      } catch {}
+
+      setThemeCookie(nextTheme);
+
+      // During theme switch, briefly suppress CSS transitions to avoid
+      // large-tree transition jank on heavy pages like /properties.
+      try {
+        document.documentElement.classList.add('theme-switching');
+        window.setTimeout(() => {
+          document.documentElement.classList.remove('theme-switching');
+        }, 140);
+      } catch {}
+
+      applyThemeToDocument(nextTheme);
+      return nextTheme;
     });
-  }, [theme]);
+  }, []);
 
   return (
     <ThemeToggleContext.Provider value={toggleTheme}>
