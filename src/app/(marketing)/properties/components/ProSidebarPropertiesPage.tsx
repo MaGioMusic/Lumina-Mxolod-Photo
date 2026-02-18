@@ -82,7 +82,8 @@ export default function ProSidebarPropertiesPage() {
             {currentView === 'grid' ? (
               <div className="p-3">
                 <PropertiesGrid 
-                  searchQuery={searchQuery} 
+                  // Keep typing responsive while reducing result-grid churn.
+                  searchQuery={debouncedQuery} 
                   filters={filters}
                   highlightedPropertyId={highlightedPropertyId}
                   onPropertyHighlight={setHighlightedPropertyId}
@@ -90,7 +91,7 @@ export default function ProSidebarPropertiesPage() {
               </div>
             ) : (
               <div className="h-[calc(100vh-6rem)]">
-                <PropertyDetailsMap filters={filters} searchQuery={searchQuery} />
+                <PropertyDetailsMap filters={filters} searchQuery={debouncedQuery} />
               </div>
             )}
           </div>

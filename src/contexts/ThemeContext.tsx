@@ -2,6 +2,7 @@
 
 import React, {
   createContext,
+  startTransition,
   useCallback,
   useContext,
   useEffect,
@@ -60,16 +61,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setTheme((currentTheme) => {
-      const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
-      try {
-        localStorage.setItem('theme', nextTheme);
-      } catch {}
-      setThemeCookie(nextTheme);
-      applyThemeToDocument(nextTheme);
-      return nextTheme;
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    try {
+      localStorage.setItem('theme', nextTheme);
+    } catch {}
+    setThemeCookie(nextTheme);
+    applyThemeToDocument(nextTheme);
+    startTransition(() => {
+      setTheme(nextTheme);
     });
-  }, []);
+  }, [theme]);
 
   return (
     <ThemeToggleContext.Provider value={toggleTheme}>

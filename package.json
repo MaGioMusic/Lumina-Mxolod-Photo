@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "perf:properties": "node scripts/properties-perf-harness.mjs",
     "erd:check": "node -r ts-node/register scripts/erd-check.js",
     "ci:verify": "npm run lint && npm run erd:check",
     "prisma:format": "prisma format",

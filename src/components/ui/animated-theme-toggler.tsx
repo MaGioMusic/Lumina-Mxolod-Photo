@@ -38,7 +38,17 @@ export const AnimatedThemeToggler = ({
       });
     };
 
-    if (!startViewTransition) {
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isPropertiesRoute =
+      typeof window !== "undefined" &&
+      /^\/(?:ka\/|en\/|ru\/)?properties(?:\/|$|\?)/.test(window.location.pathname + window.location.search);
+
+    // Properties grid is interaction-heavy; skip view-transition clip-path animation there
+    // to avoid avoidable input/main-thread jank during perf-sensitive workflows.
+    if (!startViewTransition || prefersReducedMotion || isPropertiesRoute) {
       applyToggle();
       return;
     }
