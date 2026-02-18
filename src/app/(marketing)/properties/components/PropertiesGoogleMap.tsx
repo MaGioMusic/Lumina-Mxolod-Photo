@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { loadMaps } from '@/lib/googleMaps';
+import { isAiToolSideEffectsEnabled, traceChatSideEffect } from '@/lib/chatSideEffectsGuard';
 
 interface Property {
   id: number;
@@ -52,7 +53,7 @@ export default function PropertiesGoogleMap({
   const initialCenterRef = useRef<{ lat: number; lng: number } | null>(null);
   const markersRef = useRef<Map<number, google.maps.Marker>>(new Map());
   const aiMarkersRef = useRef<google.maps.Marker[]>([]);
-  const isDev = process.env.NODE_ENV === 'development';
+  const allowAiToolSideEffects = isAiToolSideEffectsEnabled();
 
   const center = useMemo(() => {
     const first = properties[0];
@@ -191,13 +192,21 @@ export default function PropertiesGoogleMap({
   }, [clearAiMarkers]);
 
   useEffect(() => {
+    if (!allowAiToolSideEffects) return;
+
     const handler = (event: Event) => {
       const detail = (event as CustomEvent).detail;
       renderAiPlaces(detail);
+      traceChatSideEffect({
+        source: 'PropertiesGoogleMap',
+        effect: 'places_result_event_applied',
+        allowed: true,
+        detail: { hasDetail: Boolean(detail) },
+      });
     };
     window.addEventListener('lumina:places:result', handler as EventListener);
     return () => window.removeEventListener('lumina:places:result', handler as EventListener);
-  }, [renderAiPlaces]);
+  }, [allowAiToolSideEffects, renderAiPlaces]);
 
   // Initialize map
   useEffect(() => {

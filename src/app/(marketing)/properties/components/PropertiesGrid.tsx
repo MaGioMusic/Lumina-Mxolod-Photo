@@ -10,6 +10,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { getMockProperties } from '@/lib/mockProperties';
 import { logger } from '@/lib/logger';
+import { isAiToolSideEffectsEnabled, traceChatSideEffect } from '@/lib/chatSideEffectsGuard';
 import type { Property as ApiProperty } from '@/types/models';
 
 interface FiltersState {
@@ -144,19 +145,25 @@ export default function PropertiesGrid({
 
   // Allow AI tool to push ad-hoc filters via CustomEvent without full reload
   // only when explicitly enabled.
-  const allowAiToolSideEffects = process.env.NEXT_PUBLIC_AI_TOOL_SIDEEFFECTS === '1';
+  const allowAiToolSideEffects = isAiToolSideEffectsEnabled();
   const [injectedFilters, setInjectedFilters] = useState<Partial<FiltersState> & { location?: string }>({});
   useEffect(() => {
     if (!allowAiToolSideEffects) return;
 
     const onSet = (e: Event) => {
       try {
-        const det: any = (e as CustomEvent).detail || {};
-        setInjectedFilters(prev => ({ ...prev, ...det }));
+        const detail = ((e as CustomEvent).detail || {}) as Partial<FiltersState> & { location?: string };
+        setInjectedFilters((prev) => ({ ...prev, ...detail }));
+        traceChatSideEffect({
+          source: 'PropertiesGrid',
+          effect: 'filters_event_received',
+          allowed: true,
+          detail: { keys: Object.keys(detail) },
+        });
       } catch {}
     };
-    window.addEventListener('lumina:filters:set', onSet as any);
-    return () => window.removeEventListener('lumina:filters:set', onSet as any);
+    window.addEventListener('lumina:filters:set', onSet as EventListener);
+    return () => window.removeEventListener('lumina:filters:set', onSet as EventListener);
   }, [allowAiToolSideEffects]);
 
   // Injected AI filters should be one-shot (or short-lived), otherwise they can
@@ -184,14 +191,9 @@ export default function PropertiesGrid({
   
   // Get current page from URL params
   const currentPage = parseInt(searchParams?.get('page') || '1');
-  // Prefer URL 'location', fallback to prop searchQuery
-  const locationParam = (searchParams?.get('location') || injectedFilters.location || searchQuery || '').toString();
-  // URL-driven overrides for filters (so navigation with query applies filters even on first load)
-  const minParam = Number(searchParams?.get('minPrice') || 'NaN');
-  const maxParam = Number(searchParams?.get('maxPrice') || 'NaN');
-  const roomsParam = searchParams?.get('rooms');
-  const statusParam = (searchParams?.get('status') || '').toString().toLowerCase();
-  const propTypeParam = (searchParams?.get('property_type') || '').toString().toLowerCase();
+  // URL filter params are consumed in ProSidebarPropertiesPage and turned into explicit state.
+  // This avoids stale query params repeatedly overriding user-cleared filters.
+  const locationParam = (injectedFilters.location || searchQuery || '').toString();
 
   // Normalize location to match internal district keys
   const districtKeys = ['vake', 'mtatsminda', 'saburtalo', 'isani', 'gldani'];
@@ -224,31 +226,14 @@ export default function PropertiesGrid({
     }
   }
   
-  // Filter and sort properties first
-  // Merge injected filters (partial) over incoming props filters
-  // Build URL-based overrides (only if present)
-  const urlOverrides: Partial<FiltersState> = {};
-  if (Number.isFinite(minParam) || Number.isFinite(maxParam)) {
-    urlOverrides.priceRange = [
-      Number.isFinite(minParam) ? Number(minParam) : filters.priceRange[0],
-      Number.isFinite(maxParam) ? Number(maxParam) : filters.priceRange[1],
-    ];
-  }
-  if (roomsParam && /^\d+$/.test(roomsParam)) {
-    const r = Number(roomsParam);
-    urlOverrides.bedrooms = [r >= 5 ? '5+' : String(r)];
-  }
-  if (propTypeParam && ['apartment','house','villa','studio','penthouse'].includes(propTypeParam)) {
-    urlOverrides.propertyTypes = [propTypeParam];
-  }
-
+  // Merge injected filters (partial) over incoming props filters.
   const effectiveFilters: FiltersState = {
     ...filters,
     priceRange: [
-      urlOverrides.priceRange?.[0] ?? injectedFilters.priceRange?.[0] ?? filters.priceRange[0],
-      urlOverrides.priceRange?.[1] ?? injectedFilters.priceRange?.[1] ?? filters.priceRange[1],
+      injectedFilters.priceRange?.[0] ?? filters.priceRange[0],
+      injectedFilters.priceRange?.[1] ?? filters.priceRange[1],
     ],
-    bedrooms: urlOverrides.bedrooms ?? injectedFilters.bedrooms ?? filters.bedrooms,
+    bedrooms: injectedFilters.bedrooms ?? filters.bedrooms,
     bathrooms: injectedFilters.bathrooms ?? filters.bathrooms,
     propertyTypes: injectedFilters.propertyTypes ?? filters.propertyTypes,
     transactionType: injectedFilters.transactionType ?? filters.transactionType,
@@ -258,6 +243,9 @@ export default function PropertiesGrid({
     area: injectedFilters.area ?? filters.area,
     amenities: injectedFilters.amenities ?? filters.amenities,
   };
+  const statusParam = effectiveFilters.transactionType.toLowerCase();
+  const propTypeParam = (effectiveFilters.propertyTypes[0] || '').toString().toLowerCase();
+  const roomsParam = (effectiveFilters.bedrooms[0] || '').toString();
 
   // Stable scalar keys for effect dependencies (არ ვაყენებთ მთლიან ობიექტს/მასივებს, რომ უსასრულო რერენდერები არ მივიღოთ)
   const [minPrice, maxPrice] = effectiveFilters.priceRange;

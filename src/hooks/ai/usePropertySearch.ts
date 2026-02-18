@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getMockProperties, MockProperty } from '@/lib/mockProperties';
 import { runtimeFlags } from '@/lib/flags';
+import { isAiToolSideEffectsEnabled, traceChatSideEffect } from '@/lib/chatSideEffectsGuard';
 
 type ToolCallTransport = 'realtime' | 'websocket';
 
@@ -26,7 +27,7 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
   const [lastSearchSummary, setLastSearchSummary] = useState('');
   const isDemoMode = runtimeFlags.demoModeOn;
   // Safety default: tool calls should not mutate UI/navigation unless explicitly enabled.
-  const allowToolSideEffects = process.env.NEXT_PUBLIC_AI_TOOL_SIDEEFFECTS === '1';
+  const allowToolSideEffects = isAiToolSideEffectsEnabled();
 
   const runPropertySearch = useCallback((rawArgs: unknown): MockProperty[] => {
     if (!isDemoMode) return [];
@@ -182,6 +183,71 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
         else navigateWithLocation(path);
       };
 
+      const navigateIfAllowed = (url: URL | string, effect: string) => {
+        const path = typeof url === 'string' ? url : url.pathname + url.search;
+        if (!allowToolSideEffects) {
+          traceChatSideEffect({
+            source: 'usePropertySearch',
+            effect,
+            allowed: false,
+            detail: { path },
+          });
+          return false;
+        }
+        try {
+          ensureNavigation(path);
+          traceChatSideEffect({
+            source: 'usePropertySearch',
+            effect,
+            allowed: true,
+            detail: { path },
+          });
+          return true;
+        } catch {
+          traceChatSideEffect({
+            source: 'usePropertySearch',
+            effect,
+            allowed: true,
+            detail: { path, navigateFailed: true },
+          });
+          return false;
+        }
+      };
+
+      const dispatchEventIfAllowed = (
+        eventName: string,
+        detail: Record<string, unknown>,
+        effect: string,
+      ) => {
+        if (!allowToolSideEffects) {
+          traceChatSideEffect({
+            source: 'usePropertySearch',
+            effect,
+            allowed: false,
+            detail: { eventName, keys: Object.keys(detail) },
+          });
+          return false;
+        }
+        try {
+          window.dispatchEvent(new CustomEvent(eventName, { detail }));
+          traceChatSideEffect({
+            source: 'usePropertySearch',
+            effect,
+            allowed: true,
+            detail: { eventName, keys: Object.keys(detail) },
+          });
+          return true;
+        } catch {
+          traceChatSideEffect({
+            source: 'usePropertySearch',
+            effect,
+            allowed: true,
+            detail: { eventName, dispatchFailed: true },
+          });
+          return false;
+        }
+      };
+
       try {
         const argsObj = JSON.parse(argsText || '{}');
 
@@ -203,11 +269,13 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
                 body: JSON.stringify({ address, radius_m: radius, types }),
               });
               const data = await res.json().catch(() => null);
-              try {
-                if (data) {
-                  window.dispatchEvent(new CustomEvent('lumina:places:result', { detail: data }));
-                }
-              } catch {}
+              if (data && typeof data === 'object') {
+                dispatchEventIfAllowed(
+                  'lumina:places:result',
+                  data as Record<string, unknown>,
+                  'nearby_places_result_event',
+                );
+              }
               return {
                 handled: true,
                 payload: data && typeof data === 'object' ? data : { ok: false, error: 'bad_response' },
@@ -225,11 +293,17 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
           const full = runPropertySearch(argsObj);
           setSearchResults(full);
           setFilterSummary(argsObj);
-          if (allowToolSideEffects) {
-            try {
-              const u = buildPropertiesUrl(argsObj);
-              ensureNavigation(u);
-            } catch {}
+          let navigationApplied = false;
+          try {
+            const u = buildPropertiesUrl(argsObj);
+            navigationApplied = navigateIfAllowed(u, 'search_properties_navigate');
+          } catch {
+            traceChatSideEffect({
+              source: 'usePropertySearch',
+              effect: 'search_properties_navigate',
+              allowed: allowToolSideEffects,
+              detail: { urlBuildFailed: true },
+            });
           }
           const { previewLimit, preview } = buildResultsPreview(full, argsObj);
           return {
@@ -240,6 +314,7 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
               returned_count: preview.length,
               results_preview: preview,
               preview_limit: previewLimit,
+              side_effects_applied: navigationApplied,
             },
           };
         }
@@ -247,12 +322,38 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
         if (fnName === 'open_page') {
           const path = (argsObj.path || '/').toString();
           const newTab = Boolean(argsObj.new_tab);
+          let opened = false;
           if (allowToolSideEffects) {
             rememberAutostart();
-            if (newTab && typeof window !== 'undefined') window.open(path, '_blank');
-            else ensureNavigation(path);
+            if (newTab && typeof window !== 'undefined') {
+              window.open(path, '_blank');
+              traceChatSideEffect({
+                source: 'usePropertySearch',
+                effect: 'open_page_new_tab',
+                allowed: true,
+                detail: { path },
+              });
+              opened = true;
+            } else {
+              opened = navigateIfAllowed(path, 'open_page_navigate');
+            }
+          } else {
+            traceChatSideEffect({
+              source: 'usePropertySearch',
+              effect: 'open_page_navigate',
+              allowed: false,
+              detail: { path, newTab },
+            });
           }
-          return { handled: true, payload: { ok: true, path, newTab } };
+          return {
+            handled: true,
+            payload: {
+              ok: opened,
+              path,
+              newTab,
+              ...(opened ? {} : { error: 'side_effects_disabled' }),
+            },
+          };
         }
 
         if (fnName === 'set_filters') {
@@ -270,29 +371,48 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
             const r = Number(roomsVal);
             detail.bedrooms = [r >= 5 ? '5+' : String(r)];
           }
-          if (allowToolSideEffects) {
-            try {
-              window.dispatchEvent(new CustomEvent('lumina:filters:set', { detail }));
-            } catch {}
-            try {
-              const u = buildPropertiesUrl(argsObj);
-              ensureNavigation(u);
-            } catch {
-              ensureNavigation('/properties');
-            }
+          const eventApplied = dispatchEventIfAllowed(
+            'lumina:filters:set',
+            detail,
+            'set_filters_event',
+          );
+          let navigationApplied = false;
+          try {
+            const u = buildPropertiesUrl(argsObj);
+            navigationApplied = navigateIfAllowed(u, 'set_filters_navigate');
+          } catch {
+            navigationApplied = navigateIfAllowed('/properties', 'set_filters_navigate_fallback');
           }
-          return { handled: true, payload: { ok: true, applied: detail } };
+          return {
+            handled: true,
+            payload: {
+              ok: eventApplied || navigationApplied,
+              applied: detail,
+              event_applied: eventApplied,
+              navigation_applied: navigationApplied,
+              ...((eventApplied || navigationApplied) ? {} : { error: 'side_effects_disabled' }),
+            },
+          };
         }
 
         if (fnName === 'set_view') {
           const view = (argsObj.view || 'map').toString();
-          if (allowToolSideEffects) {
-            try {
-              window.dispatchEvent(new CustomEvent('lumina:view:set', { detail: { view } }));
-            } catch {}
-            ensureNavigation('/properties');
-          }
-          return { handled: true, payload: { ok: true, view } };
+          const eventApplied = dispatchEventIfAllowed(
+            'lumina:view:set',
+            { view },
+            'set_view_event',
+          );
+          const navigationApplied = navigateIfAllowed('/properties', 'set_view_navigate');
+          return {
+            handled: true,
+            payload: {
+              ok: eventApplied || navigationApplied,
+              view,
+              event_applied: eventApplied,
+              navigation_applied: navigationApplied,
+              ...((eventApplied || navigationApplied) ? {} : { error: 'side_effects_disabled' }),
+            },
+          };
         }
 
         if (fnName === 'navigate_to_property') {
@@ -300,8 +420,15 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
           if (!id) {
             return { handled: true, payload: { ok: false, error: 'missing_id' } };
           }
-          ensureNavigation(`/properties/${id}`);
-          return { handled: true, payload: { ok: true, id } };
+          const didNavigate = navigateIfAllowed(`/properties/${id}`, 'navigate_to_property');
+          return {
+            handled: true,
+            payload: {
+              ok: didNavigate,
+              id,
+              ...(didNavigate ? {} : { error: 'side_effects_disabled' }),
+            },
+          };
         }
 
         if (fnName === 'open_first_property') {
@@ -319,10 +446,19 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
           const list = ensureList();
           const first = list[0];
           if (first && first.id) {
-            ensureNavigation(`/properties/mock-${first.id}`);
-            return { handled: true, payload: { ok: true, id: `mock-${first.id}`, total_count: list.length } };
+            const id = `mock-${first.id}`;
+            const didNavigate = navigateIfAllowed(`/properties/${id}`, 'open_first_property');
+            return {
+              handled: true,
+              payload: {
+                ok: didNavigate,
+                id,
+                total_count: list.length,
+                ...(didNavigate ? {} : { error: 'side_effects_disabled' }),
+              },
+            };
           }
-          ensureNavigation('/properties');
+          navigateIfAllowed('/properties', 'open_first_property_fallback');
           return { handled: true, payload: { ok: false, error: 'no_results' } };
         }
 
@@ -342,8 +478,18 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
           const list = ensureList();
           const item = list[idx];
           if (item?.id) {
-            ensureNavigation(`/properties/mock-${item.id}`);
-            return { handled: true, payload: { ok: true, id: `mock-${item.id}`, index: idx + 1, total_count: list.length } };
+            const id = `mock-${item.id}`;
+            const didNavigate = navigateIfAllowed(`/properties/${id}`, 'open_nth_result');
+            return {
+              handled: true,
+              payload: {
+                ok: didNavigate,
+                id,
+                index: idx + 1,
+                total_count: list.length,
+                ...(didNavigate ? {} : { error: 'side_effects_disabled' }),
+              },
+            };
           }
           return { handled: true, payload: { ok: false, error: 'index_out_of_range', index: idx + 1, total_count: list.length } };
         }
@@ -382,8 +528,15 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
         if (fnName === 'open_property_detail') {
           const id = (argsObj.id || '').toString();
           if (id) {
-            if (allowToolSideEffects) ensureNavigation(`/properties/${id}`);
-            return { handled: true, payload: { ok: true, id } };
+            const didNavigate = navigateIfAllowed(`/properties/${id}`, 'open_property_detail');
+            return {
+              handled: true,
+              payload: {
+                ok: didNavigate,
+                id,
+                ...(didNavigate ? {} : { error: 'side_effects_disabled' }),
+              },
+            };
           }
           return { handled: true, payload: { ok: false, error: 'missing_id' } };
         }

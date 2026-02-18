@@ -10,6 +10,7 @@ import { usePropertySearch } from '@/hooks/ai/usePropertySearch';
 import { runtimeFlags } from '@/lib/flags';
 import { useGeminiLiveSession } from '@/hooks/ai/useGeminiLiveSession';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { isAiToolSideEffectsEnabled, traceChatSideEffect } from '@/lib/chatSideEffectsGuard';
 
 const ChatMessageSchema = z.object({
   message: z.string().min(1, 'Message cannot be empty').max(500, 'Message too long'),
@@ -56,6 +57,7 @@ export default function AIChatComponent() {
   // Safety default: disable keyword-based auto-navigation fallback.
   // Keep navigation controlled by explicit tool-calls or direct user actions.
   const enableKeywordFallbackNav = process.env.NEXT_PUBLIC_AI_FALLBACK_NAV === '1';
+  const allowAiToolSideEffects = isAiToolSideEffectsEnabled();
 
   const nearbyConfig = useMemo(() => {
     return {
@@ -249,8 +251,23 @@ export default function AIChatComponent() {
         body: JSON.stringify({ address, radius_m: radius, types }),
       });
       const data = await res.json().catch(() => null);
-      if (data) {
-        window.dispatchEvent(new CustomEvent('lumina:places:result', { detail: data }));
+      if (data && typeof data === 'object') {
+        if (allowAiToolSideEffects) {
+          window.dispatchEvent(new CustomEvent('lumina:places:result', { detail: data }));
+          traceChatSideEffect({
+            source: 'AIChatComponent',
+            effect: 'nearby_fallback_result_event',
+            allowed: true,
+            detail: { keys: Object.keys(data as Record<string, unknown>) },
+          });
+        } else {
+          traceChatSideEffect({
+            source: 'AIChatComponent',
+            effect: 'nearby_fallback_result_event',
+            allowed: false,
+            detail: { blocked: true },
+          });
+        }
       }
       if (!data || data.ok !== true) {
         appendAssistantDelta(`${t('aiNearbySearchFailed')}\n`);
@@ -267,7 +284,7 @@ export default function AIChatComponent() {
       appendAssistantDelta(`${t('aiNearbySearchFailed')}\n`);
       return { handled: true };
     }
-  }, [appendAssistantDelta, extractRadiusMeters, extractTypes, nearbyConfig, stripTokens, t]);
+  }, [allowAiToolSideEffects, appendAssistantDelta, extractRadiusMeters, extractTypes, nearbyConfig, stripTokens, t]);
 
   // Close chat when clicking outside
   useEffect(() => {
@@ -348,6 +365,15 @@ export default function AIChatComponent() {
 
   const maybeAutoNavigateToProperties = useCallback(() => {
     if (pathname === '/properties') return;
+    if (!allowAiToolSideEffects) {
+      traceChatSideEffect({
+        source: 'AIChatComponent',
+        effect: 'keyword_fallback_navigate_properties',
+        allowed: false,
+        detail: { reason: 'side_effects_disabled' },
+      });
+      return;
+    }
 
     const now = Date.now();
     if (now - lastAutoNavigateAtRef.current < 2500) return;
@@ -360,23 +386,29 @@ export default function AIChatComponent() {
     } catch {}
 
     router.push('/properties');
-  }, [isListening, isOpen, pathname, router]);
+    traceChatSideEffect({
+      source: 'AIChatComponent',
+      effect: 'keyword_fallback_navigate_properties',
+      allowed: true,
+      detail: { path: '/properties' },
+    });
+  }, [allowAiToolSideEffects, isListening, isOpen, pathname, router]);
 
   // Fallback: explicit intent-based navigation when function-calling doesn't trigger
   useEffect(() => {
-    if (!enableKeywordFallbackNav) return;
+    if (!enableKeywordFallbackNav || !allowAiToolSideEffects) return;
     if (matchesNavigateTrigger(message)) {
       maybeAutoNavigateToProperties();
     }
-  }, [enableKeywordFallbackNav, message, maybeAutoNavigateToProperties]);
+  }, [allowAiToolSideEffects, enableKeywordFallbackNav, message, maybeAutoNavigateToProperties]);
 
   // Additional fallback: navigate based on latest voice transcript
   useEffect(() => {
-    if (!enableKeywordFallbackNav) return;
+    if (!enableKeywordFallbackNav || !allowAiToolSideEffects) return;
     if (matchesNavigateTrigger(lastTranscript)) {
       maybeAutoNavigateToProperties();
     }
-  }, [enableKeywordFallbackNav, lastTranscript, maybeAutoNavigateToProperties]);
+  }, [allowAiToolSideEffects, enableKeywordFallbackNav, lastTranscript, maybeAutoNavigateToProperties]);
 
   const startVoice = useCallback(async () => {
     if (!voiceSupported) {

@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ProSidebarFilter from './ProSidebarFilter';
 import PropertiesGrid from './PropertiesGrid';
 import AppliedFiltersChips from './AppliedFiltersChips';
 import useDebounced from './hooks/useDebounced';
+import { isAiToolSideEffectsEnabled, traceChatSideEffect } from '@/lib/chatSideEffectsGuard';
 
 // Updated FiltersState interface to match the enhanced version
 interface FiltersState {
@@ -28,7 +29,8 @@ import PropertyDetailsMap from './PropertyDetailsMap';
 
 const ProSidebarPropertiesPage: React.FC = () => {
   const searchParams = useSearchParams();
-  const allowAiToolSideEffects = process.env.NEXT_PUBLIC_AI_TOOL_SIDEEFFECTS === '1';
+  const allowAiToolSideEffects = isAiToolSideEffectsEnabled();
+  const lastAppliedAiFilterSignatureRef = useRef('');
   // Hydration-safe default: always start with 'grid' on first render.
   // Then, after mount, sync from URL/localStorage/effects.
   const [currentView, setCurrentView] = useState<'grid' | 'map'>('grid');
@@ -98,28 +100,65 @@ const ProSidebarPropertiesPage: React.FC = () => {
   useEffect(() => {
     if (!searchParams) return;
     const locationParam = searchParams.get('location') || '';
-    const typeParam = searchParams.get('type') || '';
-    const minParam = Number(searchParams.get('minPrice') || '0');
-    const maxParam = Number(searchParams.get('maxPrice') || '1000000');
+    const typeParamRaw = (searchParams.get('property_type') || searchParams.get('type') || '').toLowerCase();
+    const roomsParamRaw = (searchParams.get('rooms') || '').trim();
+    const statusParamRaw = (searchParams.get('status') || '').toLowerCase();
+    const minParamRaw = searchParams.get('minPrice');
+    const maxParamRaw = searchParams.get('maxPrice');
+    const minParam = Number(minParamRaw || '0');
+    const maxParam = Number(maxParamRaw || '1000000');
     const viewParam = (searchParams.get('view') || '').toLowerCase();
+    const propertyTypeParam = ['apartment', 'house', 'villa', 'studio', 'penthouse'].includes(typeParamRaw)
+      ? typeParamRaw
+      : '';
+    const roomsParam = /^\d+$/.test(roomsParamRaw)
+      ? [Number(roomsParamRaw) >= 5 ? '5+' : String(Number(roomsParamRaw))]
+      : [];
+    const statusParam = statusParamRaw === 'for-rent' || statusParamRaw === 'for-sale' ? statusParamRaw : '';
 
     // Respect view param if provided
     if (viewParam === 'map' || viewParam === 'grid') setCurrentView(viewParam as any);
 
     // Safety default: do not auto-apply URL filters unless AI tool side-effects are enabled.
     if (!allowAiToolSideEffects) return;
+    const aiFilterSignature = [
+      locationParam,
+      propertyTypeParam,
+      String(Number.isFinite(minParam) ? minParam : ''),
+      String(Number.isFinite(maxParam) ? maxParam : ''),
+      roomsParam.join(','),
+      statusParam,
+    ].join('|');
+    const hasAiFilterParams = Boolean(
+      locationParam ||
+      propertyTypeParam ||
+      roomsParam.length ||
+      statusParam ||
+      minParamRaw !== null ||
+      maxParamRaw !== null,
+    );
+    if (!hasAiFilterParams) return;
+    if (lastAppliedAiFilterSignatureRef.current === aiFilterSignature) return;
+    lastAppliedAiFilterSignatureRef.current = aiFilterSignature;
 
-    // Update search query if provided
-    if (locationParam) {
-      setSearchQuery(locationParam);
-    }
+    setSearchQuery(locationParam);
 
     // Update filters based on params
     setFilters((prev) => ({
       ...prev,
-      propertyTypes: typeParam ? [typeParam] : [],
-      priceRange: [Number.isFinite(minParam) ? minParam : 0, Number.isFinite(maxParam) ? maxParam : prev.priceRange[1]],
+      propertyTypes: propertyTypeParam ? [propertyTypeParam] : [],
+      bedrooms: roomsParam,
+      transactionType: statusParam,
+      priceRange: [Number.isFinite(minParam) ? minParam : 0, Number.isFinite(maxParam) ? maxParam : 1000000],
     }));
+    traceChatSideEffect({
+      source: 'ProSidebarPropertiesPage',
+      effect: 'url_filters_applied',
+      allowed: true,
+      detail: {
+        signature: aiFilterSignature,
+      },
+    });
   }, [allowAiToolSideEffects, searchParams]);
 
   // When AI side-effects are disabled, strip stale URL filter params once.
@@ -132,6 +171,12 @@ const ProSidebarPropertiesPage: React.FC = () => {
       if (!hadAny) return;
       keys.forEach((k) => u.searchParams.delete(k));
       window.history.replaceState(null, '', u.toString());
+      traceChatSideEffect({
+        source: 'ProSidebarPropertiesPage',
+        effect: 'stale_url_filters_stripped',
+        allowed: true,
+        detail: { keys },
+      });
     } catch {}
   }, [allowAiToolSideEffects]);
 
@@ -147,6 +192,8 @@ const ProSidebarPropertiesPage: React.FC = () => {
 
   // Listen for AI-triggered view switch
   useEffect(() => {
+    if (!allowAiToolSideEffects) return;
+
     const onAiView = (e: Event) => {
       try {
         const det = (e as CustomEvent).detail || {};
@@ -158,12 +205,18 @@ const ProSidebarPropertiesPage: React.FC = () => {
             u.searchParams.set('view', det.view);
             window.history.replaceState(null, '', u.toString());
           } catch {}
+          traceChatSideEffect({
+            source: 'ProSidebarPropertiesPage',
+            effect: 'ai_view_event_applied',
+            allowed: true,
+            detail: { view: det.view },
+          });
         }
       } catch {}
     };
-    window.addEventListener('lumina:view:set', onAiView as any);
-    return () => window.removeEventListener('lumina:view:set', onAiView as any);
-  }, []);
+    window.addEventListener('lumina:view:set', onAiView as EventListener);
+    return () => window.removeEventListener('lumina:view:set', onAiView as EventListener);
+  }, [allowAiToolSideEffects]);
 
   // On mount: თუ URL-ში view არ წერია, ამოიკითხე localStorage და გამოიყენე
   useEffect(() => {
