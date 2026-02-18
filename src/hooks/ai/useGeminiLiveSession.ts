@@ -152,6 +152,15 @@ export function useGeminiLiveSession({
   const bcRef = useRef<BroadcastChannel | null>(null);
   const toolDebugOnceRef = useRef(false);
   const lastSnapshotKeyRef = useRef<string>('');
+  const lastConnectAttemptAtRef = useRef<number>(0);
+
+  const shouldThrottleReconnect = useCallback(() => {
+    const now = Date.now();
+    const minReconnectIntervalMs = 1500;
+    if (now - lastConnectAttemptAtRef.current < minReconnectIntervalMs) return true;
+    lastConnectAttemptAtRef.current = now;
+    return false;
+  }, []);
 
   const markAiSpeakingForMs = useCallback((ms: number) => {
     const until = Date.now() + ms;
@@ -316,6 +325,10 @@ export function useGeminiLiveSession({
 
   const startVoice = useCallback(async () => {
     if (!enabled) return;
+    if (shouldThrottleReconnect()) {
+      onErrorRef.current?.('Reconnecting too quickly. Please wait a moment and retry.');
+      return;
+    }
     if (wsRef.current) {
       if (sessionTypeRef.current === 'voice') return;
       // If a text session is open, restart in voice mode (Live API allows one response modality).
@@ -916,9 +929,13 @@ export function useGeminiLiveSession({
       await closeAll();
       setConnectionState('error');
     }
-  }, [closeAll, enabled, handleAudioOut, stopPlaybackNow]);
+  }, [closeAll, enabled, handleAudioOut, shouldThrottleReconnect, stopPlaybackNow]);
 
   const startText = useCallback(async () => {
+    if (shouldThrottleReconnect()) {
+      onErrorRef.current?.('Reconnecting too quickly. Please wait a moment and retry.');
+      return;
+    }
     if (wsRef.current) return;
     sessionTypeRef.current = 'text';
     setConnectionState('connecting');
@@ -1399,7 +1416,7 @@ export function useGeminiLiveSession({
       await closeAll();
       setConnectionState('error');
     }
-  }, [closeAll, handleAudioOut, stopPlaybackNow]);
+  }, [closeAll, handleAudioOut, shouldThrottleReconnect, stopPlaybackNow]);
 
   const sendText = useCallback(
     async (text: string) => {
