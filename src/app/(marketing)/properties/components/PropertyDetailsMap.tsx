@@ -45,7 +45,7 @@ interface DisplayProperty {
   price: string;
   location: string;
   type: string;
-  status: 'for-sale' | 'for-rent';
+  status?: 'for-sale' | 'for-rent';
   bedrooms: number;
   bathrooms: number;
   area: number;
@@ -485,7 +485,7 @@ export default function PropertyDetailsMap({ selectedPropertyId, filters, search
           )}
           <div
             role="separator"
-            aria-label="Resize properties panel"
+            aria-label={t('resizePropertiesPanel')}
             onPointerDown={startResize}
             className="absolute right-0 top-0 z-30 h-full w-2 cursor-col-resize bg-transparent transition hover:bg-orange-200/40 hover:shadow-[0_0_10px_rgba(240,131,54,0.35)]"
           />

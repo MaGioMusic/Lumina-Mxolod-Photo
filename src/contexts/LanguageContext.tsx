@@ -1574,6 +1574,296 @@ const translations: Translations = {
     en: 'Uploading...',
     ru: 'Загружается...'
   },
+  back: {
+    ka: 'უკან',
+    en: 'Back',
+    ru: 'Назад'
+  },
+  property: {
+    ka: 'ქონება',
+    en: 'Property',
+    ru: 'Недвижимость'
+  },
+  agent: {
+    ka: 'აგენტი',
+    en: 'Agent',
+    ru: 'Агент'
+  },
+  describeThisPage: {
+    ka: 'ამ გვერდის აღწერა',
+    en: 'Describe this page',
+    ru: 'Описать эту страницу'
+  },
+  keyFacts: {
+    ka: 'ძირითადი მახასიათებლები',
+    en: 'Key Facts',
+    ru: 'Ключевые характеристики'
+  },
+  floorplans: {
+    ka: 'გეგმარებები',
+    en: 'Floorplans',
+    ru: 'Планировки'
+  },
+  floorplanAlt: {
+    ka: 'გეგმარება',
+    en: 'Floorplan',
+    ru: 'Планировка'
+  },
+  priceHistory: {
+    ka: 'ფასის ისტორია',
+    en: 'Price History',
+    ru: 'История цены'
+  },
+  last12Months: {
+    ka: 'ბოლო 12 თვე',
+    en: 'Last 12 Months',
+    ru: 'Последние 12 месяцев'
+  },
+  tour3d: {
+    ka: '3D ტური',
+    en: '3D Tour',
+    ru: '3D-тур'
+  },
+  tour3dAlt: {
+    ka: '3D ტურის წინასწარი ხედი',
+    en: '3D tour preview',
+    ru: 'Превью 3D-тура'
+  },
+  bedsShort: {
+    ka: 'საძ.',
+    en: 'Beds',
+    ru: 'Сп.'
+  },
+  bathsShort: {
+    ka: 'აბაზ.',
+    en: 'Baths',
+    ru: 'Ванн.'
+  },
+  scheduleTour: {
+    ka: 'ტურის დაჯავშნა',
+    en: 'Schedule a Tour',
+    ru: 'Запланировать просмотр'
+  },
+  selectPreferredTime: {
+    ka: 'აირჩიეთ სასურველი თარიღი და დრო.',
+    en: 'Select a preferred date and time.',
+    ru: 'Выберите удобную дату и время.'
+  },
+  scheduleDate: {
+    ka: 'თარიღი',
+    en: 'Date',
+    ru: 'Дата'
+  },
+  scheduleTime: {
+    ka: 'დრო',
+    en: 'Time',
+    ru: 'Время'
+  },
+  bookTour: {
+    ka: 'ტურის დაჯავშნა',
+    en: 'Book Tour',
+    ru: 'Записаться на просмотр'
+  },
+  resizePropertiesPanel: {
+    ka: 'ქონებების პანელის ზომის შეცვლა',
+    en: 'Resize properties panel',
+    ru: 'Изменить размер панели объектов'
+  },
+  propertyUploadSuccess: {
+    ka: 'ქონება წარმატებით აიტვირთა!',
+    en: 'Property uploaded successfully!',
+    ru: 'Объект успешно загружен!'
+  },
+  propertyUploadError: {
+    ka: 'ქონების ატვირთვა ვერ მოხერხდა. სცადეთ თავიდან.',
+    en: 'Error uploading property. Please try again.',
+    ru: 'Ошибка загрузки объекта. Попробуйте снова.'
+  },
+  currency: {
+    ka: 'ვალუტა',
+    en: 'Currency',
+    ru: 'Валюта'
+  },
+  propertyTitleExample: {
+    ka: 'თანამედროვე 2-საძინებლიანი ბინა ვაკეში',
+    en: 'Modern 2BR in Vake',
+    ru: 'Современная 2-комнатная квартира в Ваке'
+  },
+  locationExample: {
+    ka: 'ვაკე, თბილისი',
+    en: 'Vake, Tbilisi',
+    ru: 'Ваке, Тбилиси'
+  },
+  describeTheProperty: {
+    ka: 'აღწერეთ ქონება...',
+    en: 'Describe the property...',
+    ru: 'Опишите объект...'
+  },
+  photosOptional: {
+    ka: 'ფოტოები (არასავალდებულო)',
+    en: 'Photos (optional)',
+    ru: 'Фотографии (необязательно)'
+  },
+  photosRequirements: {
+    ka: 'მაქსიმუმ {maxFiles} ფოტო, JPG/PNG/WebP/AVIF, თითო {maxSizeMb}MB',
+    en: 'Up to {maxFiles} images, JPG/PNG/WebP/AVIF, {maxSizeMb}MB each',
+    ru: 'До {maxFiles} изображений, JPG/PNG/WebP/AVIF, по {maxSizeMb} МБ каждое'
+  },
+  dragDropImagesHereOr: {
+    ka: 'ჩააგდეთ ფოტოები აქ ან',
+    en: 'Drag & drop images here or',
+    ru: 'Перетащите изображения сюда или'
+  },
+  browse: {
+    ka: 'აირჩიეთ',
+    en: 'browse',
+    ru: 'выберите'
+  },
+  uploadedImageAlt: {
+    ka: 'ატვირთული ფოტო {index}',
+    en: 'Uploaded image {index}',
+    ru: 'Загруженное изображение {index}'
+  },
+  removeImage: {
+    ka: 'ფოტოს წაშლა',
+    en: 'Remove image',
+    ru: 'Удалить изображение'
+  },
+  contactName: {
+    ka: 'საკონტაქტო სახელი',
+    en: 'Contact Name',
+    ru: 'Контактное имя'
+  },
+  contactPhone: {
+    ka: 'საკონტაქტო ტელეფონი',
+    en: 'Contact Phone',
+    ru: 'Контактный телефон'
+  },
+  latitudeOptional: {
+    ka: 'განედი (არასავალდებულო)',
+    en: 'Latitude (optional)',
+    ru: 'Широта (необязательно)'
+  },
+  longitudeOptional: {
+    ka: 'გრძედი (არასავალდებულო)',
+    en: 'Longitude (optional)',
+    ru: 'Долгота (необязательно)'
+  },
+  validationPleaseEnterTitle: {
+    ka: 'გთხოვთ შეიყვანოთ სათაური',
+    en: 'Please enter a title',
+    ru: 'Пожалуйста, введите заголовок'
+  },
+  validationPleaseEnterLocation: {
+    ka: 'გთხოვთ შეიყვანოთ მდებარეობა',
+    en: 'Please enter a location',
+    ru: 'Пожалуйста, укажите локацию'
+  },
+  validationSelectType: {
+    ka: 'აირჩიეთ ტიპი',
+    en: 'Select a type',
+    ru: 'Выберите тип'
+  },
+  validationEnterValidPrice: {
+    ka: 'შეიყვანეთ სწორი ფასი',
+    en: 'Enter a valid price',
+    ru: 'Введите корректную цену'
+  },
+  validationInvalidValue: {
+    ka: 'არასწორი მნიშვნელობა',
+    en: 'Invalid value',
+    ru: 'Недопустимое значение'
+  },
+  validationEnterArea: {
+    ka: 'შეიყვანეთ ფართობი',
+    en: 'Enter area',
+    ru: 'Введите площадь'
+  },
+  validationDescriptionTooShort: {
+    ka: 'აღწერა ძალიან მოკლეა',
+    en: 'Description too short',
+    ru: 'Описание слишком короткое'
+  },
+  validationEnterContactName: {
+    ka: 'შეიყვანეთ საკონტაქტო სახელი',
+    en: 'Enter contact name',
+    ru: 'Введите контактное имя'
+  },
+  validationEnterValidPhone: {
+    ka: 'შეიყვანეთ სწორი ტელეფონის ნომერი',
+    en: 'Enter valid phone',
+    ru: 'Введите корректный телефон'
+  },
+  parking: {
+    ka: 'პარკინგი',
+    en: 'Parking',
+    ru: 'Парковка'
+  },
+  swimming_pool: {
+    ka: 'აუზი',
+    en: 'Swimming Pool',
+    ru: 'Бассейн'
+  },
+  gym: {
+    ka: 'სპორტული დარბაზი',
+    en: 'Gym',
+    ru: 'Спортзал'
+  },
+  garden: {
+    ka: 'ბაღი',
+    en: 'Garden',
+    ru: 'Сад'
+  },
+  balcony: {
+    ka: 'აივანი',
+    en: 'Balcony',
+    ru: 'Балкон'
+  },
+  air_conditioning: {
+    ka: 'კონდიციონერი',
+    en: 'Air Conditioning',
+    ru: 'Кондиционер'
+  },
+  elevator: {
+    ka: 'ლიფტი',
+    en: 'Elevator',
+    ru: 'Лифт'
+  },
+  security: {
+    ka: 'უსაფრთხოება',
+    en: 'Security',
+    ru: 'Охрана'
+  },
+  internet: {
+    ka: 'ინტერნეტი',
+    en: 'Internet',
+    ru: 'Интернет'
+  },
+  heating: {
+    ka: 'გათბობა',
+    en: 'Heating',
+    ru: 'Отопление'
+  },
+  fireplace: {
+    ka: 'ბუხარი',
+    en: 'Fireplace',
+    ru: 'Камин'
+  },
+  storage: {
+    ka: 'სათავსო',
+    en: 'Storage',
+    ru: 'Кладовая'
+  },
+  terrace: {
+    ka: 'ტერასა',
+    en: 'Terrace',
+    ru: 'Терраса'
+  },
+  petsAllowed: {
+    ka: 'ცხოველები დაშვებულია',
+    en: 'Pets Allowed',
+    ru: 'Разрешены питомцы'
+  },
   filters: {
     ka: 'ფილტრები',
     en: 'Filters',
@@ -2556,6 +2846,16 @@ const translations: Translations = {
     en: 'Didube',
     ru: 'Дидубе'
   },
+  krtsanisi: {
+    ka: 'კრწანისი',
+    en: 'Krtsanisi',
+    ru: 'Крцаниси'
+  },
+  nadzaladevi: {
+    ka: 'ნაძალადევი',
+    en: 'Nadzaladevi',
+    ru: 'Надзаладеви'
+  },
   vera: {
     ka: 'ვერა',
     en: 'Vera',
@@ -2966,6 +3266,56 @@ const translations: Translations = {
   chat_qr_3: { ka: 'როდის გირჩევნიათ დათვალიერება?', en: 'When is a good time for a viewing?', ru: 'Когда удобно для просмотра?' },
   chat_qr_4: { ka: 'გთხოვთ დატოვოთ საკონტაქტო ნომერი.', en: 'Please leave a contact number.', ru: 'Оставьте, пожалуйста, контактный номер.' },
   chat_qr_5: { ka: 'მოგწერთ დეტალებს მოკლე დროში.', en: 'I will send details shortly.', ru: 'Скоро отправлю детали.' },
+  chatUser1LastMessage: {
+    ka: 'გმადლობთ დახმარებისთვის, ძალიან...',
+    en: 'Thank you for the help, very...',
+    ru: 'Спасибо за помощь, очень...'
+  },
+  chatUser2Name: {
+    ka: 'ნინო კვარაცხელია',
+    en: 'Nino Kvaratskhelia',
+    ru: 'Нино Кварацхелия'
+  },
+  chatUser2LastMessage: {
+    ka: 'როდის იქნება ხელმისაწვდომი?',
+    en: 'When will it be available?',
+    ru: 'Когда будет доступно?'
+  },
+  chatUser3Name: {
+    ka: 'დავით გურგენიძე',
+    en: 'Davit Gurgenidze',
+    ru: 'Давит Гургенидзе'
+  },
+  chatUser3LastMessage: {
+    ka: 'გმადლობთ ინფორმაციისთვის',
+    en: 'Thank you for the information',
+    ru: 'Спасибо за информацию'
+  },
+  chatUser4Name: {
+    ka: 'თამარ ბერიძე',
+    en: 'Tamar Beridze',
+    ru: 'Тамар Беридзе'
+  },
+  chatUser5Name: {
+    ka: 'ლევან კიკნაძე',
+    en: 'Levan Kiknadze',
+    ru: 'Леван Кикнадзе'
+  },
+  chatUser5LastMessage: {
+    ka: 'კიდევ მაქვს რამდენიმე კითხვა...',
+    en: 'I still have a few more questions...',
+    ru: 'У меня есть еще несколько вопросов...'
+  },
+  chatUser6Name: {
+    ka: 'მარიამ გოგოლაძე',
+    en: 'Mariam Gogoladze',
+    ru: 'Мариам Гоголадзе'
+  },
+  chatUser6LastMessage: {
+    ka: 'მადლობა დროული პასუხისთვის',
+    en: 'Thanks for the timely response',
+    ru: 'Спасибо за быстрый ответ'
+  },
   today: { ka: 'დღეს', en: 'Today', ru: 'Сегодня' },
   tomorrow: { ka: 'ხვალ', en: 'Tomorrow', ru: 'Завтра' },
   oneWeek: { ka: '1 კვირა', en: '1 week', ru: '1 неделя' },
