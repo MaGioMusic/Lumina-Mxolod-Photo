@@ -894,6 +894,7 @@ export function useGeminiLiveSession({
       await closeAll();
       setConnectionState('error');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- onError/stopPlaybackNow/toolHandler are caller-stable but not memoized; adding them causes reconnect loops
   }, [closeAll, enabled, handleAudioOut, onResponseText, onTranscript]);
 
   const startText = useCallback(async () => {
@@ -1376,6 +1377,7 @@ export function useGeminiLiveSession({
       await closeAll();
       setConnectionState('error');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- handleAudioOut/onError/stopPlaybackNow are caller-stable but not memoized; adding them causes reconnect loops
   }, [closeAll, onResponseText, onTranscript, toolHandler]);
 
   const sendText = useCallback(

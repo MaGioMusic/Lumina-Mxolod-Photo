@@ -746,6 +746,7 @@ export const useRealtimeVoiceSession = ({
     isListening,
     isModeB,
     isVoiceEnabled,
+    onTranscript,
     requestModelResponse,
     stopVoice,
     useClientVad,
@@ -765,7 +766,6 @@ export const useRealtimeVoiceSession = ({
     };
     raf = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(raf);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isListening]);
 
   useEffect(() => {

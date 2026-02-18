@@ -102,6 +102,7 @@ export const ProgressSlider: FC<ProgressSliderProps> = ({
     return () => {
       cancelAnimationFrame(frame.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- animate is a stable RAF loop; adding it would cause infinite re-fires
   }, [sliderValues, active, isFastForward]);
 
   const animate = (now: number) => {
