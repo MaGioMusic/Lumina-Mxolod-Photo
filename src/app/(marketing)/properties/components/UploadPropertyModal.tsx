@@ -63,6 +63,7 @@ export default function UploadPropertyModal({ isOpen, onClose }: UploadPropertyM
 
   const [dragActive, setDragActive] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 
   if (!isOpen) return null;
 
@@ -260,12 +261,32 @@ export default function UploadPropertyModal({ isOpen, onClose }: UploadPropertyM
             </div>
 
             <div>
-              <LocationPicker
-                value={formData.location}
-                onChange={handleLocationChange}
-                apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}
-                className="w-full"
-              />
+              {mapsApiKey ? (
+                <LocationPicker
+                  value={formData.location}
+                  onChange={handleLocationChange}
+                  apiKey={mapsApiKey}
+                  className="w-full"
+                />
+              ) : (
+                <div className="rounded-lg border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 p-3 space-y-2">
+                  <p className="text-xs text-amber-700 dark:text-amber-300">
+                    Google Maps API key არ არის კონფიგურირებული. დროებით გამოიყენე ტექსტური მისამართი.
+                  </p>
+                  <input
+                    type="text"
+                    value={formData.location?.address || ''}
+                    onChange={(e) =>
+                      handleLocationChange({
+                        address: e.target.value,
+                        coordinates: formData.location?.coordinates || { lat: 41.7151, lng: 44.7661 },
+                      })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-400 dark:bg-gray-700 dark:text-white"
+                    placeholder={t('enterLocation') || 'Enter location'}
+                  />
+                </div>
+              )}
             </div>
 
             <div>
