@@ -44,6 +44,16 @@ export async function POST(req: NextRequest) {
   try {
     supabase = getSupabaseAdmin();
   } catch (e) {
+    // Dev/local fallback: allow chat UI to continue without persistence when
+    // Supabase admin env is missing. This prevents noisy 503 loops in console.
+    if (process.env.NODE_ENV !== 'production') {
+      return NextResponse.json({
+        persisted: false,
+        reason: 'SUPABASE_NOT_CONFIGURED',
+        summary: '',
+      });
+    }
+
     return NextResponse.json(
       {
         error: {

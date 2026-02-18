@@ -31,6 +31,8 @@ export default function AIChatComponent() {
   const hydratedFromDbRef = useRef(false);
   const persistedMessageIdsRef = useRef<Set<string>>(new Set());
   const lastSavedTranscriptRef = useRef<string>('');
+  const chatPersistenceDisabledRef = useRef(false);
+  const lastAutoNavigateAtRef = useRef(0);
   const assistantDraftIdRef = useRef<string | null>(null);
   const assistantFlushTimerRef = useRef<number | null>(null);
   const [voiceError, setVoiceError] = useState<string | null>(null);
@@ -313,36 +315,63 @@ export default function AIChatComponent() {
 
   const matchesNavigateTrigger = (raw: string | undefined | null): boolean => {
     if (!raw) return false;
-    const m = raw.toLowerCase();
-    const triggers = [
-      'properties', 'property', 'listings', 'go to properties', 'open properties',
-      'უძრავი', 'უძრავი ქონება', 'ქონება', 'განცხადებები', 'ბინების გვერდზე', 'ბინები', 'სახლები', 'გავიდეთ უძრავზე', 'გადადი უძრავი', 'მაჩვენე უძრავი'
+    const m = raw.toLowerCase().trim();
+
+    // Keep this strict to avoid accidental redirects from generic words
+    // like "property" in normal chat sentences.
+    const explicitPhrases = [
+      'go to properties',
+      'open properties',
+      'show properties page',
+      'show listings',
+      'take me to properties',
+      'გადადი ბინებზე',
+      'გადადი უძრავ ქონებაზე',
+      'მაჩვენე ბინები',
+      'მაჩვენე განცხადებები',
+      'მაჩვენე უძრავი ქონება',
+      'перейди к объектам',
+      'открой объекты',
+      'покажи объявления',
     ];
-    return triggers.some(t => m.includes(t));
+
+    if (explicitPhrases.some((p) => m.includes(p))) return true;
+
+    // Two-token intent pattern: action verb + real-estate target term
+    const hasAction = /(go|open|show|navigate|перейди|открой|покажи|გადადი|გახსენი|მაჩვენე)/.test(m);
+    const hasTarget = /(properties|listings|real estate|უძრავ|ქონებ|ბინ|განცხადებ|объект|недвиж)/.test(m);
+    return hasAction && hasTarget;
   };
 
-  // Fallback: keyword-based navigation when function-calling doesn't trigger
+  const maybeAutoNavigateToProperties = useCallback(() => {
+    if (pathname === '/properties') return;
+
+    const now = Date.now();
+    if (now - lastAutoNavigateAtRef.current < 2500) return;
+    lastAutoNavigateAtRef.current = now;
+
+    try {
+      window.sessionStorage.setItem('lumina_ai_autostart', isOpen ? '1' : '0');
+      // Only auto-start voice after navigation if we were already in voice mode.
+      window.sessionStorage.setItem('lumina_ai_autostart_mode', isListening ? 'voice' : 'text');
+    } catch {}
+
+    router.push('/properties');
+  }, [isListening, isOpen, pathname, router]);
+
+  // Fallback: explicit intent-based navigation when function-calling doesn't trigger
   useEffect(() => {
     if (matchesNavigateTrigger(message)) {
-                try {
-                  window.sessionStorage.setItem('lumina_ai_autostart', isOpen ? '1' : '0');
-                  // Only auto-start voice after navigation if we were already in voice mode.
-                  window.sessionStorage.setItem('lumina_ai_autostart_mode', isListening ? 'voice' : 'text');
-                } catch {}
-                  router.push('/properties');
-                }
-  }, [message, isOpen, isListening, router]);
+      maybeAutoNavigateToProperties();
+    }
+  }, [message, maybeAutoNavigateToProperties]);
 
   // Additional fallback: navigate based on latest voice transcript
   useEffect(() => {
     if (matchesNavigateTrigger(lastTranscript)) {
-                try {
-                  window.sessionStorage.setItem('lumina_ai_autostart', isOpen ? '1' : '0');
-                  window.sessionStorage.setItem('lumina_ai_autostart_mode', isListening ? 'voice' : 'text');
-                } catch {}
-                router.push('/properties');
+      maybeAutoNavigateToProperties();
     }
-  }, [lastTranscript, isOpen, isListening, router]);
+  }, [lastTranscript, maybeAutoNavigateToProperties]);
 
   const startVoice = useCallback(async () => {
     if (!voiceSupported) {
@@ -378,6 +407,8 @@ export default function AIChatComponent() {
   }, [appendUserMessage, lastTranscript, maybeHandleNearbyFallback, stopGeminiVoice]);
 
   const persistMessage = useCallback(async (m: PersistedChatMessage) => {
+    if (chatPersistenceDisabledRef.current) return;
+
     try {
       const res = await fetch('/api/chat/message', {
         method: 'POST',
@@ -398,7 +429,15 @@ export default function AIChatComponent() {
         setChatSummary(json.summary);
       }
     } catch (err) {
-      // allow retry on next render
+      const text = String((err as Error)?.message ?? err ?? '');
+      if (text.includes('SUPABASE_NOT_CONFIGURED')) {
+        // Avoid request spam in local env when Supabase admin key is missing.
+        chatPersistenceDisabledRef.current = true;
+        console.warn('[chat] persistence disabled: missing Supabase admin env');
+        return;
+      }
+
+      // allow retry on transient failures
       persistedMessageIdsRef.current.delete(m.id);
       console.warn('[chat] persist failed', err);
     }
@@ -459,6 +498,8 @@ export default function AIChatComponent() {
   // Persist newly-finalized messages (text + voice) once.
   useEffect(() => {
     if (!hydratedFromDbRef.current) return;
+    if (chatPersistenceDisabledRef.current) return;
+
     for (const m of messages) {
       if (!m.isFinal) continue;
       if (persistedMessageIdsRef.current.has(m.id)) continue;
