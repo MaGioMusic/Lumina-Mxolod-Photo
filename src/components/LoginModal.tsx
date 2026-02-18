@@ -328,9 +328,11 @@ export default function LoginModal({
       </div>
 
       {/* Sign Up Modal */}
-      <SignUpModal 
-        isOpen={isSignUpModalOpen} 
-        onClose={handleSignUpModalClose} 
+      <SignUpModal
+        isOpen={isSignUpModalOpen}
+        onClose={handleSignUpModalClose}
+        onSuccess={onSuccess}
+        redirectOnSuccess={redirectOnSuccess}
       />
     </>
   );
