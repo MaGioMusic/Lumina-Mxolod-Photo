@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import Header from '@/components/Header';
 import StickyCompareBar from '@/components/StickyCompareBar';
 import { logger } from '@/lib/logger';
+import { ProfiledSection } from '@/lib/perf/reactProfiler';
 
 export default function ConditionalLayout({
   children,
@@ -20,14 +21,22 @@ export default function ConditionalLayout({
 
   return (
     <>
-      <Header />
-      <main className="min-h-screen">
-        <div style={{ ['--app-header-height' as string]: '5rem' }}>
-          {children}
-        </div>
-      </main>
+      <ProfiledSection id="Header">
+        <Header />
+      </ProfiledSection>
+      <ProfiledSection id="MainContent">
+        <main className="min-h-screen">
+          <div style={{ ['--app-header-height' as string]: '5rem' }}>
+            {children}
+          </div>
+        </main>
+      </ProfiledSection>
       {/* Sticky Compare Bar (hide on /compare) */}
-      {!isComparePage && <StickyCompareBar />}
+      {!isComparePage && (
+        <ProfiledSection id="StickyCompareBar">
+          <StickyCompareBar />
+        </ProfiledSection>
+      )}
       {/* Global AI Chat - visible on all pages */}
       {/* Chat mounted globally in Root layout */}
     </>

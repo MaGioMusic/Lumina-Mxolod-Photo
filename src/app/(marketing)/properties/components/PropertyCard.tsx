@@ -10,6 +10,7 @@ import PropertyImageCarousel from './PropertyImageCarousel';
 import { getPropertyImages } from '@/lib/samplePropertyImages';
 import { useCompare } from '@/contexts/CompareContext';
 import GlowingShadow from '@/components/GlowingShadow';
+import { ProfiledSection } from '@/lib/perf/reactProfiler';
 
 interface PropertyCardProps {
   id: string;
@@ -140,11 +141,13 @@ export default function PropertyCard({
       >
         {/* Property Image Carousel with Overlays */}
         <div className="relative group">
-          <PropertyImageCarousel
-            images={propertyImages}
-            alt={title || address || 'Property'}
-            onImageChange={(index) => console.log(`Property ${id} image changed to ${index}`)}
-          />
+          <ProfiledSection id="PropertyImageCarousel">
+            <PropertyImageCarousel
+              images={propertyImages}
+              alt={title || address || 'Property'}
+              onImageChange={(index) => console.log(`Property ${id} image changed to ${index}`)}
+            />
+          </ProfiledSection>
           
           {/* Property Type and Status Badges */}
           <div className="absolute top-2 left-2 flex flex-col gap-1 z-20 opacity-100">

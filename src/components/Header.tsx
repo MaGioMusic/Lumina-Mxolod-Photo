@@ -18,6 +18,7 @@ import IOSToggle from '@/app/(marketing)/properties/components/IOSToggle';
 import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler';
 import LoginModal from '@/components/LoginModal';
 import PropertySubmitModal from '@/components/PropertySubmitModal';
+import { ProfiledSection } from '@/lib/perf/reactProfiler';
 
 // Type definitions for navigation items
 interface NavItem {
@@ -285,13 +286,15 @@ export default function Header() {
               {/* Account controls moved next to auth buttons */}
 
               {/* Theme Toggle */}
-              <AnimatedThemeToggler
-                type="button"
-                className={`p-2 rounded-lg transition-colors ${
-                  theme === 'dark' ? 'text-gray-300 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-100'
-                }`}
-                title={theme === 'dark' ? t('lightMode') : t('darkMode')}
-              />
+              <ProfiledSection id="AnimatedThemeToggler">
+                <AnimatedThemeToggler
+                  type="button"
+                  className={`p-2 rounded-lg transition-colors ${
+                    theme === 'dark' ? 'text-gray-300 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                  title={theme === 'dark' ? t('lightMode') : t('darkMode')}
+                />
+              </ProfiledSection>
 
               {/* Favorites (if authenticated) */}
               {isAuthenticated && (

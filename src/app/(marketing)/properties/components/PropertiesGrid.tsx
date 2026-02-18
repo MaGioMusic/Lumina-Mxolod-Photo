@@ -11,6 +11,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { getMockProperties } from '@/lib/mockProperties';
 import { logger } from '@/lib/logger';
 import type { Property as ApiProperty } from '@/types/models';
+import { ProfiledSection } from '@/lib/perf/reactProfiler';
 
 interface FiltersState {
   priceRange: [number, number];
@@ -523,26 +524,27 @@ export default function PropertiesGrid({
           const addressLabel = property.location || `${t('tbilisi')}, ${t(property.address)}`;
 
           return (
-          <PropertyCard
-            key={property.slug || property.id}
-            id={property.id.toString()}
-            slug={property.slug}
-            image={property.image}
-            images={property.images}
-            price={formatPrice(property)}
-            address={addressLabel}
-            title={property.title || `${property.type} in ${addressLabel}`}
-            bedrooms={property.bedrooms}
-            bathrooms={property.bathrooms}
-            sqft={property.sqft}
-            floor={property.floor}
-            area={property.sqft ? `${property.sqft} მ²` : undefined}
-            type={property.type}
-            status={property.status}
-            isNew={property.isNew}
-            isHighlighted={highlightedPropertyId === property.id}
-            onHighlight={() => onPropertyHighlight?.(property.id)}
-          />
+          <ProfiledSection id="PropertyCard" key={property.slug || property.id}>
+            <PropertyCard
+              id={property.id.toString()}
+              slug={property.slug}
+              image={property.image}
+              images={property.images}
+              price={formatPrice(property)}
+              address={addressLabel}
+              title={property.title || `${property.type} in ${addressLabel}`}
+              bedrooms={property.bedrooms}
+              bathrooms={property.bathrooms}
+              sqft={property.sqft}
+              floor={property.floor}
+              area={property.sqft ? `${property.sqft} მ²` : undefined}
+              type={property.type}
+              status={property.status}
+              isNew={property.isNew}
+              isHighlighted={highlightedPropertyId === property.id}
+              onHighlight={() => onPropertyHighlight?.(property.id)}
+            />
+          </ProfiledSection>
           );
         })}
       </div>

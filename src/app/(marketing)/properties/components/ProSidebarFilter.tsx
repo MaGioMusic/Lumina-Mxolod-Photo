@@ -6,6 +6,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import ToggleSwitch from './ToggleSwitch';
 import BeautifulRangeSlider from './BeautifulRangeSlider';
 import MiniCalendar from './MiniCalendar';
+import { ProfiledSection } from '@/lib/perf/reactProfiler';
 
 // Enhanced FiltersState interface with new filters
 interface FiltersState {
@@ -799,15 +800,17 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
             >
               {!isCollapsed && (
                 <div className="p-4" style={{ backgroundColor: colors.background }}>
-                  <BeautifulRangeSlider
-                    min={0}
-                    max={1000000}
-                    value={filters.priceRange}
-                    onChange={handlePriceChange}
-                    step={10000}
-                    unit="$"
-                    formatValue={formatPrice}
-                  />
+                  <ProfiledSection id="BeautifulRangeSlider:price">
+                    <BeautifulRangeSlider
+                      min={0}
+                      max={1000000}
+                      value={filters.priceRange}
+                      onChange={handlePriceChange}
+                      step={10000}
+                      unit="$"
+                      formatValue={formatPrice}
+                    />
+                  </ProfiledSection>
                 </div>
               )}
             </SubMenu>
@@ -917,15 +920,17 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
             >
               {!isCollapsed && (
                 <div className="p-4">
-                  <BeautifulRangeSlider
-                    min={0}
-                    max={10000}
-                    value={filters.area}
-                    onChange={handleAreaChange}
-                    step={50}
-                    unit="m²"
-                    formatValue={formatArea}
-                  />
+                  <ProfiledSection id="BeautifulRangeSlider:area">
+                    <BeautifulRangeSlider
+                      min={0}
+                      max={10000}
+                      value={filters.area}
+                      onChange={handleAreaChange}
+                      step={50}
+                      unit="m²"
+                      formatValue={formatArea}
+                    />
+                  </ProfiledSection>
                 </div>
               )}
             </SubMenu>
@@ -974,10 +979,12 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
             >
               {!isCollapsed && (
                 <div className="p-4">
-                  <MiniCalendar
-                    selectedDateRange={filters.dateAdded}
-                    onDateRangeChange={handleDateAddedChange}
-                  />
+                  <ProfiledSection id="MiniCalendar">
+                    <MiniCalendar
+                      selectedDateRange={filters.dateAdded}
+                      onDateRangeChange={handleDateAddedChange}
+                    />
+                  </ProfiledSection>
                 </div>
               )}
             </SubMenu>
@@ -994,13 +1001,14 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
               {!isCollapsed && (
                 <div className="p-4 space-y-3">
                   {qualityLevels.map((quality) => (
-                    <ToggleSwitch
-                      key={quality}
-                      id={`quality-${quality}`}
-                      checked={filters.quality.includes(quality)}
-                      onChange={() => handleQualityChange(quality)}
-                      label={quality}
-                    />
+                    <ProfiledSection id="ToggleSwitch:quality" key={quality}>
+                      <ToggleSwitch
+                        id={`quality-${quality}`}
+                        checked={filters.quality.includes(quality)}
+                        onChange={() => handleQualityChange(quality)}
+                        label={quality}
+                      />
+                    </ProfiledSection>
                   ))}
                 </div>
               )}

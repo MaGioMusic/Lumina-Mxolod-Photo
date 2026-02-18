@@ -6,6 +6,7 @@ import ProSidebarFilter from './ProSidebarFilter';
 import PropertiesGrid from './PropertiesGrid';
 import AppliedFiltersChips from './AppliedFiltersChips';
 import useDebounced from './hooks/useDebounced';
+import { ProfiledSection } from '@/lib/perf/reactProfiler';
 
 // Updated FiltersState interface to match the enhanced version
 interface FiltersState {
@@ -285,14 +286,16 @@ const ProSidebarPropertiesPage: React.FC = () => {
             className="sticky top-16 h-[calc(100vh-4rem)] relative group overflow-y-auto overflow-x-hidden pr-2 bg-white dark:bg-[#111111]"
             style={{ scrollbarGutter: 'stable' }}
           >
-            <ProSidebarFilter
-              filters={filters}
-              onFiltersChange={handleFiltersChange}
-              isCollapsed={false}
-              onToggleCollapse={() => {}}
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-            />
+            <ProfiledSection id="ProSidebarFilter">
+              <ProSidebarFilter
+                filters={filters}
+                onFiltersChange={handleFiltersChange}
+                isCollapsed={false}
+                onToggleCollapse={() => {}}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+              />
+            </ProfiledSection>
           </div>
         </div>
 
@@ -301,12 +304,14 @@ const ProSidebarPropertiesPage: React.FC = () => {
           {/* Applied Filters (compact) */}
           {hasActiveFilters && (
             <div className="sticky top-16 z-10 p-2 bg-white/80 dark:bg-[#111111]/90 backdrop-blur border-b border-black/5 dark:border-white/10 relative">
-              <AppliedFiltersChips 
-                searchQuery={searchQuery}
-                filters={filters}
-                onRemove={handleRemoveChip}
-                onClearAll={handleClearAll}
-              />
+              <ProfiledSection id="AppliedFiltersChips">
+                <AppliedFiltersChips 
+                  searchQuery={searchQuery}
+                  filters={filters}
+                  onRemove={handleRemoveChip}
+                  onClearAll={handleClearAll}
+                />
+              </ProfiledSection>
             </div>
           )}
 
@@ -314,16 +319,20 @@ const ProSidebarPropertiesPage: React.FC = () => {
           <div className="flex-1">
             {currentView === 'grid' ? (
               <div className="p-3">
-                <PropertiesGrid 
-                  searchQuery={searchQuery} 
-                  filters={filters}
-                  highlightedPropertyId={highlightedPropertyId}
-                  onPropertyHighlight={setHighlightedPropertyId}
-                />
+                <ProfiledSection id="PropertiesGrid">
+                  <PropertiesGrid 
+                    searchQuery={searchQuery} 
+                    filters={filters}
+                    highlightedPropertyId={highlightedPropertyId}
+                    onPropertyHighlight={setHighlightedPropertyId}
+                  />
+                </ProfiledSection>
               </div>
             ) : (
               <div className="h-[calc(100vh-6rem)]">
-                <PropertyDetailsMap filters={filters} searchQuery={searchQuery} />
+                <ProfiledSection id="PropertyDetailsMap">
+                  <PropertyDetailsMap filters={filters} searchQuery={searchQuery} />
+                </ProfiledSection>
               </div>
             )}
           </div>
