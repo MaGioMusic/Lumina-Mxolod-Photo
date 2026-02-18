@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Loader2, Wand2, Compare, Check } from 'lucide-react';
+import { Loader2, Wand2, Columns2 as Compare, Check } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ImageEditorModalProps {
