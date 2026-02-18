@@ -29,6 +29,23 @@ const resetSingleFilterValue = (
   }
 };
 
+const isDefaultFiltersState = (nextFilters: PropertiesFiltersState): boolean =>
+  nextFilters.priceRange[0] === 0 &&
+  nextFilters.priceRange[1] === 1_000_000 &&
+  nextFilters.bedrooms.length === 0 &&
+  nextFilters.bathrooms.length === 0 &&
+  nextFilters.propertyTypes.length === 0 &&
+  nextFilters.transactionType === '' &&
+  nextFilters.constructionStatus === '' &&
+  nextFilters.floor === '' &&
+  nextFilters.furniture === '' &&
+  nextFilters.area[0] === 0 &&
+  nextFilters.area[1] === 10_000 &&
+  nextFilters.amenities.length === 0 &&
+  nextFilters.dateAdded[0] === null &&
+  nextFilters.dateAdded[1] === null &&
+  nextFilters.quality.length === 0;
+
 export default function usePropertiesPageState() {
   const [currentView, setCurrentView] = useState<'grid' | 'map'>('grid');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -62,13 +79,13 @@ export default function usePropertiesPageState() {
   }, []);
 
   const handleClearAll = useCallback(() => {
-    setSearchQuery('');
-    setFilters(createDefaultPropertiesFilters());
+    setSearchQuery((prev) => (prev ? '' : prev));
+    setFilters((prev) => (isDefaultFiltersState(prev) ? prev : createDefaultPropertiesFilters()));
   }, []);
 
   const resetFiltersForMapView = useCallback(() => {
-    setSearchQuery('');
-    setFilters(createDefaultPropertiesFilters());
+    setSearchQuery((prev) => (prev ? '' : prev));
+    setFilters((prev) => (isDefaultFiltersState(prev) ? prev : createDefaultPropertiesFilters()));
   }, []);
 
   const hasActiveFilters = useMemo(

@@ -101,12 +101,50 @@ html.theme-switching *::after {
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* /properties theme vars (light defaults) */
+  --properties-sidebar-bg: #ffffff;
+  --properties-sidebar-text: #111827;
+  --properties-sidebar-text-secondary: #6b7280;
+  --properties-sidebar-menu-item-hover: #f1f5f9;
+  --properties-sidebar-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+
+  --properties-range-track: #e5e7eb;
+  --properties-range-text: #374151;
+  --properties-range-text-secondary: #6b7280;
+  --properties-range-text-label: #4b5563;
+  --properties-range-input-bg: #ffffff;
+  --properties-range-input-border: #d1d5db;
+  --properties-range-badge-bg: #fed7aa;
+  --properties-range-badge-text: #9a3412;
+
+  --properties-toggle-bg-off: #d1d5db;
+  --properties-toggle-shadow: rgba(0, 0, 0, 0.2);
+  --properties-toggle-text: #374151;
 }
 
 /* Dark mode when .dark class is present */
 html.dark {
   color-scheme: dark;
   --primary: var(--primary-500);
+  --properties-sidebar-bg: #111111;
+  --properties-sidebar-text: #f9fafb;
+  --properties-sidebar-text-secondary: #d1d5db;
+  --properties-sidebar-menu-item-hover: #4b5563;
+  --properties-sidebar-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+
+  --properties-range-track: #374151;
+  --properties-range-text: #f9fafb;
+  --properties-range-text-secondary: #9ca3af;
+  --properties-range-text-label: #d1d5db;
+  --properties-range-input-bg: #374151;
+  --properties-range-input-border: #4b5563;
+  --properties-range-badge-bg: #ea580c;
+  --properties-range-badge-text: #ffffff;
+
+  --properties-toggle-bg-off: #4b5563;
+  --properties-toggle-shadow: rgba(0, 0, 0, 0.4);
+  --properties-toggle-text: #f9fafb;
 }
 
 /* Earth Tones Utility Classes - Tailwind v4 Compatible */

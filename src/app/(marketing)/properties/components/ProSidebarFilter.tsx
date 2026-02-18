@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { Sidebar, Menu, SubMenu } from 'react-pro-sidebar';
-import { useThemeValue } from '@/contexts/ThemeContext';
 import ToggleSwitch from './ToggleSwitch';
 import BeautifulRangeSlider from './BeautifulRangeSlider';
 import MiniCalendar from './MiniCalendar';
@@ -17,6 +16,14 @@ interface ProSidebarFilterProps {
   onSearchChange: (query: string) => void;
 }
 
+const SIDEBAR_THEME_COLORS = {
+  background: 'var(--properties-sidebar-bg)',
+  text: 'var(--properties-sidebar-text)',
+  textSecondary: 'var(--properties-sidebar-text-secondary)',
+  menuItemHover: 'var(--properties-sidebar-menu-item-hover)',
+  shadow: 'var(--properties-sidebar-shadow)',
+} as const;
+
 const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
   filters,
   onFiltersChange,
@@ -25,7 +32,6 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
   searchQuery,
   onSearchChange,
 }) => {
-  const theme = useThemeValue(); // Dark mode detection
   const [showCollapsedSearch, setShowCollapsedSearch] = useState(false);
   // Prevent "slow slide-in" on initial mount caused by width transitions.
   const [hasMounted, setHasMounted] = useState(false);
@@ -34,20 +40,9 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
     const id = requestAnimationFrame(() => setHasMounted(true));
     return () => cancelAnimationFrame(id);
   }, []);
-  
-  // Dynamic color scheme based on theme
-  const colors = {
-    background: theme === 'dark' ? '#111111' : '#ffffff',
-    border: theme === 'dark' ? '#374151' : '#e5e7eb',
-    text: theme === 'dark' ? '#f9fafb' : '#111827',
-    textSecondary: theme === 'dark' ? '#d1d5db' : '#6b7280',
-    menuItem: theme === 'dark' ? '#374151' : '#f8fafc',
-    menuItemHover: theme === 'dark' ? '#4b5563' : '#f1f5f9',
-    shadow: theme === 'dark' 
-      ? '2px 0 10px rgba(0,0,0,0.3)' 
-      : '2px 0 10px rgba(0,0,0,0.1)'
-  };
-  
+
+  const colors = SIDEBAR_THEME_COLORS;
+
   // Dark mode now handled by global CSS overrides in globals.css
 
   const handlePriceChange = (value: [number, number]) => {
@@ -817,7 +812,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                           className={`px-3 py-1 rounded-full text-sm border transition-colors ${
                             active
                               ? 'bg-[#f97316] text-white border-[#f97316]'
-                              : `${theme === 'dark' ? 'bg-gray-800 text-gray-200 border-gray-700' : 'bg-white text-gray-700 border-gray-300'} hover:border-orange-300`
+                              : 'bg-white text-gray-700 border-gray-300 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 hover:border-orange-300'
                           }`}
                         >
                           {type}
@@ -849,7 +844,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                         className={`px-3 py-2 text-sm rounded-md border transition-colors ${
                           filters.bedrooms.includes(num)
                             ? 'bg-primary-400 text-white border-primary-400'
-                            : `${theme === 'dark' ? 'bg-gray-700 text-gray-200 border-gray-600' : 'bg-white text-gray-700 border-gray-300'} hover:border-orange-300`
+                            : 'bg-white text-gray-700 border-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 hover:border-orange-300'
                         }`}
                       >
                         {num}
@@ -879,7 +874,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                         className={`px-3 py-2 text-sm rounded-md border transition-colors ${
                           filters.bathrooms.includes(num)
                             ? 'bg-primary-400 text-white border-primary-400'
-                            : `${theme === 'dark' ? 'bg-gray-700 text-gray-200 border-gray-600' : 'bg-white text-gray-700 border-gray-300'} hover:border-orange-300`
+                            : 'bg-white text-gray-700 border-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 hover:border-orange-300'
                         }`}
                       >
                         {num}+
@@ -935,7 +930,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                           className={`px-3 py-1 rounded-full text-sm border transition-colors ${
                             active
                               ? 'bg-[#f97316] text-white border-[#f97316]'
-                              : `${theme === 'dark' ? 'bg-gray-800 text-gray-200 border-gray-700' : 'bg-white text-gray-700 border-gray-300'} hover:border-orange-300`
+                              : 'bg-white text-gray-700 border-gray-300 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 hover:border-orange-300'
                           }`}
                         >
                           {amenity}

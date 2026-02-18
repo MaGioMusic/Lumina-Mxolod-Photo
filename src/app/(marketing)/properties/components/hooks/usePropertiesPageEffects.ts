@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 
 import {
@@ -9,6 +9,9 @@ import {
 } from './propertiesFilters';
 
 type SearchParamsLike = Pick<URLSearchParams, 'get'> | null;
+
+const sameStringArray = (left: string[], right: string[]) =>
+  left.length === right.length && left.every((value, index) => value === right[index]);
 
 const MAP_VIEW_RESET_QUERY_PARAMS = [
   'location',
@@ -39,6 +42,18 @@ export default function usePropertiesPageEffects({
   setFilters,
   resetFiltersForMapView,
 }: UsePropertiesPageEffectsArgs) {
+  const lastReplacedUrlRef = useRef<string>('');
+
+  const replaceUrlIfChanged = useCallback((nextUrl: URL) => {
+    const nextHref = nextUrl.toString();
+    const currentHref = window.location.href;
+    if (nextHref === currentHref || nextHref === lastReplacedUrlRef.current) {
+      return;
+    }
+    window.history.replaceState(null, '', nextHref);
+    lastReplacedUrlRef.current = nextHref;
+  }, []);
+
   useEffect(() => {
     if (!searchParams) return;
 
@@ -48,25 +63,45 @@ export default function usePropertiesPageEffects({
     const maxParam = Number(searchParams.get('maxPrice') || '1000000');
     const viewParam = (searchParams.get('view') || '').toLowerCase();
 
-    if (viewParam === 'map' || viewParam === 'grid') {
+    if ((viewParam === 'map' || viewParam === 'grid') && viewParam !== currentView) {
       setCurrentView(viewParam);
     }
 
     if (!allowAiToolSideEffects) return;
 
     if (locationParam) {
-      setSearchQuery(locationParam);
+      setSearchQuery((prev) => (prev === locationParam ? prev : locationParam));
     }
 
-    setFilters((prev) => ({
-      ...prev,
-      propertyTypes: typeParam ? [typeParam] : [],
-      priceRange: [
+    setFilters((prev) => {
+      const nextPropertyTypes = typeParam ? [typeParam] : [];
+      const nextPriceRange: [number, number] = [
         Number.isFinite(minParam) ? minParam : 0,
         Number.isFinite(maxParam) ? maxParam : prev.priceRange[1],
-      ],
-    }));
-  }, [allowAiToolSideEffects, searchParams, setCurrentView, setSearchQuery, setFilters]);
+      ];
+
+      if (
+        sameStringArray(prev.propertyTypes, nextPropertyTypes) &&
+        prev.priceRange[0] === nextPriceRange[0] &&
+        prev.priceRange[1] === nextPriceRange[1]
+      ) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        propertyTypes: nextPropertyTypes,
+        priceRange: nextPriceRange,
+      };
+    });
+  }, [
+    allowAiToolSideEffects,
+    currentView,
+    searchParams,
+    setCurrentView,
+    setSearchQuery,
+    setFilters,
+  ]);
 
   useEffect(() => {
     if (allowAiToolSideEffects) return;
@@ -77,17 +112,17 @@ export default function usePropertiesPageEffects({
       );
       if (!hasAnyStaleParams) return;
       CLEARABLE_PROPERTIES_QUERY_PARAMS.forEach((key) => url.searchParams.delete(key));
-      window.history.replaceState(null, '', url.toString());
+      replaceUrlIfChanged(url);
     } catch {
       // noop
     }
-  }, [allowAiToolSideEffects]);
+  }, [allowAiToolSideEffects, replaceUrlIfChanged]);
 
   useEffect(() => {
     const handleViewChange = (event: Event) => {
       const nextView = (event as CustomEvent<'grid' | 'map'>).detail;
       if (nextView === 'grid' || nextView === 'map') {
-        setCurrentView(nextView);
+        setCurrentView((prev) => (prev === nextView ? prev : nextView));
       }
     };
 
@@ -100,11 +135,14 @@ export default function usePropertiesPageEffects({
       try {
         const detail = ((event as CustomEvent).detail || {}) as { view?: string };
         if (detail.view === 'map' || detail.view === 'grid') {
-          setCurrentView(detail.view);
+          const nextView = detail.view;
+          setCurrentView((prev) => (prev === nextView ? prev : nextView));
           try {
             const url = new URL(window.location.href);
-            url.searchParams.set('view', detail.view);
-            window.history.replaceState(null, '', url.toString());
+            if (url.searchParams.get('view') !== nextView) {
+              url.searchParams.set('view', nextView);
+              replaceUrlIfChanged(url);
+            }
           } catch {
             // noop
           }
@@ -116,7 +154,7 @@ export default function usePropertiesPageEffects({
 
     window.addEventListener('lumina:view:set', onAiView as EventListener);
     return () => window.removeEventListener('lumina:view:set', onAiView as EventListener);
-  }, [setCurrentView]);
+  }, [replaceUrlIfChanged, setCurrentView]);
 
   useEffect(() => {
     try {
@@ -125,26 +163,30 @@ export default function usePropertiesPageEffects({
       if (!queryView) {
         const savedView = window.localStorage.getItem('lumina_view');
         if (savedView === 'map' || savedView === 'grid') {
-          setCurrentView(savedView);
+          setCurrentView((prev) => (prev === savedView ? prev : savedView));
           url.searchParams.set('view', savedView);
-          window.history.replaceState(null, '', url.toString());
+          replaceUrlIfChanged(url);
         }
       }
     } catch {
       // noop
     }
-  }, [setCurrentView]);
+  }, [replaceUrlIfChanged, setCurrentView]);
 
   useEffect(() => {
     try {
       window.localStorage.setItem('lumina_view', currentView);
+      // Map mode performs a dedicated URL cleanup pass below; avoid double writes.
+      if (currentView === 'map') return;
       const url = new URL(window.location.href);
-      url.searchParams.set('view', currentView);
-      window.history.replaceState(null, '', url.toString());
+      if (url.searchParams.get('view') !== currentView) {
+        url.searchParams.set('view', currentView);
+        replaceUrlIfChanged(url);
+      }
     } catch {
       // noop
     }
-  }, [currentView]);
+  }, [currentView, replaceUrlIfChanged]);
 
   useEffect(() => {
     if (currentView !== 'map') return;
@@ -152,11 +194,15 @@ export default function usePropertiesPageEffects({
     try {
       resetFiltersForMapView();
       const url = new URL(window.location.href);
+      const hadResetParams = MAP_VIEW_RESET_QUERY_PARAMS.some((key) => url.searchParams.has(key));
+      const viewAlreadyMap = url.searchParams.get('view') === 'map';
       MAP_VIEW_RESET_QUERY_PARAMS.forEach((key) => url.searchParams.delete(key));
-      url.searchParams.set('view', 'map');
-      window.history.replaceState(null, '', url.toString());
+      if (!viewAlreadyMap || hadResetParams) {
+        url.searchParams.set('view', 'map');
+        replaceUrlIfChanged(url);
+      }
     } catch {
       // noop
     }
-  }, [currentView, resetFiltersForMapView]);
+  }, [currentView, replaceUrlIfChanged, resetFiltersForMapView]);
 }

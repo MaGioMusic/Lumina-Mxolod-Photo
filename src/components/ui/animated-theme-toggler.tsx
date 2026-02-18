@@ -33,6 +33,9 @@ export const AnimatedThemeToggler = ({
 
     const startViewTransition = (document as ViewTransitionDocument).startViewTransition;
     const applyToggle = () => {
+      toggleTheme();
+    };
+    const applyToggleForViewTransition = () => {
       flushSync(() => {
         toggleTheme();
       });
@@ -48,13 +51,18 @@ export const AnimatedThemeToggler = ({
 
     // Properties grid is interaction-heavy; skip view-transition clip-path animation there
     // to avoid avoidable input/main-thread jank during perf-sensitive workflows.
-    if (!startViewTransition || prefersReducedMotion || isPropertiesRoute) {
+    if (isPropertiesRoute) {
       applyToggle();
       return;
     }
 
+    if (!startViewTransition || prefersReducedMotion) {
+      applyToggleForViewTransition();
+      return;
+    }
+
     const transition = startViewTransition.call(document, () => {
-      applyToggle();
+      applyToggleForViewTransition();
     });
 
     await transition.ready;

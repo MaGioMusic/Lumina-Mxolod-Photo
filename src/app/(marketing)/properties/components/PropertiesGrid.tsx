@@ -145,6 +145,7 @@ export default function PropertiesGrid({
   const { t } = useLanguage();
   const { isAuthenticated } = useAuth();
   const searchParams = useSearchParams();
+  const searchParamsString = searchParams?.toString() ?? '';
   const pathname = usePathname();
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -206,21 +207,24 @@ export default function PropertiesGrid({
     statusParam,
     propTypeParam,
   } = useMemo(
-    () => ({
-      currentPage: Number.parseInt(searchParams?.get('page') || '1', 10),
-      locationParam: (
-        searchParams?.get('location') ||
-        injectedFilters.location ||
-        searchQuery ||
-        ''
-      ).toString(),
-      minParam: Number(searchParams?.get('minPrice') || 'NaN'),
-      maxParam: Number(searchParams?.get('maxPrice') || 'NaN'),
-      roomsParam: searchParams?.get('rooms'),
-      statusParam: (searchParams?.get('status') || '').toString().toLowerCase(),
-      propTypeParam: (searchParams?.get('property_type') || '').toString().toLowerCase(),
-    }),
-    [injectedFilters.location, searchParams, searchQuery],
+    () => {
+      const parsedSearchParams = new URLSearchParams(searchParamsString);
+      return {
+        currentPage: Number.parseInt(parsedSearchParams.get('page') || '1', 10),
+        locationParam: (
+          parsedSearchParams.get('location') ||
+          injectedFilters.location ||
+          searchQuery ||
+          ''
+        ).toString(),
+        minParam: Number(parsedSearchParams.get('minPrice') || 'NaN'),
+        maxParam: Number(parsedSearchParams.get('maxPrice') || 'NaN'),
+        roomsParam: parsedSearchParams.get('rooms'),
+        statusParam: (parsedSearchParams.get('status') || '').toString().toLowerCase(),
+        propTypeParam: (parsedSearchParams.get('property_type') || '').toString().toLowerCase(),
+      };
+    },
+    [injectedFilters.location, searchParamsString, searchQuery],
   );
 
   const normalizedLocationKey = useMemo(() => {
@@ -454,8 +458,8 @@ export default function PropertiesGrid({
   
   // Update URL without page reload
   const updateURL = useCallback(
-    (newParams: Record<string, string>) => {
-      const current = new URLSearchParams(searchParams?.toString() || '');
+    (newParams: Record<string, string>): boolean => {
+      const current = new URLSearchParams(searchParamsString);
 
       Object.entries(newParams).forEach(([key, value]) => {
         if (value) {
@@ -465,17 +469,25 @@ export default function PropertiesGrid({
         }
       });
 
-      const newURL = `${pathname}?${current.toString()}`;
+      const nextSearch = current.toString();
+      if (nextSearch === searchParamsString) {
+        return false;
+      }
+
+      const newURL = nextSearch ? `${pathname}?${nextSearch}` : pathname;
       window.history.pushState(null, '', newURL);
+      return true;
     },
-    [pathname, searchParams],
+    [pathname, searchParamsString],
   );
   
   // Pagination handlers
   const goToPage = useCallback((page: number) => {
     if (page >= 1 && page <= totalPages) {
-      updateURL({ page: page.toString() });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const didUpdate = updateURL({ page: page.toString() });
+      if (didUpdate) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
   }, [totalPages, updateURL]);
   

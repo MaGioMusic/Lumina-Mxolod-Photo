@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useThemeValue } from '@/contexts/ThemeContext';
 
 interface BeautifulRangeSliderProps {
   min: number;
@@ -13,6 +12,17 @@ interface BeautifulRangeSliderProps {
   unit?: string;
   formatValue?: (value: number) => string;
 }
+
+const RANGE_SLIDER_COLORS = {
+  track: 'var(--properties-range-track)',
+  text: 'var(--properties-range-text)',
+  textSecondary: 'var(--properties-range-text-secondary)',
+  textLabel: 'var(--properties-range-text-label)',
+  inputBg: 'var(--properties-range-input-bg)',
+  inputBorder: 'var(--properties-range-input-border)',
+  badge: 'var(--properties-range-badge-bg)',
+  badgeText: 'var(--properties-range-badge-text)',
+} as const;
 
 const BeautifulRangeSlider: React.FC<BeautifulRangeSliderProps> = ({
   min,
@@ -26,19 +36,7 @@ const BeautifulRangeSlider: React.FC<BeautifulRangeSliderProps> = ({
 }) => {
   const [isDragging, setIsDragging] = useState<'min' | 'max' | null>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
-  const theme = useThemeValue(); // Dark mode detection
-
-  // Dynamic colors based on theme
-  const colors = {
-    track: theme === 'dark' ? '#374151' : '#e5e7eb', // Slightly darker gray for better contrast
-    text: theme === 'dark' ? '#f9fafb' : '#374151', // gray-50 : gray-700
-    textSecondary: theme === 'dark' ? '#9ca3af' : '#6b7280', // gray-400 : gray-500
-    textLabel: theme === 'dark' ? '#d1d5db' : '#4b5563', // gray-300 : gray-600
-    inputBg: theme === 'dark' ? '#374151' : '#ffffff', // gray-700 : white
-    inputBorder: theme === 'dark' ? '#4b5563' : '#d1d5db', // gray-600 : gray-300
-    badge: theme === 'dark' ? '#ea580c' : '#fed7aa', // Enhanced orange for dark mode
-    badgeText: theme === 'dark' ? '#ffffff' : '#9a3412' // white : orange-900
-  };
+  const colors = RANGE_SLIDER_COLORS;
 
   const getPercentage = (val: number) => ((val - min) / (max - min)) * 100;
 

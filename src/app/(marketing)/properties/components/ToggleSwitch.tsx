@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useThemeValue } from '@/contexts/ThemeContext';
 
 interface ToggleSwitchProps {
   id: string;
@@ -10,20 +9,16 @@ interface ToggleSwitchProps {
   label: string;
 }
 
-const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ id, checked, onChange, label }) => {
-  const theme = useThemeValue();
+const TOGGLE_SWITCH_COLORS = {
+  uncheckedBackground: 'var(--properties-toggle-bg-off)',
+  thumb: '#ffffff',
+  shadow: 'var(--properties-toggle-shadow)',
+  text: 'var(--properties-toggle-text)',
+} as const;
 
-  // Enhanced color scheme
-  const colors = {
-    background: checked 
-      ? '#f97316' // orange-500 when checked
-      : (theme === 'dark' ? '#4b5563' : '#d1d5db'), // gray-600 : gray-300 when unchecked
-    thumb: '#ffffff',
-    shadow: theme === 'dark' 
-      ? 'rgba(0, 0, 0, 0.4)' 
-      : 'rgba(0, 0, 0, 0.2)',
-    text: theme === 'dark' ? '#f9fafb' : '#374151'
-  };
+const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ id, checked, onChange, label }) => {
+  const colors = TOGGLE_SWITCH_COLORS;
+  const backgroundColor = checked ? '#f97316' : colors.uncheckedBackground;
 
   return (
     <div className="flex items-center space-x-3">
@@ -42,7 +37,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ id, checked, onChange, labe
             display: 'block',
             width: '44px',
             height: '24px',
-            backgroundColor: colors.background,
+            backgroundColor,
             borderRadius: '12px',
             position: 'relative',
             transition: 'all 0.3s ease',
