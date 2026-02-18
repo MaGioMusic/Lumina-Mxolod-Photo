@@ -153,13 +153,35 @@ export function useGeminiLiveSession({
   const toolDebugOnceRef = useRef(false);
   const lastSnapshotKeyRef = useRef<string>('');
   const lastConnectAttemptAtRef = useRef<number>(0);
+  const reconnectBurstCountRef = useRef<number>(0);
+  const reconnectBlockedUntilRef = useRef<number>(0);
 
-  const shouldThrottleReconnect = useCallback(() => {
+  const getReconnectThrottleMessage = useCallback(() => {
     const now = Date.now();
+
+    if (reconnectBlockedUntilRef.current > now) {
+      const waitMs = reconnectBlockedUntilRef.current - now;
+      const waitSeconds = Math.max(1, Math.ceil(waitMs / 1000));
+      return `Reconnecting too quickly. Please wait ${waitSeconds}s and retry.`;
+    }
+
     const minReconnectIntervalMs = 1500;
-    if (now - lastConnectAttemptAtRef.current < minReconnectIntervalMs) return true;
+    if (now - lastConnectAttemptAtRef.current < minReconnectIntervalMs) {
+      reconnectBurstCountRef.current += 1;
+      if (reconnectBurstCountRef.current >= 3) {
+        const backoffMs = 5000;
+        reconnectBlockedUntilRef.current = now + backoffMs;
+        return `Too many rapid reconnect attempts. Cooling down for ${Math.ceil(backoffMs / 1000)}s.`;
+      }
+      return 'Reconnecting too quickly. Please wait a moment and retry.';
+    }
+
+    if (now - lastConnectAttemptAtRef.current > 10000) {
+      reconnectBurstCountRef.current = 0;
+    }
+
     lastConnectAttemptAtRef.current = now;
-    return false;
+    return null;
   }, []);
 
   const markAiSpeakingForMs = useCallback((ms: number) => {
@@ -325,8 +347,9 @@ export function useGeminiLiveSession({
 
   const startVoice = useCallback(async () => {
     if (!enabled) return;
-    if (shouldThrottleReconnect()) {
-      onErrorRef.current?.('Reconnecting too quickly. Please wait a moment and retry.');
+    const reconnectThrottleMessage = getReconnectThrottleMessage();
+    if (reconnectThrottleMessage) {
+      onErrorRef.current?.(reconnectThrottleMessage);
       return;
     }
     if (wsRef.current) {
@@ -386,6 +409,8 @@ export function useGeminiLiveSession({
 
       ws.onopen = async () => {
         setConnectionState('connected');
+        reconnectBurstCountRef.current = 0;
+        reconnectBlockedUntilRef.current = 0;
         allowAudioOutRef.current = true;
         lastOutputTranscriptRef.current = '';
         const langCookie = (getCookieValue('lumina_language') || '').toLowerCase();
@@ -929,11 +954,12 @@ export function useGeminiLiveSession({
       await closeAll();
       setConnectionState('error');
     }
-  }, [closeAll, enabled, handleAudioOut, shouldThrottleReconnect, stopPlaybackNow]);
+  }, [closeAll, enabled, getReconnectThrottleMessage, handleAudioOut, stopPlaybackNow]);
 
   const startText = useCallback(async () => {
-    if (shouldThrottleReconnect()) {
-      onErrorRef.current?.('Reconnecting too quickly. Please wait a moment and retry.');
+    const reconnectThrottleMessage = getReconnectThrottleMessage();
+    if (reconnectThrottleMessage) {
+      onErrorRef.current?.(reconnectThrottleMessage);
       return;
     }
     if (wsRef.current) return;
@@ -982,6 +1008,8 @@ export function useGeminiLiveSession({
 
       ws.onopen = async () => {
         setConnectionState('connected');
+        reconnectBurstCountRef.current = 0;
+        reconnectBlockedUntilRef.current = 0;
         // Text mode: don't play audio chunks even if they arrive.
         allowAudioOutRef.current = false;
         lastOutputTranscriptRef.current = '';
@@ -1416,7 +1444,7 @@ export function useGeminiLiveSession({
       await closeAll();
       setConnectionState('error');
     }
-  }, [closeAll, handleAudioOut, shouldThrottleReconnect, stopPlaybackNow]);
+  }, [closeAll, getReconnectThrottleMessage, handleAudioOut, stopPlaybackNow]);
 
   const sendText = useCallback(
     async (text: string) => {
