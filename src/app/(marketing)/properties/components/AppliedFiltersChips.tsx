@@ -1,26 +1,13 @@
 'use client';
 
-import React from 'react';
+import { memo, type ReactNode } from 'react';
 
-interface FiltersState {
-  priceRange: [number, number];
-  bedrooms: string[];
-  bathrooms: string[];
-  propertyTypes: string[];
-  transactionType: string;
-  constructionStatus: string;
-  floor: string;
-  furniture: string;
-  area: [number, number];
-  amenities: string[];
-  dateAdded: [Date | null, Date | null];
-  quality: string[];
-}
+import type { PropertiesFiltersState, RemovableFilterTarget } from './hooks/propertiesFilters';
 
 interface AppliedFiltersChipsProps {
   searchQuery: string;
-  filters: FiltersState;
-  onRemove: (key: keyof FiltersState | 'search' | { arrayKey: keyof FiltersState; value: string }) => void;
+  filters: PropertiesFiltersState;
+  onRemove: (key: RemovableFilterTarget) => void;
   onClearAll: () => void;
 }
 
@@ -31,7 +18,7 @@ const closeBtn =
   'ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full bg-white/20 hover:bg-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white';
 
 function AppliedFiltersChips({ searchQuery, filters, onRemove, onClearAll }: AppliedFiltersChipsProps) {
-  const chips: React.ReactNode[] = [];
+  const chips: ReactNode[] = [];
 
   if (searchQuery.trim()) {
     chips.push(
@@ -117,6 +104,6 @@ function AppliedFiltersChips({ searchQuery, filters, onRemove, onClearAll }: App
   );
 }
 
-export default React.memo(AppliedFiltersChips);
+export default memo(AppliedFiltersChips);
 
 

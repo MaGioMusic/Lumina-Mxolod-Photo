@@ -6,27 +6,11 @@ import { useThemeValue } from '@/contexts/ThemeContext';
 import ToggleSwitch from './ToggleSwitch';
 import BeautifulRangeSlider from './BeautifulRangeSlider';
 import MiniCalendar from './MiniCalendar';
-
-// Enhanced FiltersState interface with new filters
-interface FiltersState {
-  priceRange: [number, number];
-  bedrooms: string[];
-  bathrooms: string[];
-  propertyTypes: string[];
-  transactionType: string;
-  constructionStatus: string;
-  floor: string;
-  furniture: string;
-  area: [number, number];
-  amenities: string[];
-  // New filters
-  dateAdded: [Date | null, Date | null];
-  quality: string[];
-}
+import type { PropertiesFiltersState } from './hooks/propertiesFilters';
 
 interface ProSidebarFilterProps {
-  filters: FiltersState;
-  onFiltersChange: (filters: FiltersState) => void;
+  filters: PropertiesFiltersState;
+  onFiltersChange: (filters: PropertiesFiltersState) => void;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
   searchQuery: string;
