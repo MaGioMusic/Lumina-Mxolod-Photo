@@ -25,6 +25,8 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
   const [searchResults, setSearchResults] = useState<MockProperty[]>([]);
   const [lastSearchSummary, setLastSearchSummary] = useState('');
   const isDemoMode = runtimeFlags.demoModeOn;
+  // Safety default: tool calls should not mutate UI/navigation unless explicitly enabled.
+  const allowToolSideEffects = process.env.NEXT_PUBLIC_AI_TOOL_SIDEEFFECTS === '1';
 
   const runPropertySearch = useCallback((rawArgs: unknown): MockProperty[] => {
     if (!isDemoMode) return [];
@@ -223,10 +225,12 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
           const full = runPropertySearch(argsObj);
           setSearchResults(full);
           setFilterSummary(argsObj);
-          try {
-            const u = buildPropertiesUrl(argsObj);
-            ensureNavigation(u);
-          } catch {}
+          if (allowToolSideEffects) {
+            try {
+              const u = buildPropertiesUrl(argsObj);
+              ensureNavigation(u);
+            } catch {}
+          }
           const { previewLimit, preview } = buildResultsPreview(full, argsObj);
           return {
             handled: true,
@@ -243,9 +247,11 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
         if (fnName === 'open_page') {
           const path = (argsObj.path || '/').toString();
           const newTab = Boolean(argsObj.new_tab);
-          rememberAutostart();
-          if (newTab && typeof window !== 'undefined') window.open(path, '_blank');
-          else ensureNavigation(path);
+          if (allowToolSideEffects) {
+            rememberAutostart();
+            if (newTab && typeof window !== 'undefined') window.open(path, '_blank');
+            else ensureNavigation(path);
+          }
           return { handled: true, payload: { ok: true, path, newTab } };
         }
 
@@ -264,24 +270,28 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
             const r = Number(roomsVal);
             detail.bedrooms = [r >= 5 ? '5+' : String(r)];
           }
-          try {
-            window.dispatchEvent(new CustomEvent('lumina:filters:set', { detail }));
-          } catch {}
-          try {
-            const u = buildPropertiesUrl(argsObj);
-            ensureNavigation(u);
-          } catch {
-            ensureNavigation('/properties');
+          if (allowToolSideEffects) {
+            try {
+              window.dispatchEvent(new CustomEvent('lumina:filters:set', { detail }));
+            } catch {}
+            try {
+              const u = buildPropertiesUrl(argsObj);
+              ensureNavigation(u);
+            } catch {
+              ensureNavigation('/properties');
+            }
           }
           return { handled: true, payload: { ok: true, applied: detail } };
         }
 
         if (fnName === 'set_view') {
           const view = (argsObj.view || 'map').toString();
-          try {
-            window.dispatchEvent(new CustomEvent('lumina:view:set', { detail: { view } }));
-          } catch {}
-          ensureNavigation('/properties');
+          if (allowToolSideEffects) {
+            try {
+              window.dispatchEvent(new CustomEvent('lumina:view:set', { detail: { view } }));
+            } catch {}
+            ensureNavigation('/properties');
+          }
           return { handled: true, payload: { ok: true, view } };
         }
 
@@ -372,7 +382,7 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
         if (fnName === 'open_property_detail') {
           const id = (argsObj.id || '').toString();
           if (id) {
-            ensureNavigation(`/properties/${id}`);
+            if (allowToolSideEffects) ensureNavigation(`/properties/${id}`);
             return { handled: true, payload: { ok: true, id } };
           }
           return { handled: true, payload: { ok: false, error: 'missing_id' } };
@@ -393,6 +403,7 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
       searchResults,
       setFilterSummary,
       isDemoMode,
+      allowToolSideEffects,
     ],
   );
 
