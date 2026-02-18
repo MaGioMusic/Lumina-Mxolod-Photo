@@ -9,6 +9,7 @@ import PropertiesGrid from './PropertiesGrid';
 import ProSidebarFilter from './ProSidebarFilter';
 import usePropertiesPageEffects from './hooks/usePropertiesPageEffects';
 import usePropertiesPageState from './hooks/usePropertiesPageState';
+import useDebounced from './hooks/useDebounced';
 
 export default function ProSidebarPropertiesPage() {
   const searchParams = useSearchParams();
@@ -44,6 +45,9 @@ export default function ProSidebarPropertiesPage() {
     setFilters,
     resetFiltersForMapView,
   });
+
+  const debouncedQuery = useDebounced(searchQuery, 200);
+
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-[#111111]">
         {/* Sidebar (sticky) */}
