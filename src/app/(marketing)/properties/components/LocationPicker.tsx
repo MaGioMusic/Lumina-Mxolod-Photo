@@ -39,18 +39,50 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
   const defaultCenter = { lat: 41.7151, lng: 44.7661 };
   const center = value?.coordinates || defaultCenter;
 
-  // Initialize Google Maps services
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.google) {
-      autocompleteService.current = new google.maps.places.AutocompleteService();
+  const initializeServices = useCallback(() => {
+    if (typeof window === 'undefined' || !window.google?.maps) return false;
+    try {
       geocoder.current = new google.maps.Geocoder();
+      if (window.google.maps.places?.AutocompleteService) {
+        autocompleteService.current = new google.maps.places.AutocompleteService();
+      } else {
+        autocompleteService.current = null;
+      }
+      return true;
+    } catch (error) {
+      console.error('Google Maps services init error:', error);
+      autocompleteService.current = null;
+      geocoder.current = null;
+      return false;
     }
   }, []);
+
+  // Initialize Google Maps services after APIProvider script load
+  useEffect(() => {
+    if (initializeServices()) return;
+    let attempts = 0;
+    const timer = window.setInterval(() => {
+      attempts += 1;
+      if (initializeServices() || attempts >= 20) {
+        window.clearInterval(timer);
+      }
+    }, 250);
+    return () => window.clearInterval(timer);
+  }, [apiKey, initializeServices]);
 
   // Search for address suggestions
   const searchAddresses = useCallback(
     async (query: string) => {
-      if (!query.trim() || !autocompleteService.current) return;
+      if (!query.trim()) {
+        setSuggestions([]);
+        setShowSuggestions(false);
+        return;
+      }
+      if (!autocompleteService.current) {
+        setSuggestions([]);
+        setShowSuggestions(false);
+        return;
+      }
 
       setIsLoading(true);
       try {
@@ -190,6 +222,19 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
+
+    if (!autocompleteService.current) {
+      onChange({
+        address: query,
+        coordinates: value?.coordinates || defaultCenter,
+        district: value?.district,
+        city: value?.city,
+        country: value?.country,
+      });
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
     
     if (query.length > 2) {
       searchAddresses(query);
@@ -211,7 +256,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
   };
 
   return (
-    <APIProvider apiKey={apiKey}>
+    <APIProvider apiKey={apiKey} libraries={['places']}>
       <div className={`space-y-4 ${className}`}>
         {/* Address Search Input */}
         <div className="relative">

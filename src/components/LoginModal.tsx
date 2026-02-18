@@ -13,9 +13,16 @@ import SignUpModal from './SignUpModal';
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
+  redirectOnSuccess?: boolean;
 }
 
-export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
+export default function LoginModal({
+  isOpen,
+  onClose,
+  onSuccess,
+  redirectOnSuccess = true,
+}: LoginModalProps) {
   const { login } = useAuth();
   const router = useRouter();
   const { t } = useLanguage();
@@ -30,6 +37,15 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [error, setError] = useState<string | null>(null);
   const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
 
+  const handleLoginSuccess = () => {
+    if (redirectOnSuccess) {
+      router.push('/profile');
+    }
+    onSuccess?.();
+    onClose();
+    setCredentials({ email: '', password: '' });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
@@ -40,10 +56,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     try {
       const success = await login(credentials.email, credentials.password);
       if (success) {
-        // Redirect to profile dashboard after login
-        router.push('/profile');
-        onClose();
-        setCredentials({ email: '', password: '' });
+        handleLoginSuccess();
       } else {
         setError(t('invalidCredentials'));
       }
@@ -71,9 +84,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       // Mock Google user data
       const success = await login('google.user@gmail.com', 'google_oauth_token');
       if (success) {
-        router.push('/profile');
-        onClose();
-        setCredentials({ email: '', password: '' });
+        handleLoginSuccess();
       } else {
         setError('Google login failed. Please try again.');
       }
@@ -96,9 +107,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       // Mock Facebook user data
       const success = await login('facebook.user@facebook.com', 'facebook_oauth_token');
       if (success) {
-        router.push('/profile');
-        onClose();
-        setCredentials({ email: '', password: '' });
+        handleLoginSuccess();
       } else {
         setError('Facebook login failed. Please try again.');
       }
