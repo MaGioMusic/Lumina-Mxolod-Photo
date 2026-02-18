@@ -154,6 +154,14 @@ export default function PropertiesGrid({
     window.addEventListener('lumina:filters:set', onSet as any);
     return () => window.removeEventListener('lumina:filters:set', onSet as any);
   }, []);
+
+  // Injected AI filters should be one-shot (or short-lived), otherwise they can
+  // keep overriding user-cleared filters and make the list appear to "disappear".
+  useEffect(() => {
+    if (!Object.keys(injectedFilters).length) return;
+    const t = window.setTimeout(() => setInjectedFilters({}), 1800);
+    return () => window.clearTimeout(t);
+  }, [injectedFilters]);
   
   // Handle upload button click
   const handleUploadClick = () => {
