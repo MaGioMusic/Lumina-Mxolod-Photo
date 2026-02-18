@@ -81,6 +81,17 @@ export const ensureRealtimeAccess = async (request: NextRequest): Promise<GuardR
     };
   }
 
+  // Development mode: optional local bypass for realtime debugging.
+  // Enable only on local/dev by setting LUMINA_DEV_ALLOW_REALTIME_NOAUTH=1
+  if (process.env.LUMINA_DEV_ALLOW_REALTIME_NOAUTH === '1') {
+    return {
+      userId: 'dev-realtime-noauth',
+      role: 'admin',
+      mode: 'internal',
+      rateLimitKey: toRateLimitKey('dev-realtime-noauth', request),
+    };
+  }
+
   // Development mode without session - unauthorized
   throw new HttpError('Unauthorized', 401, 'UNAUTHORIZED');
 };
