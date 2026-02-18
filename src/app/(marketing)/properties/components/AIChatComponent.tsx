@@ -53,6 +53,9 @@ export default function AIChatComponent() {
 
   const [lastTranscript, setLastTranscript] = useState('');
   const safeVoiceEnabled = isVoiceEnabled && voiceSupported && !voiceError;
+  // Safety default: disable keyword-based auto-navigation fallback.
+  // Keep navigation controlled by explicit tool-calls or direct user actions.
+  const enableKeywordFallbackNav = process.env.NEXT_PUBLIC_AI_FALLBACK_NAV === '1';
 
   const nearbyConfig = useMemo(() => {
     return {
@@ -361,17 +364,19 @@ export default function AIChatComponent() {
 
   // Fallback: explicit intent-based navigation when function-calling doesn't trigger
   useEffect(() => {
+    if (!enableKeywordFallbackNav) return;
     if (matchesNavigateTrigger(message)) {
       maybeAutoNavigateToProperties();
     }
-  }, [message, maybeAutoNavigateToProperties]);
+  }, [enableKeywordFallbackNav, message, maybeAutoNavigateToProperties]);
 
   // Additional fallback: navigate based on latest voice transcript
   useEffect(() => {
+    if (!enableKeywordFallbackNav) return;
     if (matchesNavigateTrigger(lastTranscript)) {
       maybeAutoNavigateToProperties();
     }
-  }, [lastTranscript, maybeAutoNavigateToProperties]);
+  }, [enableKeywordFallbackNav, lastTranscript, maybeAutoNavigateToProperties]);
 
   const startVoice = useCallback(async () => {
     if (!voiceSupported) {
