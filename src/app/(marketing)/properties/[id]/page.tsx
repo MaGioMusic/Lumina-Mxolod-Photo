@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowLeft, MapPin, Phone, Mail } from 'lucide-react';
@@ -31,6 +31,18 @@ interface PropertyDetailsData {
   features: string[];
   currency: string;
 }
+
+const PROPERTY_TYPE_KEY_MAP: Record<string, string> = {
+  apartment: 'apartment',
+  house: 'house',
+  villa: 'villa',
+  studio: 'studio',
+  penthouse: 'penthouse',
+  commercial: 'commercial',
+  office: 'office',
+  cottage: 'cottage',
+  loft: 'loft',
+};
 
 export default function PropertyDetails({ params }: PropertyDetailsProps) {
   const router = useRouter();
@@ -160,6 +172,39 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
     }));
   }, [locale]);
 
+  const formatCurrency = useCallback(
+    (value: number, currency: string) => {
+      const normalizedCurrency = (currency || 'GEL').toUpperCase();
+      try {
+        return new Intl.NumberFormat(locale, {
+          style: 'currency',
+          currency: normalizedCurrency,
+          maximumFractionDigits: 0,
+        }).format(value);
+      } catch {
+        return `${new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(value)} ${normalizedCurrency}`;
+      }
+    },
+    [locale]
+  );
+
+  const propertyTypeLabel = useMemo(() => {
+    const normalizedType = String(data?.type ?? '')
+      .trim()
+      .toLowerCase()
+      .replace(/_/g, '-')
+      .replace(/\s+/g, '-');
+    const translationKey = PROPERTY_TYPE_KEY_MAP[normalizedType];
+    if (translationKey) return t(translationKey);
+    if (data?.type) return data.type;
+    return t('propertyType');
+  }, [data?.type, t]);
+
+  const formattedPrice = useMemo(() => {
+    if (!data) return '';
+    return formatCurrency(data.price, data.currency);
+  }, [data, formatCurrency]);
+
   if (loading || !data) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -252,7 +297,7 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
                   <p className="text-gray-600 mt-1 flex items-center gap-2"><MapPin className="w-4 h-4" />{data.location}</p>
                   <p className="text-gray-500 mt-1">{data.bedrooms} {t('bedsShort')} | {data.bathrooms} {t('bathsShort')} | {data.area} m²</p>
                 </div>
-                <div className="text-3xl font-bold text-gray-900">${data.price.toLocaleString()}</div>
+                <div className="text-3xl font-bold text-gray-900">{formattedPrice}</div>
               </div>
             </div>
 
@@ -260,7 +305,7 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">{t('keyFacts')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('propertyType')}</p><p className="font-medium text-gray-900 capitalize">{t(String(data.type).toLowerCase())}</p></div>
+                <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('propertyType')}</p><p className="font-medium text-gray-900 capitalize">{propertyTypeLabel}</p></div>
                 <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('area')}</p><p className="font-medium text-gray-900">{data.area} m²</p></div>
                 <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('bedrooms')}</p><p className="font-medium text-gray-900">{data.bedrooms}</p></div>
                 <div className="flex justify-between border-b border-gray-200 py-3"><p className="text-gray-600">{t('bathrooms')}</p><p className="font-medium text-gray-900">{data.bathrooms}</p></div>
@@ -298,7 +343,7 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
                 <SinglePropertyMap
                   coordinates={data.coordinates}
                   propertyTitle={data.title}
-                  propertyPrice={`$${data.price.toLocaleString()}`}
+                  propertyPrice={formattedPrice}
                   propertyAddress={data.location}
                   propertyImage={data.images[0]}
                 />
@@ -309,7 +354,7 @@ export default function PropertyDetails({ params }: PropertyDetailsProps) {
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">{t('priceHistory')}</h3>
               <div className="flex items-baseline gap-4">
-                <p className="text-3xl font-bold text-gray-900">${data.price.toLocaleString()}</p>
+                <p className="text-3xl font-bold text-gray-900">{formattedPrice}</p>
                 <p className="text-gray-500 text-sm">{t('last12Months')}</p>
               </div>
               <div className="h-40 mt-4">
