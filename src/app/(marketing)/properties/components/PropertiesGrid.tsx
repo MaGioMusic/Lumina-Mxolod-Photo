@@ -520,43 +520,49 @@ export default function PropertiesGrid({
       />
 
       {/* Properties Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
-        {currentProperties.map((property) => {
-          // Debug log for first few properties
-          if (property.id <= 5) {
-            logger.debug(`Property ${property.id}:`, {
-              type: property.type,
-              status: property.status,
-              isNew: property.isNew
-            });
-          }
+      {currentProperties.length === 0 && !isFetching ? (
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#171717] p-6 text-center text-sm text-gray-600 dark:text-gray-300">
+          შედეგი ვერ მოიძებნა. შეამოწმე ფილტრები ან გაასუფთავე ძებნა.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+          {currentProperties.map((property) => {
+            // Debug log for first few properties
+            if (property.id <= 5) {
+              logger.debug(`Property ${property.id}:`, {
+                type: property.type,
+                status: property.status,
+                isNew: property.isNew
+              });
+            }
 
-          const addressLabel = property.location || `${t('tbilisi')}, ${t(property.address)}`;
+            const addressLabel = property.location || `${t('tbilisi')}, ${t(property.address)}`;
 
-          return (
-          <PropertyCard
-            key={property.slug || property.id}
-            id={property.id.toString()}
-            slug={property.slug}
-            image={property.image}
-            images={property.images}
-            price={formatPrice(property)}
-            address={addressLabel}
-            title={property.title || `${property.type} in ${addressLabel}`}
-            bedrooms={property.bedrooms}
-            bathrooms={property.bathrooms}
-            sqft={property.sqft}
-            floor={property.floor}
-            area={property.sqft ? `${property.sqft} მ²` : undefined}
-            type={property.type}
-            status={property.status}
-            isNew={property.isNew}
-            isHighlighted={highlightedPropertyId === property.id}
-            onHighlight={onPropertyHighlight}
-          />
-          );
-        })}
-      </div>
+            return (
+            <PropertyCard
+              key={property.slug || property.id}
+              id={property.id.toString()}
+              slug={property.slug}
+              image={property.image}
+              images={property.images}
+              price={formatPrice(property)}
+              address={addressLabel}
+              title={property.title || `${property.type} in ${addressLabel}`}
+              bedrooms={property.bedrooms}
+              bathrooms={property.bathrooms}
+              sqft={property.sqft}
+              floor={property.floor}
+              area={property.sqft ? `${property.sqft} მ²` : undefined}
+              type={property.type}
+              status={property.status}
+              isNew={property.isNew}
+              isHighlighted={highlightedPropertyId === property.id}
+              onHighlight={onPropertyHighlight}
+            />
+            );
+          })}
+        </div>
+      )}
 
       <PropertiesGridPagination
         currentPage={currentPage}
