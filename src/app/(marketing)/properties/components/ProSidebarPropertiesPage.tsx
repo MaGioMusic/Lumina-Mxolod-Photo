@@ -49,9 +49,9 @@ export default function ProSidebarPropertiesPage() {
   const debouncedQuery = useDebounced(searchQuery, 200);
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-[#111111]">
+    <div className="properties-page flex min-h-screen bg-gray-50 dark:bg-[#111111]">
         {/* Sidebar (sticky) */}
-        <div className="flex-shrink-0 bg-white dark:bg-[#111111]">
+        <div className="properties-sidebar-surface flex-shrink-0 bg-white dark:bg-[#111111]">
           <div
             className="sticky top-16 h-[calc(100vh-4rem)] relative group overflow-y-auto overflow-x-hidden pr-2 bg-white dark:bg-[#111111]"
             style={sidebarScrollerStyle}
@@ -71,7 +71,7 @@ export default function ProSidebarPropertiesPage() {
         <div className="flex-1 flex flex-col">
           {/* Applied Filters (compact) */}
           {hasActiveFilters && (
-            <div className="sticky top-16 z-10 p-2 bg-white/80 dark:bg-[#111111]/90 backdrop-blur border-b border-black/5 dark:border-white/10 relative">
+            <div className="properties-chips-surface sticky top-16 z-10 p-2 bg-white/80 dark:bg-[#111111]/90 backdrop-blur border-b border-black/5 dark:border-white/10 relative">
               <AppliedFiltersChips 
                 searchQuery={searchQuery}
                 filters={filters}
@@ -84,7 +84,7 @@ export default function ProSidebarPropertiesPage() {
           {/* Content - Grid or Map */}
           <div className="flex-1">
             {currentView === 'grid' ? (
-              <div className="p-3">
+              <div className="properties-grid-surface p-3">
                 <PropertiesGrid 
                   // Keep typing responsive while reducing result-grid churn.
                   searchQuery={debouncedQuery} 
@@ -94,7 +94,7 @@ export default function ProSidebarPropertiesPage() {
                 />
               </div>
             ) : (
-              <div className="h-[calc(100vh-6rem)]">
+              <div className="properties-map-surface h-[calc(100vh-6rem)]">
                 <PropertyDetailsMap filters={filters} searchQuery={debouncedQuery} />
               </div>
             )}

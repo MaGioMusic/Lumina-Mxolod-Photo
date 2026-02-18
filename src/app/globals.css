@@ -20,6 +20,17 @@ html.theme-switching *::after {
   animation: none !important;
 }
 
+/* /properties last-mile smoothness:
+   trim paint-heavy effects only while theme-switching is active. */
+html.theme-switching .properties-page .properties-chips-surface,
+html.theme-switching .properties-page .properties-map-surface .leaflet-container,
+html.theme-switching .properties-page .property-card {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
 /* Earth Tones Color Palette Variables */
 :root {
   /* Natural Earth Tones Palette */

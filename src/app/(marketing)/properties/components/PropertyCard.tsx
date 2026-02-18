@@ -3,7 +3,6 @@
 import { memo, useState, type MouseEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useThemeHydration } from '@/contexts/ThemeContext';
 import { useFavorites, FavoriteProperty } from '@/contexts/FavoritesContext';
 import { Bed, Bath, Maximize2, Heart, GitCompare } from 'lucide-react';
 import PropertyImageCarousel from './PropertyImageCarousel';
@@ -53,7 +52,6 @@ function PropertyCard({
   onFavoriteToggle
 }: PropertyCardProps) {
   const { t } = useLanguage();
-  const isHydrated = useThemeHydration();
   const { isFavorite, addToFavorites, removeFromFavorites } = useFavorites();
   const { toggle: toggleCompare, isSelected: isCompared } = useCompare();
   const router = useRouter();
@@ -118,7 +116,7 @@ function PropertyCard({
   };
 
   // Prevent hydration mismatch by not applying dynamic classes until hydrated
-  const shouldApplyHoverEffects = isHydrated && isHovered;
+  const shouldApplyHoverEffects = isHovered;
 
   const cardInner = (
     <div className={isNew ? 'new-property-gradient-border' : ''}>

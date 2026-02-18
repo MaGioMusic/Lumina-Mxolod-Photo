@@ -11,6 +11,10 @@ import React, {
 
 type Theme = 'light' | 'dark';
 
+const PROPERTIES_ROUTE_PATTERN = /^\/(?:ka\/|en\/|ru\/)?properties(?:\/|$)/;
+const DEFAULT_THEME_SWITCH_SUPPRESSION_MS = 140;
+const PROPERTIES_THEME_SWITCH_SUPPRESSION_MS = 220;
+
 interface ThemeContextType {
   theme: Theme;
   toggleTheme: () => void;
@@ -44,6 +48,13 @@ function applyThemeToDocument(nextTheme: Theme) {
   root.style.colorScheme = isDark ? 'dark' : 'light';
 }
 
+function getThemeSwitchSuppressionDuration(): number {
+  if (typeof window === 'undefined') return DEFAULT_THEME_SWITCH_SUPPRESSION_MS;
+  return PROPERTIES_ROUTE_PATTERN.test(window.location.pathname)
+    ? PROPERTIES_THEME_SWITCH_SUPPRESSION_MS
+    : DEFAULT_THEME_SWITCH_SUPPRESSION_MS;
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(readInitialTheme);
   const [isHydrated, setIsHydrated] = useState(false);
@@ -72,10 +83,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       // During theme switch, briefly suppress CSS transitions to avoid
       // large-tree transition jank on heavy pages like /properties.
       try {
+        const suppressionDuration = getThemeSwitchSuppressionDuration();
         document.documentElement.classList.add('theme-switching');
         window.setTimeout(() => {
           document.documentElement.classList.remove('theme-switching');
-        }, 140);
+        }, suppressionDuration);
       } catch {}
 
       applyThemeToDocument(nextTheme);
