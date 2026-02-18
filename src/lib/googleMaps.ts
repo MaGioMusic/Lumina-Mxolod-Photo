@@ -34,7 +34,7 @@ export async function loadMarker() {
   return (await importLibrary('marker')) as google.maps.MarkerLibrary;
 }
 
-async function loadPlaces() {
+export async function loadPlaces() {
   ensureMapsLoader();
   return (await importLibrary('places')) as google.maps.PlacesLibrary;
 }

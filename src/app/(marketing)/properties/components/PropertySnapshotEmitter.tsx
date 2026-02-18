@@ -18,7 +18,7 @@ interface PropertySnapshotProps {
 
 export default function PropertySnapshotEmitter(props: PropertySnapshotProps) {
   const sp = useSearchParams();
-  const cid = sp.get('cid') || (typeof window !== 'undefined' ? window.sessionStorage.getItem('lumina_cid') : null);
+  const cid = sp?.get('cid') || (typeof window !== 'undefined' ? window.sessionStorage.getItem('lumina_cid') : null);
 
   useEffect(() => {
     if (!cid) return;

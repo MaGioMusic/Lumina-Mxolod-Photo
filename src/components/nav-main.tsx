@@ -21,7 +21,7 @@ export function NavMain({
     icon?: LucideIcon
   }[]
 }) {
-  const pathname = usePathname()
+  const pathname = usePathname() ?? ''
 
   return (
     <SidebarGroup>

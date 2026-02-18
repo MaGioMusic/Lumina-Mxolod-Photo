@@ -128,7 +128,7 @@ export async function getPropertyDetail(id: string): Promise<PropertyDetailResul
   return { property, agent, analytics };
 }
 
-const __test = {
+export const __test = {
   buildWhere,
   buildOrderBy,
 };
