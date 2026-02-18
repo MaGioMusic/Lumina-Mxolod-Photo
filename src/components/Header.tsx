@@ -36,6 +36,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isPropertyModalOpen, setIsPropertyModalOpen] = useState(false);
+  const [loginIntent, setLoginIntent] = useState<'none' | 'addProperty'>('none');
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
   const [currentView, setCurrentView] = useState<'grid' | 'map'>('grid');
@@ -147,6 +148,7 @@ export default function Header() {
         // Language dropdown is handled separately
         break;
       case 'login':
+        setLoginIntent('none');
         setIsLoginModalOpen(true);
         break;
       case 'logout':
@@ -154,6 +156,30 @@ export default function Header() {
         break;
     }
     setIsMobileMenuOpen(false);
+  };
+
+  const handleAddPropertyClick = () => {
+    if (isAuthenticated) {
+      setIsPropertyModalOpen(true);
+      return;
+    }
+
+    setLoginIntent('addProperty');
+    setIsLoginModalOpen(true);
+  };
+
+  const handleLoginSuccess = () => {
+    if (loginIntent === 'addProperty') {
+      setIsPropertyModalOpen(true);
+      setLoginIntent('none');
+    }
+  };
+
+  const handleLoginModalClose = () => {
+    setIsLoginModalOpen(false);
+    if (loginIntent !== 'none') {
+      setLoginIntent('none');
+    }
   };
 
   // Close mobile menu when route changes
@@ -317,7 +343,10 @@ export default function Header() {
                 {!isAuthenticated ? (
                   <>
                     <button
-                      onClick={() => setIsLoginModalOpen(true)}
+                      onClick={() => {
+                        setLoginIntent('none');
+                        setIsLoginModalOpen(true);
+                      }}
                       className={`px-5 py-2 border rounded-full text-sm font-medium transition-colors ${
                         theme === 'dark' 
                           ? 'border-gray-600 text-gray-300 hover:bg-gray-800' 
@@ -326,7 +355,7 @@ export default function Header() {
                     >
                       {t('signIn')}
                     </button>
-                    <button onClick={() => setIsPropertyModalOpen(true)} className="px-5 py-2 bg-[#F08336] text-white rounded-full hover:bg-[#e0743a] transition-colors text-sm font-medium">
+                    <button onClick={handleAddPropertyClick} className="px-5 py-2 bg-[#F08336] text-white rounded-full hover:bg-[#e0743a] transition-colors text-sm font-medium">
                       {t('addProperty')}
                     </button>
                   </>
@@ -466,7 +495,9 @@ export default function Header() {
       {/* Login Modal */}
       <LoginModal
         isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
+        onClose={handleLoginModalClose}
+        onSuccess={handleLoginSuccess}
+        redirectOnSuccess={loginIntent === 'none'}
       />
       <PropertySubmitModal isOpen={isPropertyModalOpen} onClose={() => setIsPropertyModalOpen(false)} />
     </>

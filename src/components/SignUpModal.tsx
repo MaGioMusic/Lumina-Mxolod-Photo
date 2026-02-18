@@ -9,6 +9,8 @@ import { X, Eye, EyeSlash, UserPlus } from '@phosphor-icons/react';
 interface SignUpModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
+  redirectOnSuccess?: boolean;
 }
 
 interface SignUpForm {
@@ -21,7 +23,7 @@ interface SignUpForm {
   agreeToTerms: boolean;
 }
 
-export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
+export default function SignUpModal({ isOpen, onClose, onSuccess, redirectOnSuccess = true }: SignUpModalProps) {
   const { t } = useLanguage();
   const { theme } = useTheme();
   
@@ -131,8 +133,13 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
       });
       setErrors({});
 
-      // Reload to update session state
-      window.location.href = '/dashboard';
+      // Let parent complete post-auth intent if provided.
+      onSuccess?.();
+
+      // Default legacy behavior: redirect to dashboard after sign-up.
+      if (redirectOnSuccess) {
+        window.location.href = '/dashboard';
+      }
     } catch (error) {
       setErrors({ form: 'Registration failed. Please try again.' });
     } finally {
