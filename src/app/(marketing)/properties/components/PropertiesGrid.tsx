@@ -143,8 +143,12 @@ export default function PropertiesGrid({
   logger.log('PropertiesGrid received filters:', filters);
 
   // Allow AI tool to push ad-hoc filters via CustomEvent without full reload
+  // only when explicitly enabled.
+  const allowAiToolSideEffects = process.env.NEXT_PUBLIC_AI_TOOL_SIDEEFFECTS === '1';
   const [injectedFilters, setInjectedFilters] = useState<Partial<FiltersState> & { location?: string }>({});
   useEffect(() => {
+    if (!allowAiToolSideEffects) return;
+
     const onSet = (e: Event) => {
       try {
         const det: any = (e as CustomEvent).detail || {};
@@ -153,7 +157,7 @@ export default function PropertiesGrid({
     };
     window.addEventListener('lumina:filters:set', onSet as any);
     return () => window.removeEventListener('lumina:filters:set', onSet as any);
-  }, []);
+  }, [allowAiToolSideEffects]);
 
   // Injected AI filters should be one-shot (or short-lived), otherwise they can
   // keep overriding user-cleared filters and make the list appear to "disappear".

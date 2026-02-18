@@ -28,6 +28,7 @@ import PropertyDetailsMap from './PropertyDetailsMap';
 
 const ProSidebarPropertiesPage: React.FC = () => {
   const searchParams = useSearchParams();
+  const allowAiToolSideEffects = process.env.NEXT_PUBLIC_AI_TOOL_SIDEEFFECTS === '1';
   // Hydration-safe default: always start with 'grid' on first render.
   // Then, after mount, sync from URL/localStorage/effects.
   const [currentView, setCurrentView] = useState<'grid' | 'map'>('grid');
@@ -102,6 +103,12 @@ const ProSidebarPropertiesPage: React.FC = () => {
     const maxParam = Number(searchParams.get('maxPrice') || '1000000');
     const viewParam = (searchParams.get('view') || '').toLowerCase();
 
+    // Respect view param if provided
+    if (viewParam === 'map' || viewParam === 'grid') setCurrentView(viewParam as any);
+
+    // Safety default: do not auto-apply URL filters unless AI tool side-effects are enabled.
+    if (!allowAiToolSideEffects) return;
+
     // Update search query if provided
     if (locationParam) {
       setSearchQuery(locationParam);
@@ -113,10 +120,20 @@ const ProSidebarPropertiesPage: React.FC = () => {
       propertyTypes: typeParam ? [typeParam] : [],
       priceRange: [Number.isFinite(minParam) ? minParam : 0, Number.isFinite(maxParam) ? maxParam : prev.priceRange[1]],
     }));
+  }, [allowAiToolSideEffects, searchParams]);
 
-    // Respect view param if provided
-    if (viewParam === 'map' || viewParam === 'grid') setCurrentView(viewParam as any);
-  }, [searchParams]);
+  // When AI side-effects are disabled, strip stale URL filter params once.
+  useEffect(() => {
+    if (allowAiToolSideEffects) return;
+    try {
+      const u = new URL(window.location.href);
+      const keys = ['location', 'minPrice', 'maxPrice', 'rooms', 'status', 'property_type', 'type', 'sort'];
+      const hadAny = keys.some((k) => u.searchParams.has(k));
+      if (!hadAny) return;
+      keys.forEach((k) => u.searchParams.delete(k));
+      window.history.replaceState(null, '', u.toString());
+    } catch {}
+  }, [allowAiToolSideEffects]);
 
   // Listen for view changes from Header
   useEffect(() => {
