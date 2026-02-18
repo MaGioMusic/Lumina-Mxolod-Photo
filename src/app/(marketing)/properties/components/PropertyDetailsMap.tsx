@@ -45,7 +45,7 @@ interface DisplayProperty {
   price: string;
   location: string;
   type: string;
-  status: 'for-sale' | 'for-rent';
+  status?: 'for-sale' | 'for-rent';
   bedrooms: number;
   bathrooms: number;
   area: number;

@@ -3266,6 +3266,56 @@ const translations: Translations = {
   chat_qr_3: { ka: 'როდის გირჩევნიათ დათვალიერება?', en: 'When is a good time for a viewing?', ru: 'Когда удобно для просмотра?' },
   chat_qr_4: { ka: 'გთხოვთ დატოვოთ საკონტაქტო ნომერი.', en: 'Please leave a contact number.', ru: 'Оставьте, пожалуйста, контактный номер.' },
   chat_qr_5: { ka: 'მოგწერთ დეტალებს მოკლე დროში.', en: 'I will send details shortly.', ru: 'Скоро отправлю детали.' },
+  chatUser1LastMessage: {
+    ka: 'გმადლობთ დახმარებისთვის, ძალიან...',
+    en: 'Thank you for the help, very...',
+    ru: 'Спасибо за помощь, очень...'
+  },
+  chatUser2Name: {
+    ka: 'ნინო კვარაცხელია',
+    en: 'Nino Kvaratskhelia',
+    ru: 'Нино Кварацхелия'
+  },
+  chatUser2LastMessage: {
+    ka: 'როდის იქნება ხელმისაწვდომი?',
+    en: 'When will it be available?',
+    ru: 'Когда будет доступно?'
+  },
+  chatUser3Name: {
+    ka: 'დავით გურგენიძე',
+    en: 'Davit Gurgenidze',
+    ru: 'Давит Гургенидзе'
+  },
+  chatUser3LastMessage: {
+    ka: 'გმადლობთ ინფორმაციისთვის',
+    en: 'Thank you for the information',
+    ru: 'Спасибо за информацию'
+  },
+  chatUser4Name: {
+    ka: 'თამარ ბერიძე',
+    en: 'Tamar Beridze',
+    ru: 'Тамар Беридзе'
+  },
+  chatUser5Name: {
+    ka: 'ლევან კიკნაძე',
+    en: 'Levan Kiknadze',
+    ru: 'Леван Кикнадзе'
+  },
+  chatUser5LastMessage: {
+    ka: 'კიდევ მაქვს რამდენიმე კითხვა...',
+    en: 'I still have a few more questions...',
+    ru: 'У меня есть еще несколько вопросов...'
+  },
+  chatUser6Name: {
+    ka: 'მარიამ გოგოლაძე',
+    en: 'Mariam Gogoladze',
+    ru: 'Мариам Гоголадзе'
+  },
+  chatUser6LastMessage: {
+    ka: 'მადლობა დროული პასუხისთვის',
+    en: 'Thanks for the timely response',
+    ru: 'Спасибо за быстрый ответ'
+  },
   today: { ka: 'დღეს', en: 'Today', ru: 'Сегодня' },
   tomorrow: { ka: 'ხვალ', en: 'Tomorrow', ru: 'Завтра' },
   oneWeek: { ka: '1 კვირა', en: '1 week', ru: '1 неделя' },

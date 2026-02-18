@@ -6,6 +6,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { FiSearch, FiPhone, FiPaperclip, FiImage, FiSend, FiUser, FiMapPin, FiMail, FiBell, FiCalendar, FiShare2, FiX, FiMessageCircle } from 'react-icons/fi';
 import { motion, MotionConfig } from 'framer-motion';
+import { clearReplyTimeout, scheduleReplyTimeout } from './replyTimeout';
 
 interface ChatUser {
   id: string;
@@ -96,32 +97,32 @@ export default function ChatPage() {
       id: 'giorgi-mamaladze',
       name: t('teamMember1Name'),
       avatar: '/images/photos/contact-1.jpg',
-      lastMessage: 'გმადლობთ დახმარებისთვის, ძალიან...',
+      lastMessage: t('chatUser1LastMessage'),
       timestamp: '10:23',
       unreadCount: 2,
       isOnline: true
     },
     {
       id: 'nino-kvaratskhelia',
-      name: 'ნინო კვარაცხელია',
+      name: t('chatUser2Name'),
       avatar: '/images/photos/contact-2.jpg',
-      lastMessage: 'როდის იქნება ხელმისაწვდომი?',
+      lastMessage: t('chatUser2LastMessage'),
       timestamp: '09:45',
       unreadCount: 0,
       isOnline: false
     },
     {
       id: 'davit-gurgenidze',
-      name: 'დავით გურგენიძე',
+      name: t('chatUser3Name'),
       avatar: '/images/photos/contact-3.jpg',
-      lastMessage: 'გმადლობთ ინფორმაციისთვის',
-      timestamp: 'გუშინ',
+      lastMessage: t('chatUser3LastMessage'),
+      timestamp: t('yesterday'),
       unreadCount: 0,
       isOnline: false
     },
     {
       id: 'tamar-beridze',
-      name: 'თამარ ბერიძე',
+      name: t('chatUser4Name'),
       avatar: '/images/photos/contact-4.jpg',
       lastMessage: '',
       timestamp: t('yesterday'),
@@ -130,18 +131,18 @@ export default function ChatPage() {
     },
     {
       id: 'levan-kiknadze',
-      name: 'ლევან კიკნაძე',
+      name: t('chatUser5Name'),
       avatar: '/images/photos/contact-1.jpg',
-      lastMessage: 'კიდევ მაქვს რამდენიმე კითხვა...',
+      lastMessage: t('chatUser5LastMessage'),
       timestamp: '19/05',
       unreadCount: 3,
       isOnline: false
     },
     {
       id: 'mariam-gogoladze',
-      name: 'მარიამ გოგოლაძე',
+      name: t('chatUser6Name'),
       avatar: '/images/photos/contact-2.jpg',
-      lastMessage: 'მადლობა დროული პასუხისთვის',
+      lastMessage: t('chatUser6LastMessage'),
       timestamp: '18/05',
       unreadCount: 0,
       isOnline: false
@@ -234,13 +235,7 @@ export default function ChatPage() {
       setNewMessage('');
       setIsAssistantTyping(true);
 
-      // Clear any existing pending reply timer before scheduling a new one
-      if (replyTimeoutRef.current) {
-        window.clearTimeout(replyTimeoutRef.current);
-        replyTimeoutRef.current = null;
-      }
-
-      replyTimeoutRef.current = window.setTimeout(() => {
+      scheduleReplyTimeout(replyTimeoutRef, () => {
         const reply: Message = {
           id: genId(),
           text: 'მოგწერ დეტალებს მოკლე დროში.',
@@ -273,9 +268,7 @@ export default function ChatPage() {
   // Clear pending reply timer when switching chats
   useEffect(() => {
     return () => {
-      if (replyTimeoutRef.current) {
-        window.clearTimeout(replyTimeoutRef.current);
-        replyTimeoutRef.current = null;
+      if (clearReplyTimeout(replyTimeoutRef)) {
         setIsAssistantTyping(false);
       }
     };
@@ -369,10 +362,7 @@ export default function ChatPage() {
   // Clear pending timers on unmount
   useEffect(() => {
     return () => {
-      if (replyTimeoutRef.current) {
-        window.clearTimeout(replyTimeoutRef.current);
-        replyTimeoutRef.current = null;
-      }
+      clearReplyTimeout(replyTimeoutRef);
     };
   }, []);
 
@@ -460,7 +450,7 @@ export default function ChatPage() {
               />
               <div>
                 <h2 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                  {selectedUser?.name || 'გიორგი მამალაძე'}
+                  {selectedUser?.name || t('teamMember1Name')}
                 </h2>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full online-badge-breathe"></div>
