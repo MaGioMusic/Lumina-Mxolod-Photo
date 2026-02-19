@@ -1781,7 +1781,7 @@ const translations: Translations = {
     ru: 'Быстрые ссылки'
   },
   services: {
-    ka: 'მომსახურებები',
+    ka: 'სერვისები',
     en: 'Services',
     ru: 'Услуги'
   },
@@ -3200,11 +3200,6 @@ const translations: Translations = {
   },
 
   // Footer missing keys
-  services: {
-    ka: 'სერვისები',
-    en: 'Services',
-    ru: 'Услуги'
-  },
   tbilisiGeorgia: {
     ka: 'თბილისი, საქართველო',
     en: 'Tbilisi, Georgia',
