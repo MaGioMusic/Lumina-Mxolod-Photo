@@ -1915,6 +1915,21 @@ const translations: Translations = {
     en: 'Reset view',
     ru: 'Сбросить вид'
   },
+  mapStandard: {
+    ka: 'Standard',
+    en: 'Standard',
+    ru: 'Стандарт'
+  },
+  mapSatellite: {
+    ka: 'Satellite',
+    en: 'Satellite',
+    ru: 'Спутник'
+  },
+  mapsApiKeyMissing: {
+    ka: 'Google Maps API key is missing.',
+    en: 'Google Maps API key is missing.',
+    ru: 'Ключ API Google Maps отсутствует.'
+  },
 
   // Transaction types
   forSale: {
