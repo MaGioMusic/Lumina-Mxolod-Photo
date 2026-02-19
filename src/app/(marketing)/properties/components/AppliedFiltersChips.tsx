@@ -96,7 +96,7 @@ function AppliedFiltersChips({ searchQuery, filters, onRemove, onClearAll }: App
   if (filters.area[0] > 0 || filters.area[1] < 10000) {
     chips.push(
       <button key="area" className={chipBase} aria-pressed={true} aria-label={`${t('remove')} ${t('area')}`} onClick={() => onRemove('area')}>
-        <span>{filters.area[0]}–{filters.area[1]} მ²</span>
+        <span>{filters.area[0]}–{filters.area[1]} {t('squareMetersUnit')}</span>
         <span className={closeBtn} aria-hidden>×</span>
       </button>
     );

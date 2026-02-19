@@ -1911,6 +1911,11 @@ const translations: Translations = {
     en: 'properties',
     ru: 'недвижимость'
   },
+  squareMetersUnit: {
+    ka: 'მ²',
+    en: 'm²',
+    ru: 'м²'
+  },
   propertiesSearchPlaceholder: {
     ka: 'ქონებების ძებნა...',
     en: 'Search properties...',

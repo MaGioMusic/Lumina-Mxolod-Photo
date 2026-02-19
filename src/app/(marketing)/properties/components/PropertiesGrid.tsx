@@ -527,10 +527,7 @@ export default function PropertiesGrid({
     [currentPage, t, totalPages],
   );
   const loadingText = useMemo(() => t('loading'), [t]);
-  const uploadButtonLabel = useMemo(
-    () => t('uploadProperty') || 'ქონების ატვირთვა',
-    [t],
-  );
+  const uploadButtonLabel = useMemo(() => t('uploadProperty'), [t]);
 
   return (
     <>
@@ -584,7 +581,7 @@ export default function PropertiesGrid({
               bathrooms={property.bathrooms}
               sqft={property.sqft}
               floor={property.floor}
-              area={property.sqft ? `${property.sqft} მ²` : undefined}
+              area={property.sqft ? `${property.sqft} ${t('squareMetersUnit')}` : undefined}
               type={property.type}
               status={property.status}
               isNew={property.isNew}

@@ -85,7 +85,7 @@ function PropertyCard({
       image,
       bedrooms,
       bathrooms,
-      area: area || (sqft ? `${sqft} მ²` : undefined),
+      area: area || (sqft ? `${sqft} ${t('squareMetersUnit')}` : undefined),
       type
     };
     const nextIsFavorite = !isPropertyFavorite;

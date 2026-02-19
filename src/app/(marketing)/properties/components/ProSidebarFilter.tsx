@@ -408,7 +408,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                 className="px-3 py-1 rounded-full text-xs border bg-white text-[#f97316] border-orange-200 hover:bg-orange-50"
                 aria-label={`${t('remove')} ${t('area')}`}
               >
-                {t('area')}: {formatArea(filters.area[0])}-{formatArea(filters.area[1])} m² ×
+                {t('area')}: {formatArea(filters.area[0])}-{formatArea(filters.area[1])} {t('squareMetersUnit')} ×
               </button>
             )}
 
@@ -661,7 +661,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
               <div className="absolute left-full ml-3 top-0 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 z-50">
                 <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-xl border border-gray-700">
                   <div className="font-semibold text-purple-300 mb-1">{t('propertyFiltersAreaRange')}:</div>
-                  <div className="text-gray-300">{formatArea(filters.area[0])} - {formatArea(filters.area[1])} m²</div>
+                  <div className="text-gray-300">{formatArea(filters.area[0])} - {formatArea(filters.area[1])} {t('squareMetersUnit')}</div>
                   <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
                 </div>
               </div>
@@ -959,7 +959,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                     value={filters.area}
                     onChange={handleAreaChange}
                     step={50}
-                    unit="m²"
+                    unit={t('squareMetersUnit')}
                     formatValue={formatArea}
                   />
                 </div>
