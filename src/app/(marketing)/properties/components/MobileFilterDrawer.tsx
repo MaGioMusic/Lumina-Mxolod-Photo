@@ -95,7 +95,7 @@ const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
                     onClick={onClearFilters}
                     className="text-sm text-gray-500 dark:text-gray-400 hover:text-red-500 px-3 py-1 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                   >
-                    {t('clearAll') || 'გასუფთავება'}
+                    {t('clearAll')}
                   </button>
                 )}
                 
@@ -103,7 +103,7 @@ const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
                 <button
                   onClick={onClose}
                   className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                  aria-label="ფილტრების დახურვა"
+                  aria-label={t('closeFilters')}
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -123,7 +123,7 @@ const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
                   onClick={onClose}
                   className="flex-1 px-4 py-3 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                 >
-                  {t('cancel') || 'გაუქმება'}
+                  {t('cancel')}
                 </button>
                 
                 {/* Apply Filters Button */}
@@ -134,7 +134,7 @@ const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
                   }}
                   className="flex-1 px-4 py-3 bg-primary-400 text-white rounded-lg font-medium hover:bg-primary-500 transition-colors shadow-sm"
                 >
-                  {t('applyFilters') || 'ფილტრების გამოყენება'}
+                  {t('applyFilters')}
                 </button>
               </div>
             </div>
@@ -172,7 +172,7 @@ export const MobileFilterToggle: React.FC<MobileFilterToggleProps> = ({
       `}
     >
       <Funnel className="w-4 h-4" />
-      <span className="text-sm font-medium">{t('filters') || 'ფილტრები'}</span>
+      <span className="text-sm font-medium">{t('filters')}</span>
       
       {/* Active Filters Badge */}
       {activeFiltersCount > 0 && (

@@ -1581,6 +1581,16 @@ const translations: Translations = {
     en: 'Filters',
     ru: 'Фильтры'
   },
+  closeFilters: {
+    ka: 'ფილტრების დახურვა',
+    en: 'Close Filters',
+    ru: 'Закрыть фильтры'
+  },
+  applyFilters: {
+    ka: 'ფილტრების გამოყენება',
+    en: 'Apply Filters',
+    ru: 'Применить фильтры'
+  },
   
   // Pagination
   showing: {
