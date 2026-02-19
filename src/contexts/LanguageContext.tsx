@@ -3060,11 +3060,6 @@ const translations: Translations = {
     en: 'Go Back',
     ru: 'Назад'
   },
-  uploadProperty: {
-    ka: 'ქონების ატვირთვა',
-    en: 'Upload Property',
-    ru: 'Загрузить объект'
-  },
   uploadPropertyPhotos: {
     ka: 'ატვირთეთ ქონების ფოტოები და დოკუმენტები',
     en: 'Upload property photos and documents',
@@ -3120,20 +3115,10 @@ const translations: Translations = {
     en: 'Bedroom',
     ru: 'Спальня'
   },
-  bedrooms: {
-    ka: 'საძინებელი',
-    en: 'Bedrooms',
-    ru: 'Спальни'
-  },
   bathroom: {
     ka: 'სააბაზანო',
     en: 'Bathroom',
     ru: 'Ванная'
-  },
-  bathrooms: {
-    ka: 'სააბაზანო',
-    en: 'Bathrooms',
-    ru: 'Ванные'
   },
   monthlyMetrics: {
     ka: 'ყოველთვიური მაჩვენებლები',
@@ -3164,11 +3149,6 @@ const translations: Translations = {
     ka: 'საუბრების ძიება',
     en: 'Search Conversations',
     ru: 'Поиск по беседам'
-  },
-  typeMessage: {
-    ka: 'შეტყობინების ჩაწერა',
-    en: 'Type a message',
-    ru: 'Введите сообщение'
   },
 
   today: { ka: 'დღეს', en: 'Today', ru: 'Сегодня' },
@@ -3222,7 +3202,6 @@ const translations: Translations = {
   // i18n audit missing keys (2026-02-17)
   added: { ka: 'დამატებულია', en: 'Added', ru: 'Добавлено' },
   all: { ka: 'ყველა', en: 'All', ru: 'Все' },
-  applyFilters: { ka: 'ფილტრების გამოყენება', en: 'Apply filters', ru: 'Применить фильтры' },
   back: { ka: 'უკან', en: 'Back', ru: 'Назад' },
   bookTour: { ka: 'ტურის დაჯავშნა', en: 'Book tour', ru: 'Забронировать просмотр' },
   dailyRent: { ka: 'დღიური ქირა', en: 'Daily rent', ru: 'Посуточно' },
@@ -3258,10 +3237,9 @@ const translations: Translations = {
   tour3d: { ka: '3D ტური', en: '3D tour', ru: '3D-тур' },
   fillRequiredFields: { ka: 'გთხოვთ შეავსოთ ყველა სავალდებულო ველი', en: 'Please fill in all required fields', ru: 'Пожалуйста, заполните все обязательные поля' },
   validEmailAddress: { ka: 'გთხოვთ შეიყვანოთ სწორი ელფოსტის მისამართი', en: 'Please enter a valid email address', ru: 'Пожалуйста, введите корректный email' },
-  contactMessageSent: { ka: 'გმადლობთ! თქვენი შეტყობინება წარმატებით გაიგზავნა.', en: 'Thank you! Your message has been sent successfully.', ru: 'Спасибо! Ваше сообщение успешно отправлено.' },
+  contactMessageSent: { ka: 'გმადლობთ! თქვენი შეტყობინება წარმატებით გაიგზავნა.', en: 'Thank you! Your message has been sent successfully.', ru: 'Спასибо! Ваше сообщение успешно отправлено.' },
   propertyUploadSuccess: { ka: 'უძრავი ქონება წარმატებით აიტვირთა!', en: 'Property uploaded successfully!', ru: 'Объект успешно загружен!' },
   propertyUploadError: { ka: 'ატვირთვის შეცდომა. გთხოვთ, სცადოთ თავიდან.', en: 'Error uploading property. Please try again.', ru: 'Ошибка загрузки. Пожалуйста, попробуйте снова.' },
-  office: { ka: 'ოფისი', en: 'Office', ru: 'Офис' },
   contactHeroSubtitle: { ka: 'მზად ხარ შენი საოცნებო ქონების საპოვნელად? დაგვიკავშირდი დღესვე — ჩვენი გუნდი დაგეხმარება ყველა ეტაპზე.', en: 'Ready to find your dream property? Get in touch with our expert team today. We are here to help you every step of the way.', ru: 'Готовы найти недвижимость мечты? Свяжитесь с нашей командой уже сегодня. Мы поможем вам на каждом этапе.' },
   contactSendMessage: { ka: 'მოგვწერე შეტყობინება', en: 'Send us a Message', ru: 'Отправьте нам сообщение' },
   contactFormSubtitle: { ka: 'შეავსე ფორმა და რაც შეიძლება მალე დაგიბრუნდებით პასუხით.', en: 'Fill out the form below and we will get back to you as soon as possible.', ru: 'Заполните форму ниже, и мы свяжемся с вами как можно скорее.' },
