@@ -75,11 +75,11 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         onClose();
         setCredentials({ email: '', password: '' });
       } else {
-        setError('Google login failed. Please try again.');
+        setError(t('googleLoginFailed'));
       }
     } catch (error) {
       console.error('Google login error:', error);
-      setError('Google login failed. Please try again.');
+      setError(t('googleLoginFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -100,11 +100,11 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         onClose();
         setCredentials({ email: '', password: '' });
       } else {
-        setError('Facebook login failed. Please try again.');
+        setError(t('facebookLoginFailed'));
       }
     } catch (error) {
       console.error('Facebook login error:', error);
-      setError('Facebook login failed. Please try again.');
+      setError(t('facebookLoginFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -179,13 +179,13 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 <label className={`text-sm font-medium ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                 }`}>
-                  Email
+                  {t('email')}
                 </label>
                 <input
                   type="email"
                   value={credentials.email}
                   onChange={(e) => setCredentials(prev => ({ ...prev, email: e.target.value }))}
-                  placeholder="Enter your email"
+                  placeholder={t('enterYourEmail')}
                   required
                   className={`w-full px-4 py-3 rounded-lg border transition-colors ${
                     theme === 'dark'
@@ -200,14 +200,14 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 <label className={`text-sm font-medium ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                 }`}>
-                  Password
+                  {t('password')}
                 </label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={credentials.password}
                     onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
-                    placeholder="Enter your password"
+                    placeholder={t('enterYourPassword')}
                     required
                     className={`w-full px-4 py-3 pr-12 rounded-lg border transition-colors ${
                       theme === 'dark'
@@ -235,7 +235,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
               {/* Demo Credentials Info */}
               <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-2">Demo Accounts:</p>
+                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-2">{t('demoAccounts')}</p>
                 <div className="text-xs text-blue-600 dark:text-blue-400 space-y-1">
                   <div>• Agent: agent@lumina.ge</div>
                   <div>• Client: client@lumina.ge</div>
@@ -257,7 +257,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {isSubmitting ? (
                   <div className="flex items-center justify-center space-x-2">
                     <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                    <span>Signing in...</span>
+                    <span>{t('signingIn')}</span>
                   </div>
                 ) : (
                   t('login')
@@ -278,7 +278,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               }`}
               type="button"
             >
-              Sign Up
+              {t('signUp')}
             </button>
 
             {/* Divider */}
@@ -292,7 +292,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 <span className={`px-2 ${
                   theme === 'dark' ? 'bg-gray-800 text-gray-400' : 'bg-white text-gray-500'
                 }`}>
-                  Or continue with
+                  {t('orContinueWith')}
                 </span>
               </div>
             </div>
