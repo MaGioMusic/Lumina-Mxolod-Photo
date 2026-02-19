@@ -83,7 +83,7 @@ export default function Header() {
       // Add agent quick links only when agents surfaces are enabled
       if (isAgentsSurfacesEnabled() && (user?.role === 'agent' || user?.role === 'admin')) {
         baseItems.splice(1, 0, { name: t('agentDashboard'), icon: ChartLine, action: 'agentDashboard' });
-        baseItems.splice(1, 0, { name: 'Agent Chat', icon: EnvelopeSimple, action: 'agentChat' });
+        baseItems.splice(1, 0, { name: t('agentChat'), icon: EnvelopeSimple, action: 'agentChat' });
       }
       if (user?.role === 'client') {
         baseItems.splice(1, 0, { name: t('profile'), icon: GridFour, action: 'profile' });
@@ -234,7 +234,7 @@ export default function Header() {
                     role="tooltip"
                     className="absolute left-1/2 -translate-x-1/2 top-full mt-2 px-3 py-1.5 rounded-md text-xs text-white bg-gray-900 shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap"
                   >
-                    {currentView === 'grid' ? 'Switch to Map View' : 'Switch to Grid View'}
+                    {currentView === 'grid' ? t('switchToMapView') : t('switchToGridView')}
                     <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
               </div>
                 </div>
@@ -343,7 +343,7 @@ export default function Header() {
                         <UserList className="w-5 h-5" />
                         {isAuthenticated && user?.role === 'agent' && (
                           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#FFCB74] text-black">
-                            Agent
+                            {t('agent')}
                           </span>
                         )}
                         <CaretDown className={`w-4 h-4 transition-transform ${isAccountDropdownOpen ? 'rotate-180' : ''}`} />
