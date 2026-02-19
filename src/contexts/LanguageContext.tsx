@@ -1581,6 +1581,16 @@ const translations: Translations = {
     en: 'Filters',
     ru: 'Фильтры'
   },
+  closeFilters: {
+    ka: 'ფილტრების დახურვა',
+    en: 'Close Filters',
+    ru: 'Закрыть фильтры'
+  },
+  applyFilters: {
+    ka: 'ფილტრების გამოყენება',
+    en: 'Apply Filters',
+    ru: 'Применить фильтры'
+  },
   
   // Pagination
   showing: {
@@ -1904,6 +1914,21 @@ const translations: Translations = {
     ka: 'ნახვის განულება',
     en: 'Reset view',
     ru: 'Сбросить вид'
+  },
+  mapStandard: {
+    ka: 'Standard',
+    en: 'Standard',
+    ru: 'Стандарт'
+  },
+  mapSatellite: {
+    ka: 'Satellite',
+    en: 'Satellite',
+    ru: 'Спутник'
+  },
+  mapsApiKeyMissing: {
+    ka: 'Google Maps API key is missing.',
+    en: 'Google Maps API key is missing.',
+    ru: 'Ключ API Google Maps отсутствует.'
   },
 
   // Transaction types
@@ -2968,6 +2993,164 @@ const translations: Translations = {
   chat_qr_3: { ka: 'როდის გირჩევნიათ დათვალიერება?', en: 'When is a good time for a viewing?', ru: 'Когда удобно для просмотра?' },
   chat_qr_4: { ka: 'გთხოვთ დატოვოთ საკონტაქტო ნომერი.', en: 'Please leave a contact number.', ru: 'Оставьте, пожалуйста, контактный номер.' },
   chat_qr_5: { ka: 'მოგწერთ დეტალებს მოკლე დროში.', en: 'I will send details shortly.', ru: 'Скоро отправлю детали.' },
+  chatUser1LastMessage: {
+    ka: 'გმადლობთ დახმარებისთვის, ძალიან...',
+    en: 'Thank you for the help, very...',
+    ru: 'Спасибо за помощь, очень...'
+  },
+  chatUser2Name: {
+    ka: 'ნინო კვარაცხელია',
+    en: 'Nino Kvaratskhelia',
+    ru: 'Нино Кварацхелия'
+  },
+  chatUser2LastMessage: {
+    ka: 'როდის იქნება ხელმისაწვდომი?',
+    en: 'When will it be available?',
+    ru: 'Когда будет доступно?'
+  },
+  chatUser3Name: {
+    ka: 'დავით გურგენიძე',
+    en: 'Davit Gurgenidze',
+    ru: 'Давит Гургенидзе'
+  },
+  chatUser3LastMessage: {
+    ka: 'გმადლობთ ინფორმაციისთვის',
+    en: 'Thank you for the information',
+    ru: 'Спасибо за информацию'
+  },
+  chatUser4Name: {
+    ka: 'თამარ ბერიძე',
+    en: 'Tamar Beridze',
+    ru: 'Тамар Беридзе'
+  },
+  chatUser5Name: {
+    ka: 'ლევან კიკნაძე',
+    en: 'Levan Kiknadze',
+    ru: 'Леван Кикнадзе'
+  },
+  chatUser5LastMessage: {
+    ka: 'კიდევ მაქვს რამდენიმე კითხვა...',
+    en: 'I still have a few more questions...',
+    ru: 'У меня есть еще несколько вопросов...'
+  },
+  chatUser6Name: {
+    ka: 'მარიამ გოგოლაძე',
+    en: 'Mariam Gogoladze',
+    ru: 'Мариам Гоголадзе'
+  },
+  chatUser6LastMessage: {
+    ka: 'მადლობა დროული პასუხისთვის',
+    en: 'Thanks for the timely response',
+    ru: 'Спасибо за быстрый ответ'
+  },
+
+  // PropertyDashboard translations
+  accessDenied: {
+    ka: 'წვდომა შეზღუდულია',
+    en: 'Access Denied',
+    ru: 'Доступ запрещен'
+  },
+  loginRequiredMessage: {
+    ka: 'ამ გვერდის სანახავად საჭიროა ავტორიზაცია. გთხოვთ შეხვიდეთ თქვენს ანგარიშში.',
+    en: 'Authentication required to view this page. Please sign in to your account.',
+    ru: 'Для просмотра этой страницы требуется авторизация. Пожалуйста, войдите в свой аккаунт.'
+  },
+  goBack: {
+    ka: 'უკან დაბრუნება',
+    en: 'Go Back',
+    ru: 'Назад'
+  },
+  uploadPropertyPhotos: {
+    ka: 'ატვირთეთ ქონების ფოტოები და დოკუმენტები',
+    en: 'Upload property photos and documents',
+    ru: 'Загрузите фото и документы объекта'
+  },
+  acceptedFileTypes: {
+    ka: 'PNG, JPG, PDF ფაილები 10MB-მდე',
+    en: 'PNG, JPG, PDF files up to 10MB',
+    ru: 'Файлы PNG, JPG, PDF до 10 МБ'
+  },
+  selectFiles: {
+    ka: 'ფაილების არჩევა',
+    en: 'Select Files',
+    ru: 'Выбрать файлы'
+  },
+  uploadedFiles: {
+    ka: 'ატვირთული ფაილები',
+    en: 'Uploaded Files',
+    ru: 'Загруженные файлы'
+  },
+  agentStatistics: {
+    ka: 'აგენტის სტატისტიკა',
+    en: 'Agent Statistics',
+    ru: 'Статистика агента'
+  },
+  profileCompletion: {
+    ka: 'პროფილის შევსება',
+    en: 'Profile Completion',
+    ru: 'Заполнение профиля'
+  },
+  responseRate: {
+    ka: 'პასუხის მაჩვენებელი',
+    en: 'Response Rate',
+    ru: 'Показатель ответов'
+  },
+  totalProperties: {
+    ka: 'სულ ქონება',
+    en: 'Total Properties',
+    ru: 'Всего объектов'
+  },
+  activeListings: {
+    ka: 'აქტიური განცხადებები',
+    en: 'Active Listings',
+    ru: 'Активные объявления'
+  },
+  successfulSales: {
+    ka: 'წარმატებული გაყიდვები',
+    en: 'Successful Sales',
+    ru: 'Успешные продажи'
+  },
+  bedroom: {
+    ka: 'საძინებელი',
+    en: 'Bedroom',
+    ru: 'Спальня'
+  },
+  bathroom: {
+    ka: 'სააბაზანო',
+    en: 'Bathroom',
+    ru: 'Ванная'
+  },
+  monthlyMetrics: {
+    ka: 'ყოველთვიური მაჩვენებლები',
+    en: 'Monthly Metrics',
+    ru: 'Ежемесячные показатели'
+  },
+  propertyViews: {
+    ka: 'ქონების ნახვები',
+    en: 'Property Views',
+    ru: 'Просмотры объекта'
+  },
+  inquiries: {
+    ka: 'შეკითხვები',
+    en: 'Inquiries',
+    ru: 'Запросы'
+  },
+  sales: {
+    ka: 'გაყიდვები',
+    en: 'Sales',
+    ru: 'Продажи'
+  },
+  propertyLocation: {
+    ka: 'ქონების მდებარეობა',
+    en: 'Property Location',
+    ru: 'Расположение объекта'
+  },
+  searchConversations: {
+    ka: 'საუბრების ძიება',
+    en: 'Search Conversations',
+    ru: 'Поиск по беседам'
+  },
+
   today: { ka: 'დღეს', en: 'Today', ru: 'Сегодня' },
   tomorrow: { ka: 'ხვალ', en: 'Tomorrow', ru: 'Завтра' },
   oneWeek: { ka: '1 კვირა', en: '1 week', ru: '1 неделя' },
@@ -3019,7 +3202,6 @@ const translations: Translations = {
   // i18n audit missing keys (2026-02-17)
   added: { ka: 'დამატებულია', en: 'Added', ru: 'Добавлено' },
   all: { ka: 'ყველა', en: 'All', ru: 'Все' },
-  applyFilters: { ka: 'ფილტრების გამოყენება', en: 'Apply filters', ru: 'Применить фильтры' },
   back: { ka: 'უკან', en: 'Back', ru: 'Назад' },
   bookTour: { ka: 'ტურის დაჯავშნა', en: 'Book tour', ru: 'Забронировать просмотр' },
   dailyRent: { ka: 'დღიური ქირა', en: 'Daily rent', ru: 'Посуточно' },
@@ -3055,10 +3237,9 @@ const translations: Translations = {
   tour3d: { ka: '3D ტური', en: '3D tour', ru: '3D-тур' },
   fillRequiredFields: { ka: 'გთხოვთ შეავსოთ ყველა სავალდებულო ველი', en: 'Please fill in all required fields', ru: 'Пожалуйста, заполните все обязательные поля' },
   validEmailAddress: { ka: 'გთხოვთ შეიყვანოთ სწორი ელფოსტის მისამართი', en: 'Please enter a valid email address', ru: 'Пожалуйста, введите корректный email' },
-  contactMessageSent: { ka: 'გმადლობთ! თქვენი შეტყობინება წარმატებით გაიგზავნა.', en: 'Thank you! Your message has been sent successfully.', ru: 'Спасибо! Ваше сообщение успешно отправлено.' },
+  contactMessageSent: { ka: 'გმადლობთ! თქვენი შეტყობინება წარმატებით გაიგზავნა.', en: 'Thank you! Your message has been sent successfully.', ru: 'Спასибо! Ваше сообщение успешно отправлено.' },
   propertyUploadSuccess: { ka: 'უძრავი ქონება წარმატებით აიტვირთა!', en: 'Property uploaded successfully!', ru: 'Объект успешно загружен!' },
   propertyUploadError: { ka: 'ატვირთვის შეცდომა. გთხოვთ, სცადოთ თავიდან.', en: 'Error uploading property. Please try again.', ru: 'Ошибка загрузки. Пожалуйста, попробуйте снова.' },
-  office: { ka: 'ოფისი', en: 'Office', ru: 'Офис' },
   contactHeroSubtitle: { ka: 'მზად ხარ შენი საოცნებო ქონების საპოვნელად? დაგვიკავშირდი დღესვე — ჩვენი გუნდი დაგეხმარება ყველა ეტაპზე.', en: 'Ready to find your dream property? Get in touch with our expert team today. We are here to help you every step of the way.', ru: 'Готовы найти недвижимость мечты? Свяжитесь с нашей командой уже сегодня. Мы поможем вам на каждом этапе.' },
   contactSendMessage: { ka: 'მოგვწერე შეტყობინება', en: 'Send us a Message', ru: 'Отправьте нам сообщение' },
   contactFormSubtitle: { ka: 'შეავსე ფორმა და რაც შეიძლება მალე დაგიბრუნდებით პასუხით.', en: 'Fill out the form below and we will get back to you as soon as possible.', ru: 'Заполните форму ниже, и мы свяжемся с вами как можно скорее.' },
