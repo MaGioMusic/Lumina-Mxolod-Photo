@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Sidebar, Menu, SubMenu } from 'react-pro-sidebar';
+import { useLanguage } from '@/contexts/LanguageContext';
 import ToggleSwitch from './ToggleSwitch';
 import BeautifulRangeSlider from './BeautifulRangeSlider';
 import MiniCalendar from './MiniCalendar';
@@ -24,6 +25,48 @@ const SIDEBAR_THEME_COLORS = {
   shadow: 'var(--properties-sidebar-shadow)',
 } as const;
 
+const PROPERTY_TYPES = [
+  'Apartment',
+  'House',
+  'Villa',
+  'Studio',
+  'Penthouse',
+  'Commercial',
+  'Land',
+  'Office',
+];
+
+const PROPERTY_TYPE_TRANSLATION_KEYS: Record<string, string> = {
+  Apartment: 'apartment',
+  House: 'house',
+  Villa: 'villa',
+  Studio: 'studio',
+  Penthouse: 'penthouse',
+  Commercial: 'commercial',
+  Land: 'land',
+  Office: 'office',
+};
+
+const AMENITIES = ['Parking', 'Balcony', 'Garden', 'Pool', 'Gym', 'Security', 'Elevator', 'Furnished'];
+
+const AMENITY_TRANSLATION_KEYS: Record<string, string> = {
+  Parking: 'parking',
+  Balcony: 'balcony',
+  Garden: 'garden',
+  Pool: 'swimming_pool',
+  Gym: 'gym',
+  Security: 'security',
+  Elevator: 'elevator',
+  Furnished: 'furnished',
+};
+
+const QUALITY_LEVELS = ['Premium', 'Standard'];
+
+const QUALITY_TRANSLATION_KEYS: Record<string, string> = {
+  Premium: 'qualityPremium',
+  Standard: 'qualityStandard',
+};
+
 const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
   filters,
   onFiltersChange,
@@ -32,6 +75,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
   searchQuery,
   onSearchChange,
 }) => {
+  const { t } = useLanguage();
   const [showCollapsedSearch, setShowCollapsedSearch] = useState(false);
   // Prevent "slow slide-in" on initial mount caused by width transitions.
   const [hasMounted, setHasMounted] = useState(false);
@@ -138,9 +182,22 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
     });
   };
 
-  const propertyTypes = ['Apartment', 'House', 'Villa', 'Studio', 'Penthouse', 'Commercial', 'Land', 'Office'];
-  const amenitiesList = ['Parking', 'Balcony', 'Garden', 'Pool', 'Gym', 'Security', 'Elevator', 'Furnished'];
-  const qualityLevels = ['Premium', 'Standard'];
+  const getFilterValueLabel = (
+    value: string,
+    keyMap: Record<string, string>,
+  ) => {
+    const key = keyMap[value];
+    return key ? t(key) : value;
+  };
+
+  const getPropertyTypeLabel = (value: string) =>
+    getFilterValueLabel(value, PROPERTY_TYPE_TRANSLATION_KEYS);
+
+  const getAmenityLabel = (value: string) =>
+    getFilterValueLabel(value, AMENITY_TRANSLATION_KEYS);
+
+  const getQualityLabel = (value: string) =>
+    getFilterValueLabel(value, QUALITY_TRANSLATION_KEYS);
 
   const activeFiltersCount = [
     filters.priceRange[0] > 0 || filters.priceRange[1] < 1000000 ? 1 : 0,
@@ -228,7 +285,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
           <div className="flex items-center justify-between">
             {!isCollapsed && (
               <div className="flex items-center gap-2">
-                <h2 className="font-semibold" style={{ color: colors.text }}>Filters</h2>
+                <h2 className="font-semibold" style={{ color: colors.text }}>{t('filters')}</h2>
                 {activeFiltersCount > 0 && (
                   <div className="px-2 py-1 rounded-full text-xs font-bold bg-primary-400 text-white border">
                     {activeFiltersCount}
@@ -251,7 +308,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                 <button
                   onClick={clearAllFilters}
                   className="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-all duration-200 transform hover:scale-110"
-                  title="Clear all filters"
+                  title={`${t('clearAll')} ${t('filters')}`}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -273,15 +330,15 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
-                placeholder="Search by city, district..."
+                placeholder={t('propertiesSearchPlaceholder')}
                 className="w-full bg-transparent text-white placeholder-white/70 outline-none px-3 text-sm"
-                aria-label="Search properties"
+                aria-label={t('searchProperties')}
               />
               {searchQuery && (
                 <button
                   onClick={() => onSearchChange('')}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-white/80 hover:text-white"
-                  aria-label="Clear search"
+                  aria-label={t('clearSelection')}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -294,8 +351,8 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
               <button
                 onClick={() => setShowCollapsedSearch((v) => !v)}
                 className="w-10 h-10 bg-[#f97316] rounded-full flex items-center justify-center text-white shadow"
-                aria-label="Open search"
-                title="Search"
+                aria-label={t('search')}
+                title={t('search')}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
@@ -310,15 +367,15 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                     type="text"
                     value={searchQuery}
                     onChange={(e) => onSearchChange(e.target.value)}
-                    placeholder="Search by city, district..."
+                    placeholder={t('propertiesSearchPlaceholder')}
                     className="w-full bg-transparent text-white placeholder-white/70 outline-none px-3 text-sm"
-                    aria-label="Search properties"
+                    aria-label={t('searchProperties')}
                     autoFocus
                   />
                   <button
                     onClick={() => setShowCollapsedSearch(false)}
                     className="absolute right-2 top-1/2 -translate-y-1/2 text-white/80 hover:text-white"
-                    aria-label="Close search"
+                    aria-label={t('close')}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -338,9 +395,9 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
               <button
                 onClick={() => onFiltersChange({ ...filters, priceRange: [0, 1000000] })}
                 className="px-3 py-1 rounded-full text-xs border bg-white text-[#f97316] border-orange-200 hover:bg-orange-50"
-                aria-label="Remove price filter"
+                aria-label={`${t('remove')} ${t('price')}`}
               >
-                Price: ${formatPrice(filters.priceRange[0])}-{formatPrice(filters.priceRange[1])} ×
+                {t('price')}: ${formatPrice(filters.priceRange[0])}-{formatPrice(filters.priceRange[1])} ×
               </button>
             )}
 
@@ -349,9 +406,9 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
               <button
                 onClick={() => onFiltersChange({ ...filters, area: [0, 10000] })}
                 className="px-3 py-1 rounded-full text-xs border bg-white text-[#f97316] border-orange-200 hover:bg-orange-50"
-                aria-label="Remove area filter"
+                aria-label={`${t('remove')} ${t('area')}`}
               >
-                Area: {formatArea(filters.area[0])}-{formatArea(filters.area[1])} m² ×
+                {t('area')}: {formatArea(filters.area[0])}-{formatArea(filters.area[1])} {t('squareMetersUnit')} ×
               </button>
             )}
 
@@ -361,9 +418,9 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                 key={`chip-type-${type}`}
                 onClick={() => handlePropertyTypeChange(type)}
                 className="px-3 py-1 rounded-full text-xs border bg-white text-[#f97316] border-orange-200 hover:bg-orange-50"
-                aria-label={`Remove type ${type}`}
+                aria-label={`${t('remove')} ${getPropertyTypeLabel(type)}`}
               >
-                {type} ×
+                {getPropertyTypeLabel(type)} ×
               </button>
             ))}
 
@@ -373,9 +430,9 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                 key={`chip-bed-${b}`}
                 onClick={() => handleBedroomsChange(b)}
                 className="px-3 py-1 rounded-full text-xs border bg-white text-[#f97316] border-orange-200 hover:bg-orange-50"
-                aria-label={`Remove bedrooms ${b}+`}
+                aria-label={`${t('remove')} ${t('bedrooms')} ${b}+`}
               >
-                Beds: {b}+ ×
+                {t('bedsShort')}: {b}+ ×
               </button>
             ))}
 
@@ -385,9 +442,9 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                 key={`chip-bath-${b}`}
                 onClick={() => handleBathroomsChange(b)}
                 className="px-3 py-1 rounded-full text-xs border bg-white text-[#f97316] border-orange-200 hover:bg-orange-50"
-                aria-label={`Remove bathrooms ${b}+`}
+                aria-label={`${t('remove')} ${t('bathrooms')} ${b}+`}
               >
-                Baths: {b}+ ×
+                {t('bathsShort')}: {b}+ ×
               </button>
             ))}
 
@@ -397,9 +454,9 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                 key={`chip-amenity-${a}`}
                 onClick={() => handleAmenityChange(a)}
                 className="px-3 py-1 rounded-full text-xs border bg-white text-[#f97316] border-orange-200 hover:bg-orange-50"
-                aria-label={`Remove amenity ${a}`}
+                aria-label={`${t('remove')} ${getAmenityLabel(a)}`}
               >
-                {a} ×
+                {getAmenityLabel(a)} ×
               </button>
             ))}
 
@@ -408,9 +465,9 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
               <button
                 onClick={() => onFiltersChange({ ...filters, dateAdded: [null, null] })}
                 className="px-3 py-1 rounded-full text-xs border bg-white text-[#f97316] border-orange-200 hover:bg-orange-50"
-                aria-label="Remove date filter"
+                aria-label={`${t('remove')} ${t('dateAdded')}`}
               >
-                Date: selected ×
+                {t('dateAdded')}: {t('selected')} ×
               </button>
             )}
 
@@ -420,9 +477,9 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                 key={`chip-quality-${q}`}
                 onClick={() => handleQualityChange(q)}
                 className="px-3 py-1 rounded-full text-xs border bg-white text-[#f97316] border-orange-200 hover:bg-orange-50"
-                aria-label={`Remove quality ${q}`}
+                aria-label={`${t('remove')} ${getQualityLabel(q)}`}
               >
-                {q} ×
+                {getQualityLabel(q)} ×
               </button>
             ))}
 
@@ -432,7 +489,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                 onClick={clearAllFilters}
                 className="ml-auto px-3 py-1 rounded-full text-xs border border-orange-200 text-[#f97316] hover:bg-orange-50"
               >
-                Clear all
+                {t('clearAll')}
               </button>
             )}
           </div>
@@ -447,14 +504,14 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                 <button
                   onClick={clearAllFilters}
                   className="w-full flex flex-col items-center p-2 rounded-lg hover:bg-red-50 transition-all duration-300 cursor-pointer transform hover:scale-105 group"
-                  title="Clear all filters"
+                  title={`${t('clearAll')} ${t('filters')}`}
                 >
                   <div className="relative">
                     <svg className="w-5 h-5 text-gray-400 group-hover:text-red-500 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                   </div>
-                  <span className="text-xs text-gray-400 group-hover:text-red-500 transition-colors duration-300 mt-1">Clear</span>
+                  <span className="text-xs text-gray-400 group-hover:text-red-500 transition-colors duration-300 mt-1">{t('clearAll')}</span>
                 </button>
               </div>
             )}
@@ -478,14 +535,14 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                     </div>
                   )}
                 </div>
-                <span className="text-xs text-gray-500 mt-1 group-hover:text-primary-600 transition-colors duration-300 font-medium">Price</span>
+                <span className="text-xs text-gray-500 mt-1 group-hover:text-primary-600 transition-colors duration-300 font-medium">{t('price')}</span>
               </div>
               
               {/* Enhanced Tooltip */}
               <div className="absolute left-full ml-3 top-0 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 z-50">
                 <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-xl border border-gray-700">
                   <div className="font-semibold text-orange-300">${formatPrice(filters.priceRange[0])} - ${formatPrice(filters.priceRange[1])}</div>
-                  <div className="text-gray-300 text-xs mt-1">Price range filter</div>
+                  <div className="text-gray-300 text-xs mt-1">{t('propertyFiltersPriceRange')}</div>
                   <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
                 </div>
               </div>
@@ -509,15 +566,15 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                     </div>
                   )}
                 </div>
-                <span className="text-xs text-gray-500 mt-1 group-hover:text-primary-600 transition-colors duration-300 font-medium">Type</span>
+                <span className="text-xs text-gray-500 mt-1 group-hover:text-primary-600 transition-colors duration-300 font-medium">{t('propertyType')}</span>
               </div>
               
               {/* Enhanced Tooltip */}
               {filters.propertyTypes.length > 0 && (
                 <div className="absolute left-full ml-3 top-0 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 z-50">
                   <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-xl border border-gray-700 max-w-48">
-                    <div className="font-semibold text-orange-300 mb-1">Property Types:</div>
-                    <div className="text-gray-300">{filters.propertyTypes.join(', ')}</div>
+                    <div className="font-semibold text-orange-300 mb-1">{t('propertyTypes')}:</div>
+                    <div className="text-gray-300">{filters.propertyTypes.map((value) => getPropertyTypeLabel(value)).join(', ')}</div>
                     <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
                   </div>
                 </div>
@@ -539,15 +596,15 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                     </div>
                   )}
                 </div>
-                <span className="text-xs text-gray-500 mt-1 group-hover:text-primary-600 transition-colors duration-300 font-medium">Beds</span>
+                <span className="text-xs text-gray-500 mt-1 group-hover:text-primary-600 transition-colors duration-300 font-medium">{t('bedsShort')}</span>
               </div>
               
               {/* Enhanced Tooltip */}
               {filters.bedrooms.length > 0 && (
                 <div className="absolute left-full ml-3 top-0 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 z-50">
                   <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-xl border border-gray-700">
-                    <div className="font-semibold text-blue-300 mb-1">Bedrooms:</div>
-                    <div className="text-gray-300">{filters.bedrooms.map(b => `${b}+`).join(', ')} rooms</div>
+                    <div className="font-semibold text-blue-300 mb-1">{t('bedrooms')}:</div>
+                    <div className="text-gray-300">{filters.bedrooms.map((value) => `${value}+`).join(', ')}</div>
                     <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
                   </div>
                 </div>
@@ -568,15 +625,15 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                     </div>
                   )}
                 </div>
-                <span className="text-xs text-gray-500 mt-1 group-hover:text-primary-600 transition-colors duration-300 font-medium">Baths</span>
+                <span className="text-xs text-gray-500 mt-1 group-hover:text-primary-600 transition-colors duration-300 font-medium">{t('bathsShort')}</span>
               </div>
               
               {/* Enhanced Tooltip */}
               {filters.bathrooms.length > 0 && (
                 <div className="absolute left-full ml-3 top-0 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 z-50">
                   <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-xl border border-gray-700">
-                    <div className="font-semibold text-cyan-300 mb-1">Bathrooms:</div>
-                    <div className="text-gray-300">{filters.bathrooms.map(b => `${b}+`).join(', ')} rooms</div>
+                    <div className="font-semibold text-cyan-300 mb-1">{t('bathrooms')}:</div>
+                    <div className="text-gray-300">{filters.bathrooms.map((value) => `${value}+`).join(', ')}</div>
                     <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
                   </div>
                 </div>
@@ -597,14 +654,14 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                     </div>
                   )}
                 </div>
-                <span className="text-xs text-gray-500 mt-1 group-hover:text-primary-600 transition-colors duration-300 font-medium">Area</span>
+                <span className="text-xs text-gray-500 mt-1 group-hover:text-primary-600 transition-colors duration-300 font-medium">{t('area')}</span>
               </div>
               
               {/* Enhanced Tooltip */}
               <div className="absolute left-full ml-3 top-0 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 z-50">
                 <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-xl border border-gray-700">
-                  <div className="font-semibold text-purple-300 mb-1">Area Range:</div>
-                  <div className="text-gray-300">{formatArea(filters.area[0])} - {formatArea(filters.area[1])} m²</div>
+                  <div className="font-semibold text-purple-300 mb-1">{t('propertyFiltersAreaRange')}:</div>
+                  <div className="text-gray-300">{formatArea(filters.area[0])} - {formatArea(filters.area[1])} {t('squareMetersUnit')}</div>
                   <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
                 </div>
               </div>
@@ -632,15 +689,15 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                     </div>
                   )}
                 </div>
-                <span className="text-xs text-gray-500 mt-1 group-hover:text-primary-600 transition-colors duration-300 font-medium">Plus</span>
+                <span className="text-xs text-gray-500 mt-1 group-hover:text-primary-600 transition-colors duration-300 font-medium">{t('amenities')}</span>
               </div>
               
               {/* Enhanced Tooltip */}
               {filters.amenities.length > 0 && (
                 <div className="absolute left-full ml-3 top-0 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 z-50">
                   <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-xl border border-gray-700 max-w-52">
-                    <div className="font-semibold text-green-300 mb-1">Amenities ({filters.amenities.length}):</div>
-                    <div className="text-gray-300 leading-relaxed">{filters.amenities.join(', ')}</div>
+                    <div className="font-semibold text-green-300 mb-1">{t('amenities')} ({filters.amenities.length}):</div>
+                    <div className="text-gray-300 leading-relaxed">{filters.amenities.map((value) => getAmenityLabel(value)).join(', ')}</div>
                     <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
                   </div>
                 </div>
@@ -661,18 +718,18 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                     </div>
                   )}
                 </div>
-                <span className="text-xs text-gray-500 mt-1 group-hover:text-primary-600 transition-colors duration-300 font-medium">Date</span>
+                <span className="text-xs text-gray-500 mt-1 group-hover:text-primary-600 transition-colors duration-300 font-medium">{t('dateAdded')}</span>
               </div>
               
               {/* Enhanced Tooltip */}
               {(filters.dateAdded[0] || filters.dateAdded[1]) && (
                 <div className="absolute left-full ml-3 top-0 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 z-50">
                   <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-xl border border-gray-700">
-                    <div className="font-semibold text-indigo-300 mb-1">Date Added:</div>
+                    <div className="font-semibold text-indigo-300 mb-1">{t('dateAdded')}:</div>
                     <div className="text-gray-300">
                       {filters.dateAdded[0] && filters.dateAdded[1] 
                         ? `${filters.dateAdded[0].toLocaleDateString()} - ${filters.dateAdded[1].toLocaleDateString()}`
-                        : filters.dateAdded[0]?.toLocaleDateString() || 'Selected'}
+                        : filters.dateAdded[0]?.toLocaleDateString() || t('selected')}
                     </div>
                     <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
                   </div>
@@ -701,15 +758,15 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                     </div>
                   )}
                 </div>
-                <span className="text-xs text-gray-500 mt-1 group-hover:text-primary-600 transition-colors duration-300 font-medium">Quality</span>
+                <span className="text-xs text-gray-500 mt-1 group-hover:text-primary-600 transition-colors duration-300 font-medium">{t('quality')}</span>
               </div>
               
               {/* Enhanced Tooltip */}
               {filters.quality.length > 0 && (
                 <div className="absolute left-full ml-3 top-0 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 z-50">
                   <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-xl border border-gray-700">
-                    <div className="font-semibold text-yellow-300 mb-1">Quality Levels:</div>
-                    <div className="text-gray-300">{filters.quality.join(', ')}</div>
+                    <div className="font-semibold text-yellow-300 mb-1">{t('propertyFiltersQualityLevels')}:</div>
+                    <div className="text-gray-300">{filters.quality.map((value) => getQualityLabel(value)).join(', ')}</div>
                     <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
                   </div>
                 </div>
@@ -720,12 +777,12 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
             <div className="pt-3 border-t border-gray-100 mt-3">
               <div className="text-center">
                 <div className={`text-xs font-medium ${intensityColors[getFilterIntensity()]}`}>
-                  {getFilterIntensity() === 'none' ? 'No filters' : 
-                   getFilterIntensity() === 'low' ? 'Light filtering' :
-                   getFilterIntensity() === 'medium' ? 'Medium filtering' : 'Heavy filtering'}
+                  {getFilterIntensity() === 'none' ? t('propertyFiltersNone') :
+                    getFilterIntensity() === 'low' ? t('propertyFiltersLight') :
+                    getFilterIntensity() === 'medium' ? t('propertyFiltersMedium') : t('propertyFiltersHeavy')}
                 </div>
                 <div className="text-xs text-gray-400 mt-1">
-                  {activeFiltersCount} active
+                  {activeFiltersCount} {t('selected')}
                 </div>
               </div>
             </div>
@@ -765,7 +822,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
 
             {/* Price Range */}
             <SubMenu
-              label={!isCollapsed ? "Price Range" : ""}
+              label={!isCollapsed ? t('priceRange') : ''}
               rootStyles={{
                 backgroundColor: colors.background,
                 color: colors.text,
@@ -793,7 +850,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
 
             {/* Property Type */}
             <SubMenu
-              label={!isCollapsed ? "Property Type" : ""}
+              label={!isCollapsed ? t('propertyType') : ''}
               icon={
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m2 0h4M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -803,7 +860,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
               {!isCollapsed && (
                 <div className="p-4" style={{ backgroundColor: colors.background }}>
                   <div className="flex flex-wrap gap-2">
-                    {propertyTypes.map((type) => {
+                    {PROPERTY_TYPES.map((type) => {
                       const active = filters.propertyTypes.includes(type);
                       return (
                         <button
@@ -815,7 +872,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                               : 'bg-white text-gray-700 border-gray-300 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 hover:border-orange-300'
                           }`}
                         >
-                          {type}
+                          {getPropertyTypeLabel(type)}
                         </button>
                       );
                     })}
@@ -826,7 +883,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
 
             {/* Bedrooms */}
             <SubMenu
-              label={!isCollapsed ? "Bedrooms" : ""}
+              label={!isCollapsed ? t('bedrooms') : ''}
               icon={
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z" />
@@ -857,7 +914,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
 
             {/* Bathrooms */}
             <SubMenu
-              label={!isCollapsed ? "Bathrooms" : ""}
+              label={!isCollapsed ? t('bathrooms') : ''}
               icon={
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
@@ -887,7 +944,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
 
             {/* Area */}
             <SubMenu
-              label={!isCollapsed ? "Area (m²)" : ""}
+              label={!isCollapsed ? t('area') : ''}
               icon={
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
@@ -902,7 +959,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                     value={filters.area}
                     onChange={handleAreaChange}
                     step={50}
-                    unit="m²"
+                    unit={t('squareMetersUnit')}
                     formatValue={formatArea}
                   />
                 </div>
@@ -911,7 +968,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
 
             {/* Amenities */}
             <SubMenu
-              label={!isCollapsed ? "Amenities" : ""}
+              label={!isCollapsed ? t('amenities') : ''}
               icon={
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
@@ -921,7 +978,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
               {!isCollapsed && (
                 <div className="p-4">
                   <div className="flex flex-wrap gap-2">
-                    {amenitiesList.map((amenity) => {
+                    {AMENITIES.map((amenity) => {
                       const active = filters.amenities.includes(amenity);
                       return (
                         <button
@@ -933,7 +990,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
                               : 'bg-white text-gray-700 border-gray-300 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 hover:border-orange-300'
                           }`}
                         >
-                          {amenity}
+                          {getAmenityLabel(amenity)}
                         </button>
                       );
                     })}
@@ -944,7 +1001,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
 
             {/* NEW: Date Added */}
             <SubMenu
-              label={!isCollapsed ? "Date Added" : ""}
+              label={!isCollapsed ? t('dateAdded') : ''}
               icon={
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -963,7 +1020,7 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
 
             {/* NEW: Quality/Rating */}
             <SubMenu
-              label={!isCollapsed ? "Quality" : ""}
+              label={!isCollapsed ? t('quality') : ''}
               icon={
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
@@ -972,13 +1029,13 @@ const ProSidebarFilter: React.FC<ProSidebarFilterProps> = ({
             >
               {!isCollapsed && (
                 <div className="p-4 space-y-3">
-                  {qualityLevels.map((quality) => (
+                  {QUALITY_LEVELS.map((quality) => (
                     <ToggleSwitch
                       key={quality}
                       id={`quality-${quality}`}
                       checked={filters.quality.includes(quality)}
                       onChange={() => handleQualityChange(quality)}
-                      label={quality}
+                      label={getQualityLabel(quality)}
                     />
                   ))}
                 </div>

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { loadMaps } from '@/lib/googleMaps';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Property {
   id: number;
@@ -42,6 +43,7 @@ export default function PropertiesGoogleMap({
   onPropertySelect,
   onBoundsChange,
 }: PropertiesGoogleMapProps) {
+  const { t } = useLanguage();
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
   const mapId = process.env.NEXT_PUBLIC_GOOGLE_MAP_ID || '';
   const [mapType, setMapType] = useState<'roadmap' | 'satellite'>('roadmap');
@@ -282,7 +284,7 @@ export default function PropertiesGoogleMap({
   if (!apiKey) {
     return (
       <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 text-sm text-gray-500">
-        Google Maps API key is missing.
+        {t('googleMapsApiKeyRequired')}
       </div>
     );
   }
@@ -300,7 +302,7 @@ export default function PropertiesGoogleMap({
               : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white'
           }`}
         >
-          Standard
+          {t('mapTypeStandard')}
         </button>
         <button
           type="button"
@@ -311,7 +313,7 @@ export default function PropertiesGoogleMap({
               : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white'
           }`}
         >
-          Satellite
+          {t('mapTypeSatellite')}
         </button>
       </div>
     </div>

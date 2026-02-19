@@ -48,28 +48,31 @@ interface Property {
   currency?: string;
 }
 
+type TranslationFn = (key: string) => string;
+
 // Shared mock properties util (deterministic for SSR/CSR parity)
 const mockProperties = getMockProperties(100);
-const fallbackProperties: Property[] = mockProperties.map((property) => ({
-  id: property.id,
-  // IMPORTANT: keep ids consistent with /api/properties mock ids
-  slug: `mock-${property.id}`,
-  title: `Property #${property.id}`,
-  price: property.price,
-  address: property.address,
-  location: property.address,
-  bedrooms: property.bedrooms,
-  bathrooms: property.bathrooms,
-  sqft: property.sqft,
-  floor: property.floor,
-  image: property.image,
-  images: property.images,
-  type: property.type,
-  status: property.status,
-  isNew: property.isNew,
-  amenities: property.amenities ?? [],
-  currency: 'GEL',
-}));
+const createFallbackProperties = (t: TranslationFn): Property[] =>
+  mockProperties.map((property) => ({
+    id: property.id,
+    // IMPORTANT: keep ids consistent with /api/properties mock ids
+    slug: `mock-${property.id}`,
+    title: `${t('property')} #${property.id}`,
+    price: property.price,
+    address: property.address,
+    location: property.address,
+    bedrooms: property.bedrooms,
+    bathrooms: property.bathrooms,
+    sqft: property.sqft,
+    floor: property.floor,
+    image: property.image,
+    images: property.images,
+    type: property.type,
+    status: property.status,
+    isNew: property.isNew,
+    amenities: property.amenities ?? [],
+    currency: 'GEL',
+  }));
 
 const PROPERTIES_PER_PAGE = 25;
 const DISTRICT_KEYS = ['vake', 'mtatsminda', 'saburtalo', 'isani', 'gldani'];
@@ -88,7 +91,12 @@ const DISTRICT_ALIAS_MAP: Record<string, string> = {
 
 const normalizeText = (value: string) => value.toLowerCase().trim();
 
-const convertProperty = (item: ApiProperty, index: number): Property => {
+const convertProperty = (
+  item: ApiProperty,
+  index: number,
+  fallbackPropertyLabel: string,
+  fallbackCityLabel: string,
+): Property => {
   const priceValue = Number(item.price ?? 0);
   const areaValue = Number(item.area ?? 0);
   const fallbackImageIndex = ((index * 7 + 3) % 15) + 1;
@@ -97,7 +105,7 @@ const convertProperty = (item: ApiProperty, index: number): Property => {
   return {
     id: index + 1,
     slug: item.id,
-    title: item.title ?? `${item.propertyType ?? 'property'} • ${item.city ?? 'Tbilisi'}`,
+    title: item.title ?? `${item.propertyType ?? fallbackPropertyLabel} • ${item.city ?? fallbackCityLabel}`,
     price: Number.isFinite(priceValue) ? priceValue : 0,
     address: district,
     location: (item.location ?? `${item.city ?? ''} ${item.district ?? ''}`).trim() || district,
@@ -153,6 +161,7 @@ export default function PropertiesGrid({
   const [apiTotal, setApiTotal] = useState<number | null>(null);
   const [isFetching, setIsFetching] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const fallbackProperties = useMemo(() => createFallbackProperties(t), [t]);
   
   logger.log('PropertiesGrid received filters:', filters);
 
@@ -329,12 +338,14 @@ export default function PropertiesGrid({
     fetch(`/api/properties?${params.toString()}`, { signal: controller.signal })
       .then((res) => {
         if (!res.ok) {
-          throw new Error('ვერ მოხერხდა უძრავი ქონების ჩამოტვირთვა');
+          throw new Error(t('propertiesFetchError'));
         }
         return res.json() as Promise<{ items: ApiProperty[]; total: number }>;
       })
       .then((payload) => {
-        const mapped = payload.items.map((item, index) => convertProperty(item, index));
+        const mapped = payload.items.map((item, index) =>
+          convertProperty(item, index, t('property'), t('tbilisi')),
+        );
 
         // Dev UX safeguard: if DB is empty and user has no active search/filters,
         // keep showing local fallback cards instead of swapping to a blank list.
@@ -355,15 +366,18 @@ export default function PropertiesGrid({
       .catch((error: unknown) => {
         if ((error as Error)?.name === 'AbortError') return;
         console.error('Failed to fetch properties', error);
-        setFetchError((error as Error)?.message ?? 'დაფიქსირდა პრობლემა მონაცემების მიღებისას');
+        setFetchError((error as Error)?.message ?? t('propertiesFetchError'));
         setApiProperties(null);
       })
       .finally(() => setIsFetching(false));
 
     return () => controller.abort();
-  }, [searchQuery, minPrice, maxPrice, propertyTypeKey, transactionTypeKey, bedroomsKey]);
+  }, [searchQuery, minPrice, maxPrice, propertyTypeKey, transactionTypeKey, bedroomsKey, t]);
 
-  const propertiesDataset = useMemo(() => apiProperties ?? fallbackProperties, [apiProperties]);
+  const propertiesDataset = useMemo(
+    () => apiProperties ?? fallbackProperties,
+    [apiProperties, fallbackProperties],
+  );
 
   logger.debug('Starting filter with:', effectiveFilters);
   logger.debug('Total properties before filter:', propertiesDataset.length);
@@ -512,11 +526,8 @@ export default function PropertiesGrid({
     () => `${t('page')} ${currentPage} ${t('of')} ${totalPages}`,
     [currentPage, t, totalPages],
   );
-  const loadingText = useMemo(() => `${t('loading')}...`, [t]);
-  const uploadButtonLabel = useMemo(
-    () => t('uploadProperty') || 'ქონების ატვირთვა',
-    [t],
-  );
+  const loadingText = useMemo(() => t('loading'), [t]);
+  const uploadButtonLabel = useMemo(() => t('uploadProperty'), [t]);
 
   return (
     <>
@@ -534,7 +545,7 @@ export default function PropertiesGrid({
       {/* Properties Grid */}
       {currentProperties.length === 0 && !isFetching ? (
         <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#171717] p-6 text-center text-sm text-gray-600 dark:text-gray-300">
-          შედეგი ვერ მოიძებნა. შეამოწმე ფილტრები ან გაასუფთავე ძებნა.
+          {t('propertiesEmptyStateCheckFilters')}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
@@ -549,6 +560,12 @@ export default function PropertiesGrid({
             }
 
             const addressLabel = property.location || `${t('tbilisi')}, ${t(property.address)}`;
+            const normalizedTypeKey = String(property.type ?? '').toLowerCase();
+            const translatedType = normalizedTypeKey ? t(normalizedTypeKey) : '';
+            const typeLabel =
+              translatedType && translatedType !== normalizedTypeKey
+                ? translatedType
+                : (property.type ?? t('propertyType'));
 
             return (
             <PropertyCard
@@ -559,12 +576,12 @@ export default function PropertiesGrid({
               images={property.images}
               price={formatPrice(property)}
               address={addressLabel}
-              title={property.title || `${property.type} in ${addressLabel}`}
+              title={property.title || `${typeLabel} • ${addressLabel}`}
               bedrooms={property.bedrooms}
               bathrooms={property.bathrooms}
               sqft={property.sqft}
               floor={property.floor}
-              area={property.sqft ? `${property.sqft} მ²` : undefined}
+              area={property.sqft ? `${property.sqft} ${t('squareMetersUnit')}` : undefined}
               type={property.type}
               status={property.status}
               isNew={property.isNew}
