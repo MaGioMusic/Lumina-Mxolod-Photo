@@ -1373,6 +1373,11 @@ const translations: Translations = {
     en: 'Office',
     ru: 'Офис'
   },
+  land: {
+    ka: 'მიწა',
+    en: 'Land',
+    ru: 'Земля'
+  },
   cottage: {
     ka: 'კოტეჯი',
     en: 'Cottage',
@@ -1926,6 +1931,16 @@ const translations: Translations = {
     en: 'Try zooming out or moving the map to see more properties',
     ru: 'Попробуйте уменьшить масштаб или сдвинуть карту, чтобы увидеть больше объектов'
   },
+  propertiesFetchError: {
+    ka: 'უძრავი ქონების მიღებისას დაფიქსირდა პრობლემა.',
+    en: 'There was a problem loading properties.',
+    ru: 'Возникла проблема при загрузке недвижимости.'
+  },
+  propertiesEmptyStateCheckFilters: {
+    ka: 'შედეგი ვერ მოიძებნა. შეამოწმე ფილტრები ან გაასუფთავე ძებნა.',
+    en: 'No results found. Check filters or clear the search.',
+    ru: 'Результаты не найдены. Проверьте фильтры или очистите поиск.'
+  },
   aiAskRadius: {
     ka: 'რა რადიუსში გინდა ვიპოვო გარშემო ობიექტები?',
     en: 'What radius should I use to search nearby places?',
@@ -2314,6 +2329,66 @@ const translations: Translations = {
     en: 'properties on map',
     ru: 'объектов на карте'
   },
+  dateAdded: {
+    ka: 'დამატების თარიღი',
+    en: 'Date added',
+    ru: 'Дата добавления'
+  },
+  quality: {
+    ka: 'ხარისხი',
+    en: 'Quality',
+    ru: 'Качество'
+  },
+  qualityPremium: {
+    ka: 'პრემიუმი',
+    en: 'Premium',
+    ru: 'Премиум'
+  },
+  qualityStandard: {
+    ka: 'სტანდარტი',
+    en: 'Standard',
+    ru: 'Стандарт'
+  },
+  propertyFiltersPriceRange: {
+    ka: 'ფასის დიაპაზონის ფილტრი',
+    en: 'Price range filter',
+    ru: 'Фильтр диапазона цен'
+  },
+  propertyFiltersAreaRange: {
+    ka: 'ფართობის დიაპაზონი',
+    en: 'Area range',
+    ru: 'Диапазон площади'
+  },
+  propertyFiltersQualityLevels: {
+    ka: 'ხარისხის დონეები',
+    en: 'Quality levels',
+    ru: 'Уровни качества'
+  },
+  propertyFiltersNone: {
+    ka: 'ფილტრები არჩეული არაა',
+    en: 'No filters',
+    ru: 'Фильтры не выбраны'
+  },
+  propertyFiltersLight: {
+    ka: 'მსუბუქი ფილტრაცია',
+    en: 'Light filtering',
+    ru: 'Лёгкая фильтрация'
+  },
+  propertyFiltersMedium: {
+    ka: 'საშუალო ფილტრაცია',
+    en: 'Medium filtering',
+    ru: 'Средняя фильтрация'
+  },
+  propertyFiltersHeavy: {
+    ka: 'მაღალი ფილტრაცია',
+    en: 'Heavy filtering',
+    ru: 'Сильная фильтрация'
+  },
+  filtersChanged: {
+    ka: 'ფილტრები შეიცვალა',
+    en: 'Filters changed',
+    ru: 'Фильтры изменены'
+  },
 
   // New translations
   warning: {
@@ -2335,6 +2410,16 @@ const translations: Translations = {
     ka: 'რუქის ხედი',
     en: 'Map View',
     ru: 'Карта'
+  },
+  mapTypeStandard: {
+    ka: 'სტანდარტული',
+    en: 'Standard',
+    ru: 'Стандарт'
+  },
+  mapTypeSatellite: {
+    ka: 'სატელიტი',
+    en: 'Satellite',
+    ru: 'Спутник'
   },
   zoomIn: {
     ka: 'გადიდება',

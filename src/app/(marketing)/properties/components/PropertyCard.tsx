@@ -79,7 +79,7 @@ function PropertyCard({
     // Create property object for favorites
     const propertyData: FavoriteProperty = {
       id: propertyId,
-      title: title || address,
+      title: title || address || t('property'),
       price,
       location: address,
       image,
@@ -145,7 +145,7 @@ function PropertyCard({
         <div className="relative group">
           <PropertyImageCarousel
             images={propertyImages}
-            alt={title || address || 'Property'}
+            alt={title || address || t('property')}
             onImageChange={(index) => console.log(`Property ${id} image changed to ${index}`)}
           />
           
@@ -186,8 +186,8 @@ function PropertyCard({
                 flex items-center justify-center shadow-sm hover:shadow-md
                 ${isCardCompared ? 'text-[#F08336]' : 'text-gray-600 dark:text-gray-400'}`}
               aria-pressed={isCardCompared}
-              aria-label={isCardCompared ? (t('addedToCompare') || 'Added to compare') : (t('addToCompare') || 'Add to compare')}
-              title={isCardCompared ? (t('added') || 'Added') : (t('addToCompare') || 'Add to compare')}
+              aria-label={isCardCompared ? t('addedToCompare') : t('addToCompare')}
+              title={isCardCompared ? t('addedToCompare') : t('addToCompare')}
             >
               <GitCompare size={12} />
             </button>
@@ -204,7 +204,7 @@ function PropertyCard({
                 ${isPropertyFavorite ? 'text-red-500' : 'text-gray-600 dark:text-gray-400'}
               `}
               aria-label={isPropertyFavorite ? t('removeFromFavorites') : t('addToFavorites')}
-              title={isPropertyFavorite ? (t('inFavorites') || 'In favorites') : (t('addToFavorites') || 'Add to favorites')}
+              title={isPropertyFavorite ? t('inFavorites') : t('addToFavorites')}
             >
               <Heart 
                 size={12} 

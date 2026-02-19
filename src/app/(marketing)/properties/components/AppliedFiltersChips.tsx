@@ -1,6 +1,7 @@
 'use client';
 
 import { memo, type ReactNode } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 import type { PropertiesFiltersState, RemovableFilterTarget } from './hooks/propertiesFilters';
 
@@ -17,13 +18,40 @@ const chipBase =
 const closeBtn =
   'ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full bg-white/20 hover:bg-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white';
 
+const PROPERTY_TYPE_TRANSLATION_KEYS: Record<string, string> = {
+  Apartment: 'apartment',
+  House: 'house',
+  Villa: 'villa',
+  Studio: 'studio',
+  Penthouse: 'penthouse',
+  Commercial: 'commercial',
+  Land: 'land',
+  Office: 'office',
+};
+
+const AMENITY_TRANSLATION_KEYS: Record<string, string> = {
+  Parking: 'parking',
+  Balcony: 'balcony',
+  Garden: 'garden',
+  Pool: 'swimming_pool',
+  Gym: 'gym',
+  Security: 'security',
+  Elevator: 'elevator',
+  Furnished: 'furnished',
+};
+
 function AppliedFiltersChips({ searchQuery, filters, onRemove, onClearAll }: AppliedFiltersChipsProps) {
+  const { t } = useLanguage();
   const chips: ReactNode[] = [];
+  const getLabel = (value: string, map: Record<string, string>) => {
+    const key = map[value];
+    return key ? t(key) : value;
+  };
 
   if (searchQuery.trim()) {
     chips.push(
-      <button key="search" className={chipBase} aria-pressed={true} aria-label={`remove search ${searchQuery}`} onClick={() => onRemove('search')}>
-        <span>Search: {searchQuery}</span>
+      <button key="search" className={chipBase} aria-pressed={true} aria-label={`${t('remove')} ${t('search')}`} onClick={() => onRemove('search')}>
+        <span>{t('search')}: {searchQuery}</span>
         <span className={closeBtn} aria-hidden>×</span>
       </button>
     );
@@ -31,7 +59,7 @@ function AppliedFiltersChips({ searchQuery, filters, onRemove, onClearAll }: App
 
   if (filters.priceRange[0] > 0 || filters.priceRange[1] < 1000000) {
     chips.push(
-      <button key="price" className={chipBase} aria-pressed={true} aria-label="remove price filter" onClick={() => onRemove('priceRange')}>
+      <button key="price" className={chipBase} aria-pressed={true} aria-label={`${t('remove')} ${t('price')}`} onClick={() => onRemove('priceRange')}>
         <span>${filters.priceRange[0].toLocaleString()} - ${filters.priceRange[1].toLocaleString()}</span>
         <span className={closeBtn} aria-hidden>×</span>
       </button>
@@ -40,8 +68,8 @@ function AppliedFiltersChips({ searchQuery, filters, onRemove, onClearAll }: App
 
   filters.propertyTypes.forEach((v) => {
     chips.push(
-      <button key={`type-${v}`} className={chipBase} aria-pressed={true} aria-label={`remove type ${v}`} onClick={() => onRemove({ arrayKey: 'propertyTypes', value: v })}>
-        <span>Type: {v}</span>
+      <button key={`type-${v}`} className={chipBase} aria-pressed={true} aria-label={`${t('remove')} ${getLabel(v, PROPERTY_TYPE_TRANSLATION_KEYS)}`} onClick={() => onRemove({ arrayKey: 'propertyTypes', value: v })}>
+        <span>{t('propertyType')}: {getLabel(v, PROPERTY_TYPE_TRANSLATION_KEYS)}</span>
         <span className={closeBtn} aria-hidden>×</span>
       </button>
     );
@@ -49,8 +77,8 @@ function AppliedFiltersChips({ searchQuery, filters, onRemove, onClearAll }: App
 
   filters.bedrooms.forEach((v) => {
     chips.push(
-      <button key={`bed-${v}`} className={chipBase} aria-pressed={true} aria-label={`remove bedrooms ${v}`} onClick={() => onRemove({ arrayKey: 'bedrooms', value: v })}>
-        <span>Beds: {v}</span>
+      <button key={`bed-${v}`} className={chipBase} aria-pressed={true} aria-label={`${t('remove')} ${t('bedrooms')} ${v}`} onClick={() => onRemove({ arrayKey: 'bedrooms', value: v })}>
+        <span>{t('bedsShort')}: {v}</span>
         <span className={closeBtn} aria-hidden>×</span>
       </button>
     );
@@ -58,8 +86,8 @@ function AppliedFiltersChips({ searchQuery, filters, onRemove, onClearAll }: App
 
   filters.bathrooms.forEach((v) => {
     chips.push(
-      <button key={`bath-${v}`} className={chipBase} aria-pressed={true} aria-label={`remove bathrooms ${v}`} onClick={() => onRemove({ arrayKey: 'bathrooms', value: v })}>
-        <span>Baths: {v}</span>
+      <button key={`bath-${v}`} className={chipBase} aria-pressed={true} aria-label={`${t('remove')} ${t('bathrooms')} ${v}`} onClick={() => onRemove({ arrayKey: 'bathrooms', value: v })}>
+        <span>{t('bathsShort')}: {v}</span>
         <span className={closeBtn} aria-hidden>×</span>
       </button>
     );
@@ -67,7 +95,7 @@ function AppliedFiltersChips({ searchQuery, filters, onRemove, onClearAll }: App
 
   if (filters.area[0] > 0 || filters.area[1] < 10000) {
     chips.push(
-      <button key="area" className={chipBase} aria-pressed={true} aria-label="remove area filter" onClick={() => onRemove('area')}>
+      <button key="area" className={chipBase} aria-pressed={true} aria-label={`${t('remove')} ${t('area')}`} onClick={() => onRemove('area')}>
         <span>{filters.area[0]}–{filters.area[1]} მ²</span>
         <span className={closeBtn} aria-hidden>×</span>
       </button>
@@ -77,8 +105,8 @@ function AppliedFiltersChips({ searchQuery, filters, onRemove, onClearAll }: App
   if (filters.amenities.length) {
     filters.amenities.forEach((v) => {
       chips.push(
-        <button key={`amenity-${v}`} className={chipBase} aria-pressed={true} aria-label={`remove amenity ${v}`} onClick={() => onRemove({ arrayKey: 'amenities', value: v })}>
-          <span>{v}</span>
+        <button key={`amenity-${v}`} className={chipBase} aria-pressed={true} aria-label={`${t('remove')} ${getLabel(v, AMENITY_TRANSLATION_KEYS)}`} onClick={() => onRemove({ arrayKey: 'amenities', value: v })}>
+          <span>{getLabel(v, AMENITY_TRANSLATION_KEYS)}</span>
           <span className={closeBtn} aria-hidden>×</span>
         </button>
       );
@@ -94,12 +122,12 @@ function AppliedFiltersChips({ searchQuery, filters, onRemove, onClearAll }: App
         <button
           className="ml-auto text-sm underline text-gray-600 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 rounded"
           onClick={onClearAll}
-          aria-label="clear all filters"
+          aria-label={`${t('clearAll')} ${t('filters')}`}
         >
-          Clear all
+          {t('clearAll')}
         </button>
       </div>
-      <p aria-live="polite" className="sr-only">Filters changed</p>
+      <p aria-live="polite" className="sr-only">{t('filtersChanged')}</p>
     </div>
   );
 }
