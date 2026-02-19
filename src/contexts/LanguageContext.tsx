@@ -3228,6 +3228,23 @@ const translations: Translations = {
     ru: 'Агент'
   },
 
+  // Map tooltip keys
+  objectsInZone: {
+    ka: 'ობიექტი ამ ზონაში',
+    en: 'Objects in this zone',
+    ru: 'Объекты в этой зоне'
+  },
+  moreObjects: {
+    ka: 'და კიდევ {count} ობიექტი...',
+    en: 'And {count} more objects...',
+    ru: 'И еще {count} объектов...'
+  },
+  zoomToSeeAll: {
+    ka: 'ზუმის გაზრდით დაინახავთ ყველა ობიექტს',
+    en: 'Zoom in to see all objects',
+    ru: 'Приблизьте, чтобы увидеть все объекты'
+  },
+
   // i18n audit missing keys (2026-02-17)
   added: { ka: 'დამატებულია', en: 'Added', ru: 'Добавлено' },
   all: { ka: 'ყველა', en: 'All', ru: 'Все' },

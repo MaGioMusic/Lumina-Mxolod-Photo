@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import ReactDOMServer from 'react-dom/server';
 import { useRouter } from 'next/navigation';
 import { logger } from '@/lib/logger';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Dynamically import Leaflet components to avoid SSR issues
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
@@ -422,6 +423,7 @@ const PropertyModal = ({ property, isOpen, onClose }: {
 };
 
 export default function MapView({ onPropertyHighlight }: { onPropertyHighlight?: (propertyId: number) => void }) {
+  const { t } = useLanguage();
   const [isClient, setIsClient] = useState(false);
   const [leafletLoaded, setLeafletLoaded] = useState(false);
   const [zoom, setZoom] = useState(12);
@@ -1109,7 +1111,7 @@ export default function MapView({ onPropertyHighlight }: { onPropertyHighlight?:
                     // Cluster tooltip
                     <div>
                       <h4 className="font-bold text-sm text-gray-900 mb-3 text-center">
-                        {cluster.properties.length} ობიექტი ამ ზონაში
+                        {cluster.properties.length} {t('objectsInZone')}
                       </h4>
                       
                       <div className="space-y-3 max-h-60 overflow-y-auto">
@@ -1129,13 +1131,13 @@ export default function MapView({ onPropertyHighlight }: { onPropertyHighlight?:
                         
                         {cluster.properties.length > 4 && (
                           <div className="text-xs text-gray-500 text-center pt-1">
-                            და კიდევ {cluster.properties.length - 4} ობიექტი...
+                            {t('moreObjects').replace('{count}', String(cluster.properties.length - 4))}
                           </div>
                         )}
               </div>
 
                       <div className="text-xs text-gray-500 mt-2 text-center">
-                        ზუმის გაზრდით დაინახავთ ყველა ობიექტს
+                        {t('zoomToSeeAll')}
             </div>
           </div>
         )}
