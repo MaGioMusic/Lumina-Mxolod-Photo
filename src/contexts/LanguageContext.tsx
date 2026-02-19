@@ -3408,11 +3408,6 @@ const translations: Translations = {
     en: 'Last Name',
     ru: 'Фамилия'
   },
-  phoneNumber: {
-    ka: 'ტელეფონის ნომერი',
-    en: 'Phone Number',
-    ru: 'Номер телефона'
-  },
   confirmPassword: {
     ka: 'პაროლის დადასტურება',
     en: 'Confirm Password',
@@ -3447,11 +3442,6 @@ const translations: Translations = {
     ka: 'პაროლი მინიმუმ 8 სიმბოლო უნდა იყოს',
     en: 'Password must be at least 8 characters',
     ru: 'Пароль должен быть не менее 8 символов'
-  },
-  passwordsDoNotMatch: {
-    ka: 'პაროლები არ ემთხვევა',
-    en: 'Passwords do not match',
-    ru: 'Пароли не совпадают'
   },
   agreeToTermsRequired: {
     ka: 'თქვენ უნდა დაეთანხმოთ წესებსა და პირობებს',
