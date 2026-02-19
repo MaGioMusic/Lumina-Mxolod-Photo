@@ -3199,6 +3199,18 @@ const translations: Translations = {
     ru: 'Напишите нам'
   },
 
+  // Footer missing keys
+  services: {
+    ka: 'სერვისები',
+    en: 'Services',
+    ru: 'Услуги'
+  },
+  tbilisiGeorgia: {
+    ka: 'თბილისი, საქართველო',
+    en: 'Tbilisi, Georgia',
+    ru: 'Тбилиси, Грузия'
+  },
+
   // i18n audit missing keys (2026-02-17)
   added: { ka: 'დამატებულია', en: 'Added', ru: 'Добавлено' },
   all: { ka: 'ყველა', en: 'All', ru: 'Все' },
