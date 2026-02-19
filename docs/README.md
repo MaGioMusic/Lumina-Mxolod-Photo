@@ -1,56 +1,74 @@
-## Documentation Index
+# Docs — Lumina Estate
 
-ქვემოთ დალაგებულია ყველა მნიშვნელოვანი დოკუმენტი თემატური კატეგორიებით, რომ ნავიგაცია იყოს მარტივი და სტრუქტურირებული.
+> Full documentation index. Start here if you need to find anything.
+> For the short agent guide → [`AGENTS.md`](../AGENTS.md) (root).
 
-### 1) Compliance (Chat + CRM)
-- [Chat + CRM Data Policy (MVP → EU/US ready)](./compliance/chat-crm-data-policy.md)
+---
 
-### 2) CRM (Planning)
-- [CRM ორგანიზაციული მოდელის წინასუპაბეისური გეგმა (Stage 1)](./crm/organization-plan-stage1.md)
-- [CRM არქიტექტურის ანალიზი — 2025-11-05](./crm/analysis-2025-11-05.md)
+## Architecture
 
-### 3) Architecture & Planning
-- [Architecture overview](./architecture/overview.md)
-- [Delivery Plan](../DELIVERY_PLAN.md)
+| File | What's inside |
+|---|---|
+| [`architecture/overview.md`](architecture/overview.md) | Tech stack, subsystems, data flow |
+| [`architecture/pages.md`](architecture/pages.md) | All pages & routes inventory |
+| [`architecture/flows.md`](architecture/flows.md) | Core user flows (UI → API) |
+| [`architecture/integrations.md`](architecture/integrations.md) | External APIs & integrations |
 
-### 4) Engineering (API / Testing / Tooling)
-- [API კონტრაქტები](./engineering/api-contracts.md)
-- [Testing & CI გიდი](./engineering/testing-ci.md)
-- [MCP Servers / Tooling](./engineering/mcp-servers.md)
+---
 
-### 5) AI (Realtime / Gemini)
-- [Gemini Text (Vertex AI) setup](./ai/gemini-text-notes.md)
-- [Gemini Voice Toggle Audit](./ai/gemini-toggle-notes.md)
+## Engineering
 
-### 6) Security
-- [Security წესები (Semgrep/Headers/Validation)](../SECURITY.md)
-- [Supabase RLS overview](./security/supabase-rls-overview.md)
+| File | What's inside |
+|---|---|
+| [`engineering/api-contracts.md`](engineering/api-contracts.md) | API route contracts |
+| [`engineering/testing-ci.md`](engineering/testing-ci.md) | Testing strategy & CI |
+| [`engineering/mcp-servers.md`](engineering/mcp-servers.md) | MCP tooling setup |
+| [`engineering/agents-playbook.md`](engineering/agents-playbook.md) | Full agent roles & playbook (detailed) |
 
-### 7) Data Model & ERD
-- [ERD Audit Report](../ERD_AUDIT.md)
-- [Database Schema (reference)](../LUMINA_DATABASE_SCHEMA.md)
+---
 
-### 8) Audits & Reports
-- [Code Audit Report](../CODE_AUDIT.md)
-- [Performance Analysis](../LUMINA_PERFORMANCE_ANALYSIS_REPORT.md)
-- [Progress Analysis](../LUMINA_PROGRESS_ANALYSIS.md)
+## Conventions & Standards
 
-### 9) Testing & CI/CD
-- [Knip Report](../knip-report.json)
+| File | What's inside |
+|---|---|
+| [`conventions.md`](conventions.md) | Naming, i18n rules, component patterns, API conventions |
+| [`rules/project-rules.md`](rules/project-rules.md) | Project-specific Cursor rules |
+| [`rules/user-rules.md`](rules/user-rules.md) | Global user rules |
 
-### 10) Project Rules & Standards
-- [Project Rules (Lumina Estate)](./rules/project-rules.md)
-- [User Rules (Global)](./rules/user-rules.md)
-- [Cursor Rules (Georgian)](./rules/cursor-rules-georgian.md)
+---
 
-### 11) Archive (historical / one-off)
-- [Backup merge notes](./archive/backup-merge-notes.md)
+## Tasks
 
-### 12) Quick Access (Root)
-- [README (root)](../README.md)
-- [next.config.js](../next.config.js)
-- [tailwind.config.js](../tailwind.config.js)
+| Path | What's inside |
+|---|---|
+| [`tasks/template.md`](tasks/template.md) | Template for new tasks |
+| [`tasks/active/`](tasks/active/) | Currently in-progress tasks |
+| [`tasks/done/`](tasks/done/) | Completed & merged tasks |
 
-გამოყენება: ახალი დოკუმენტი რომ დაემატოს, ჩასვი შესაბამის კატეგორიაში და შეინარჩუნე იგივე დასახელების სტილი.
+---
 
+## Security & Compliance
 
+| File | What's inside |
+|---|---|
+| [`security/supabase-rls-overview.md`](security/supabase-rls-overview.md) | Row-Level Security overview |
+| [`compliance/chat-crm-data-policy.md`](compliance/chat-crm-data-policy.md) | Chat + CRM data policy |
+
+---
+
+## AI & Experiments
+
+| File | What's inside |
+|---|---|
+| [`ai/gemini-text-notes.md`](ai/gemini-text-notes.md) | Gemini Text (Vertex AI) notes |
+| [`ai/gemini-toggle-notes.md`](ai/gemini-toggle-notes.md) | Gemini voice toggle audit |
+
+---
+
+## Archive
+
+Old / historical docs → [`archive/`](archive/)
+
+---
+
+*Last updated: 2026-02-19 | Maintained by: Oraculus 🔮*
