@@ -44,31 +44,31 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
     const newErrors: Record<string, string> = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
+      newErrors.firstName = t('firstNameRequired');
     }
 
     if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
+      newErrors.lastName = t('lastNameRequired');
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = t('emailRequired');
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
+      newErrors.email = t('validEmailRequired');
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = t('passwordRequired');
     } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
+      newErrors.password = t('passwordMinLength');
     }
 
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = t('passwordsDoNotMatch');
     }
 
     if (!formData.agreeToTerms) {
-      newErrors.agreeToTerms = 'You must agree to the terms and conditions';
+      newErrors.agreeToTerms = t('agreeToTermsRequired');
     }
 
     setErrors(newErrors);
@@ -100,8 +100,8 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
         const data = await response.json().catch(() => null);
         const message =
           data?.error?.code === 'EMAIL_EXISTS'
-            ? 'An account with this email already exists.'
-            : data?.error?.message ?? 'Registration failed. Please try again.';
+            ? t('emailAlreadyExists')
+            : data?.error?.message ?? t('registrationFailed');
         setErrors({ form: message });
         return;
       }
@@ -114,7 +114,7 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
       });
 
       if (signInResult?.error) {
-        setErrors({ form: 'Account created but auto-login failed. Please log in manually.' });
+        setErrors({ form: t('autoLoginFailed') });
         return;
       }
 
@@ -134,7 +134,7 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
       // Reload to update session state
       window.location.href = '/dashboard';
     } catch (error) {
-      setErrors({ form: 'Registration failed. Please try again.' });
+      setErrors({ form: t('registrationFailed') });
     } finally {
       setIsSubmitting(false);
     }
@@ -192,7 +192,7 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
             <h2 className={`text-xl font-bold ${
               theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
             }`}>
-              Sign Up
+              {t('createAccount')}
             </h2>
           </div>
           <button
@@ -222,13 +222,13 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
               <label className={`text-sm font-medium ${
                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
               }`}>
-                First Name *
+                {t('firstName')} *
               </label>
               <input
                 type="text"
                 value={formData.firstName}
                 onChange={(e) => handleInputChange('firstName', e.target.value)}
-                placeholder="Enter first name"
+                placeholder={t('enterFirstName')}
                 className={`w-full px-4 py-3 rounded-lg border transition-colors ${
                   errors.firstName 
                     ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20' 
@@ -246,13 +246,13 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
               <label className={`text-sm font-medium ${
                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
               }`}>
-                Last Name *
+                {t('lastName')} *
               </label>
               <input
                 type="text"
                 value={formData.lastName}
                 onChange={(e) => handleInputChange('lastName', e.target.value)}
-                placeholder="Enter last name"
+                placeholder={t('enterLastName')}
                 className={`w-full px-4 py-3 rounded-lg border transition-colors ${
                   errors.lastName 
                     ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20' 
@@ -272,13 +272,13 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
             <label className={`text-sm font-medium ${
               theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
             }`}>
-              Email *
+              {t('email')} *
             </label>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
-              placeholder="Enter your email"
+              placeholder={t('enterYourEmail')}
               className={`w-full px-4 py-3 rounded-lg border transition-colors ${
                 errors.email 
                   ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20' 
@@ -297,7 +297,7 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
             <label className={`text-sm font-medium ${
               theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
             }`}>
-              Phone Number
+              {t('phoneNumber')}
             </label>
             <input
               type="tel"
@@ -318,14 +318,14 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
               <label className={`text-sm font-medium ${
                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
               }`}>
-                Password *
+                {t('password')} *
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
-                  placeholder="Enter your password"
+                  placeholder={t('enterYourPassword')}
                   className={`w-full px-4 py-3 pr-12 rounded-lg border transition-colors ${
                     errors.password 
                       ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20' 
@@ -359,14 +359,14 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
               <label className={`text-sm font-medium ${
                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
               }`}>
-                Confirm Password *
+                {t('confirmPassword')} *
               </label>
               <div className="relative">
                 <input
                   type={showConfirmPassword ? 'text' : 'password'}
                   value={formData.confirmPassword}
                   onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                  placeholder="Confirm your password"
+                  placeholder={t('confirmPassword')}
                   className={`w-full px-4 py-3 pr-12 rounded-lg border transition-colors ${
                     errors.confirmPassword 
                       ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20' 
@@ -409,13 +409,13 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
               <span className={`text-sm ${
                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
               }`}>
-                I agree to the{' '}
+                {t('iAgreeToThe')}{' '}
                 <a href="#" className="text-[#F08336] hover:underline">
-                  Terms of Service
+                  {t('termsOfService')}
                 </a>{' '}
-                and{' '}
+                {t('and')}{' '}
                 <a href="#" className="text-[#F08336] hover:underline">
-                  Privacy Policy
+                  {t('privacyPolicy')}
                 </a>
               </span>
             </label>
@@ -437,10 +437,10 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
             {isSubmitting ? (
               <div className="flex items-center justify-center space-x-2">
                 <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                <span>Creating Account...</span>
+                <span>{t('creatingAccount')}</span>
               </div>
             ) : (
-              'Create Account'
+              t('createAccount')
             )}
           </button>
         </form>
@@ -452,12 +452,12 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
           <p className={`text-xs text-center ${
             theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
           }`}>
-            Already have an account?{' '}
+            {t('alreadyHaveAccount')}{' '}
             <button 
               onClick={handleClose}
               className="text-[#F08336] hover:underline font-medium"
             >
-              Sign in instead
+              {t('signInInstead')}
             </button>
           </p>
         </div>

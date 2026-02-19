@@ -3277,6 +3277,123 @@ const translations: Translations = {
     ru: 'Вход через Facebook не удался. Попробуйте снова.'
   },
 
+  // SignUpModal keys
+  createAccount: {
+    ka: 'ანგარიშის შექმნა',
+    en: 'Create Account',
+    ru: 'Создать аккаунт'
+  },
+  firstName: {
+    ka: 'სახელი',
+    en: 'First Name',
+    ru: 'Имя'
+  },
+  lastName: {
+    ka: 'გვარი',
+    en: 'Last Name',
+    ru: 'Фамилия'
+  },
+  confirmPassword: {
+    ka: 'პაროლის დადასტურება',
+    en: 'Confirm Password',
+    ru: 'Подтвердите пароль'
+  },
+  firstNameRequired: {
+    ka: 'სახელი სავალდებულოა',
+    en: 'First name is required',
+    ru: 'Имя обязательно'
+  },
+  lastNameRequired: {
+    ka: 'გვარი სავალდებულოა',
+    en: 'Last name is required',
+    ru: 'Фамилия обязательна'
+  },
+  emailRequired: {
+    ka: 'Email სავალდებულოა',
+    en: 'Email is required',
+    ru: 'Email обязателен'
+  },
+  validEmailRequired: {
+    ka: 'გთხოვთ შეიყვანეთ სწორი Email',
+    en: 'Please enter a valid email',
+    ru: 'Пожалуйста, введите корректный email'
+  },
+  passwordRequired: {
+    ka: 'პაროლი სავალდებულოა',
+    en: 'Password is required',
+    ru: 'Пароль обязателен'
+  },
+  passwordMinLength: {
+    ka: 'პაროლი მინიმუმ 8 სიმბოლო უნდა იყოს',
+    en: 'Password must be at least 8 characters',
+    ru: 'Пароль должен быть не менее 8 символов'
+  },
+  agreeToTermsRequired: {
+    ka: 'თქვენ უნდა დაეთანხმოთ წესებსა და პირობებს',
+    en: 'You must agree to the terms and conditions',
+    ru: 'Вы должны согласиться с правилами и условиями'
+  },
+  emailAlreadyExists: {
+    ka: 'ანგარიში ამ Email-ით უკვე არსებობს',
+    en: 'An account with this email already exists',
+    ru: 'Аккаунт с этим email уже существует'
+  },
+  registrationFailed: {
+    ka: 'რეგისტრაცია ვერ მოხერხდა. სცადეთ თავიდან.',
+    en: 'Registration failed. Please try again',
+    ru: 'Регистрация не удалась. Попробуйте снова'
+  },
+  autoLoginFailed: {
+    ka: 'ანგარიში შექმნილია, მაგრამ ავტომატური შესვლა ვერ მოხერხდა. გთხოვთ შეხვიდეთ ხელით.',
+    en: 'Account created but auto-login failed. Please log in manually',
+    ru: 'Аккаунт создан, но автоматический вход не удался. Пожалуйста, войдите вручную'
+  },
+  creatingAccount: {
+    ka: 'ანგარიშის შექმნა...',
+    en: 'Creating Account...',
+    ru: 'Создание аккаунта...'
+  },
+  iAgreeToThe: {
+    ka: 'ვეთანხმები',
+    en: 'I agree to the',
+    ru: 'Я согласен с'
+  },
+  termsOfService: {
+    ka: 'გამოყენების წესებს',
+    en: 'Terms of Service',
+    ru: 'Условиями использования'
+  },
+  and: {
+    ka: 'და',
+    en: 'and',
+    ru: 'и'
+  },
+  privacyPolicy: {
+    ka: 'კონფიდენციალურობის პოლიტიკას',
+    en: 'Privacy Policy',
+    ru: 'Политикой конфиденциальности'
+  },
+  alreadyHaveAccount: {
+    ka: 'უკვე გაქვთ ანგარიში?',
+    en: 'Already have an account?',
+    ru: 'Уже есть аккаунт?'
+  },
+  signInInstead: {
+    ka: 'შესვლა',
+    en: 'Sign in instead',
+    ru: 'Войти'
+  },
+  enterFirstName: {
+    ka: 'შეიყვანეთ სახელი',
+    en: 'Enter first name',
+    ru: 'Введите имя'
+  },
+  enterLastName: {
+    ka: 'შეიყვანეთ გვარი',
+    en: 'Enter last name',
+    ru: 'Введите фамилию'
+  },
+
   // i18n audit missing keys (2026-02-17)
   added: { ka: 'დამატებულია', en: 'Added', ru: 'Добавлено' },
   all: { ka: 'ყველა', en: 'All', ru: 'Все' },
