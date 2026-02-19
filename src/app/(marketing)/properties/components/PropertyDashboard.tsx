@@ -68,22 +68,22 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">წვდომა შეზღუდულია</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('accessDenied')}</h2>
           <p className="text-gray-600 mb-6">
-            ამ გვერდის სანახავად საჭიროა ავტორიზაცია. გთხოვთ შეხვიდეთ თქვენს ანგარიშში.
+            {t('loginRequiredMessage')}
           </p>
           <div className="space-y-3">
             <button
               onClick={() => window.location.href = '/login'}
               className="w-full bg-primary-500 text-white px-6 py-3 rounded-lg hover:bg-primary-600 transition-colors"
             >
-              შესვლა
+              {t('login')}
             </button>
             <button
               onClick={() => window.history.back()}
               className="w-full bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors"
             >
-              უკან დაბრუნება
+              {t('goBack')}
             </button>
           </div>
         </div>
@@ -202,7 +202,7 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
             className="flex items-center space-x-2 text-gray-600 hover:text-primary-500 transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
-            <span>უკან დაბრუნება</span>
+            <span>{t('goBack')}</span>
           </button>
         </div>
         <div className="flex items-center justify-between">
@@ -213,23 +213,23 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
           <nav className="flex items-center space-x-8">
             <div className="flex items-center space-x-2 text-blue-600">
               <MapPin className="w-5 h-5" />
-              <span>დაშბორდი</span>
+              <span>{t('dashboard')}</span>
             </div>
             <div className="flex items-center space-x-2 text-gray-700">
               <Home className="w-5 h-5 text-primary-500" />
-              <span>ქონება</span>
+              <span>{t('property')}</span>
             </div>
             <div className="flex items-center space-x-2 text-gray-700">
               <BarChart3 className="w-5 h-5 text-primary-500" />
-              <span>ანალიტიკა</span>
+              <span>{t('analytics')}</span>
             </div>
             <div className="flex items-center space-x-2 text-gray-700">
               <MessageCircle className="w-5 h-5 text-primary-500" />
-              <span>შეტყობინებები</span>
+              <span>{t('chat_messages')}</span>
             </div>
             <div className="flex items-center space-x-2 text-gray-700">
               <Settings className="w-5 h-5 text-primary-500" />
-              <span>პარამეტრები</span>
+              <span>{t('settings')}</span>
             </div>
           </nav>
 
@@ -256,14 +256,14 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
         <div className="w-80 border-r border-gray-200 p-6 space-y-8">
           {/* Upload Property Section */}
           <div>
-            <h2 className="text-lg font-medium text-gray-900 mb-5">ქონების ატვირთვა</h2>
+            <h2 className="text-lg font-medium text-gray-900 mb-5">{t('uploadProperty')}</h2>
             <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center">
               {isUploading ? (
                 <div className="space-y-4">
                   <div className="w-12 h-12 mx-auto">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                   </div>
-                  <p className="text-blue-600">ფაილების ატვირთვა...</p>
+                  <p className="text-blue-600">{t('uploading')}</p>
                 </div>
               ) : (
                 <>
@@ -271,10 +271,10 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
                   <div className="mt-4">
                     <label htmlFor="file-upload" className="cursor-pointer">
                       <span className="mt-2 block text-sm font-medium text-gray-900">
-                        ატვირთეთ ქონების ფოტოები და დოკუმენტები
+                        {t('uploadPropertyPhotos')}
                       </span>
                       <span className="mt-1 block text-xs text-gray-500">
-                        PNG, JPG, PDF ფაილები 10MB-მდე
+                        {t('acceptedFileTypes')}
                       </span>
                     </label>
                     <input
@@ -291,7 +291,7 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
                     onClick={() => document.getElementById('file-upload')?.click()}
                     className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                   >
-                    ფაილების არჩევა
+                    {t('selectFiles')}
                   </button>
                 </>
               )}
@@ -300,7 +300,7 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
             {/* Uploaded Files List */}
             {uploadedFiles.length > 0 && (
               <div className="mt-4 space-y-2">
-                <h3 className="text-sm font-medium text-gray-700">ატვირთული ფაილები ({uploadedFiles.length})</h3>
+                <h3 className="text-sm font-medium text-gray-700">{t('uploadedFiles')} ({uploadedFiles.length})</h3>
                 <div className="max-h-32 overflow-y-auto space-y-1">
                   {uploadedFiles.map((file, index) => (
                     <div key={index} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded text-sm">
@@ -320,12 +320,12 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
 
           {/* Agent Statistics */}
           <div className="bg-gray-50 rounded-lg p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-6">აგენტის სტატისტიკა</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-6">{t('agentStatistics')}</h3>
             <div className="space-y-5">
               {/* Profile Completion with Progress Bar */}
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-gray-700">პროფილის შევსება</span>
+                  <span className="text-gray-700">{t('profileCompletion')}</span>
                   <span className="text-blue-600 font-medium">{agentStats.profileCompletion}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
@@ -339,7 +339,7 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
               {/* Response Rate with Progress Bar */}
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-gray-700">პასუხის მაჩვენებელი</span>
+                  <span className="text-gray-700">{t('responseRate')}</span>
                   <span className="text-green-600 font-medium">{agentStats.responseRate}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
@@ -354,17 +354,17 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
               <div className="grid grid-cols-2 gap-4 pt-2">
                 <div className="text-center p-3 bg-white rounded-lg shadow-sm">
                   <div className="text-2xl font-bold text-blue-600">{agentStats.totalProperties}</div>
-                  <div className="text-xs text-gray-500">სულ ქონება</div>
+                  <div className="text-xs text-gray-500">{t('totalProperties')}</div>
                 </div>
                 <div className="text-center p-3 bg-white rounded-lg shadow-sm">
                   <div className="text-2xl font-bold text-primary-600">{agentStats.activeListings}</div>
-                  <div className="text-xs text-gray-500">აქტიური განცხადებები</div>
+                  <div className="text-xs text-gray-500">{t('activeListings')}</div>
                 </div>
               </div>
 
               <div className="text-center p-3 bg-white rounded-lg shadow-sm">
                 <div className="text-2xl font-bold text-green-600">{agentStats.successfulSales}</div>
-                <div className="text-xs text-gray-500">წარმატებული გაყიდვები</div>
+                <div className="text-xs text-gray-500">{t('successfulSales')}</div>
               </div>
             </div>
           </div>
@@ -379,8 +379,8 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
                 <h1 className="text-2xl font-bold text-gray-900 mb-2">{currentProperty.title}</h1>
                 <p className="text-gray-600 mb-4">{currentProperty.address}</p>
                 <div className="flex items-center space-x-6 text-sm text-gray-500">
-                  <span>🛏️ {currentProperty.bedrooms} საძინებელი</span>
-                  <span>🚿 {currentProperty.bathrooms} სააბაზანო</span>
+                  <span>🛏️ {currentProperty.bedrooms} {currentProperty.bedrooms === 1 ? t('bedroom') : t('bedrooms')}</span>
+                  <span>🚿 {currentProperty.bathrooms} {currentProperty.bathrooms === 1 ? t('bathroom') : t('bathrooms')}</span>
                   <span>📐 {currentProperty.area}</span>
                   <span>🏠 {currentProperty.type}</span>
                 </div>
@@ -388,7 +388,7 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
               <div className="text-right">
                 <div className="text-3xl font-bold text-primary-600 mb-2">{currentProperty.price}</div>
                 <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-                  გასაყიდად
+                  {t('forSale')}
                 </div>
               </div>
             </div>
@@ -423,7 +423,7 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
 
             {/* Analytics Chart */}
             <div className="bg-gray-50 rounded-lg p-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">ყოველთვიური მაჩვენებლები</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">{t('monthlyMetrics')}</h3>
               <div className="h-48 flex items-end justify-between px-4 pb-4 space-x-2">
                 {/* Mock Chart Bars */}
                 {[65, 85, 45, 75, 95, 70, 80, 60, 90, 55, 75, 85].map((height, index) => (
@@ -447,22 +447,22 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
               <div className="flex justify-center space-x-6 mt-4 text-sm">
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-blue-500 rounded"></div>
-                  <span className="text-gray-600">ქონების ნახვები</span>
+                  <span className="text-gray-600">{t('propertyViews')}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-green-500 rounded"></div>
-                  <span className="text-gray-600">შეკითხვები</span>
+                  <span className="text-gray-600">{t('inquiries')}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-primary-400 rounded"></div>
-                  <span className="text-gray-600">გაყიდვები</span>
+                  <span className="text-gray-600">{t('sales')}</span>
                 </div>
               </div>
             </div>
 
             {/* Property Location Section */}
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">ქონების მდებარეობა</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">{t('propertyLocation')}</h3>
               <div className="bg-gray-100 rounded-lg h-46 flex items-center justify-center">
                 <span className="text-gray-500">Interactive Map Component</span>
               </div>
@@ -478,7 +478,7 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
               <Search className="w-5 h-5 text-gray-400 mr-2" />
               <input
                 type="text"
-                placeholder="საუბრების ძიება..."
+                placeholder={t('searchConversations')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="bg-transparent flex-1 outline-none text-gray-600 placeholder-gray-400"
@@ -524,7 +524,7 @@ const PropertyDashboard: React.FC<PropertyDashboardProps> = ({ propertyId }) => 
               <Paperclip className="w-5 h-5 text-gray-400 mr-2" />
               <input
                 type="text"
-                placeholder="შეტყობინების ჩაწერა..."
+                placeholder={t('typeMessage')}
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}

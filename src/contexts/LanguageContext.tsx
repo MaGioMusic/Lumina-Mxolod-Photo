@@ -2993,6 +2993,184 @@ const translations: Translations = {
   chat_qr_3: { ka: 'როდის გირჩევნიათ დათვალიერება?', en: 'When is a good time for a viewing?', ru: 'Когда удобно для просмотра?' },
   chat_qr_4: { ka: 'გთხოვთ დატოვოთ საკონტაქტო ნომერი.', en: 'Please leave a contact number.', ru: 'Оставьте, пожалуйста, контактный номер.' },
   chat_qr_5: { ka: 'მოგწერთ დეტალებს მოკლე დროში.', en: 'I will send details shortly.', ru: 'Скоро отправлю детали.' },
+  chatUser1LastMessage: {
+    ka: 'გმადლობთ დახმარებისთვის, ძალიან...',
+    en: 'Thank you for the help, very...',
+    ru: 'Спасибо за помощь, очень...'
+  },
+  chatUser2Name: {
+    ka: 'ნინო კვარაცხელია',
+    en: 'Nino Kvaratskhelia',
+    ru: 'Нино Кварацхелия'
+  },
+  chatUser2LastMessage: {
+    ka: 'როდის იქნება ხელმისაწვდომი?',
+    en: 'When will it be available?',
+    ru: 'Когда будет доступно?'
+  },
+  chatUser3Name: {
+    ka: 'დავით გურგენიძე',
+    en: 'Davit Gurgenidze',
+    ru: 'Давит Гургенидзе'
+  },
+  chatUser3LastMessage: {
+    ka: 'გმადლობთ ინფორმაციისთვის',
+    en: 'Thank you for the information',
+    ru: 'Спасибо за информацию'
+  },
+  chatUser4Name: {
+    ka: 'თამარ ბერიძე',
+    en: 'Tamar Beridze',
+    ru: 'Тамар Беридзе'
+  },
+  chatUser5Name: {
+    ka: 'ლევან კიკნაძე',
+    en: 'Levan Kiknadze',
+    ru: 'Леван Кикнадзе'
+  },
+  chatUser5LastMessage: {
+    ka: 'კიდევ მაქვს რამდენიმე კითხვა...',
+    en: 'I still have a few more questions...',
+    ru: 'У меня есть еще несколько вопросов...'
+  },
+  chatUser6Name: {
+    ka: 'მარიამ გოგოლაძე',
+    en: 'Mariam Gogoladze',
+    ru: 'Мариам Гоголадзе'
+  },
+  chatUser6LastMessage: {
+    ka: 'მადლობა დროული პასუხისთვის',
+    en: 'Thanks for the timely response',
+    ru: 'Спасибо за быстрый ответ'
+  },
+
+  // PropertyDashboard translations
+  accessDenied: {
+    ka: 'წვდომა შეზღუდულია',
+    en: 'Access Denied',
+    ru: 'Доступ запрещен'
+  },
+  loginRequiredMessage: {
+    ka: 'ამ გვერდის სანახავად საჭიროა ავტორიზაცია. გთხოვთ შეხვიდეთ თქვენს ანგარიშში.',
+    en: 'Authentication required to view this page. Please sign in to your account.',
+    ru: 'Для просмотра этой страницы требуется авторизация. Пожалуйста, войдите в свой аккаунт.'
+  },
+  goBack: {
+    ka: 'უკან დაბრუნება',
+    en: 'Go Back',
+    ru: 'Назад'
+  },
+  uploadProperty: {
+    ka: 'ქონების ატვირთვა',
+    en: 'Upload Property',
+    ru: 'Загрузить объект'
+  },
+  uploadPropertyPhotos: {
+    ka: 'ატვირთეთ ქონების ფოტოები და დოკუმენტები',
+    en: 'Upload property photos and documents',
+    ru: 'Загрузите фото и документы объекта'
+  },
+  acceptedFileTypes: {
+    ka: 'PNG, JPG, PDF ფაილები 10MB-მდე',
+    en: 'PNG, JPG, PDF files up to 10MB',
+    ru: 'Файлы PNG, JPG, PDF до 10 МБ'
+  },
+  selectFiles: {
+    ka: 'ფაილების არჩევა',
+    en: 'Select Files',
+    ru: 'Выбрать файлы'
+  },
+  uploadedFiles: {
+    ka: 'ატვირთული ფაილები',
+    en: 'Uploaded Files',
+    ru: 'Загруженные файлы'
+  },
+  agentStatistics: {
+    ka: 'აგენტის სტატისტიკა',
+    en: 'Agent Statistics',
+    ru: 'Статистика агента'
+  },
+  profileCompletion: {
+    ka: 'პროფილის შევსება',
+    en: 'Profile Completion',
+    ru: 'Заполнение профиля'
+  },
+  responseRate: {
+    ka: 'პასუხის მაჩვენებელი',
+    en: 'Response Rate',
+    ru: 'Показатель ответов'
+  },
+  totalProperties: {
+    ka: 'სულ ქონება',
+    en: 'Total Properties',
+    ru: 'Всего объектов'
+  },
+  activeListings: {
+    ka: 'აქტიური განცხადებები',
+    en: 'Active Listings',
+    ru: 'Активные объявления'
+  },
+  successfulSales: {
+    ka: 'წარმატებული გაყიდვები',
+    en: 'Successful Sales',
+    ru: 'Успешные продажи'
+  },
+  bedroom: {
+    ka: 'საძინებელი',
+    en: 'Bedroom',
+    ru: 'Спальня'
+  },
+  bedrooms: {
+    ka: 'საძინებელი',
+    en: 'Bedrooms',
+    ru: 'Спальни'
+  },
+  bathroom: {
+    ka: 'სააბაზანო',
+    en: 'Bathroom',
+    ru: 'Ванная'
+  },
+  bathrooms: {
+    ka: 'სააბაზანო',
+    en: 'Bathrooms',
+    ru: 'Ванные'
+  },
+  monthlyMetrics: {
+    ka: 'ყოველთვიური მაჩვენებლები',
+    en: 'Monthly Metrics',
+    ru: 'Ежемесячные показатели'
+  },
+  propertyViews: {
+    ka: 'ქონების ნახვები',
+    en: 'Property Views',
+    ru: 'Просмотры объекта'
+  },
+  inquiries: {
+    ka: 'შეკითხვები',
+    en: 'Inquiries',
+    ru: 'Запросы'
+  },
+  sales: {
+    ka: 'გაყიდვები',
+    en: 'Sales',
+    ru: 'Продажи'
+  },
+  propertyLocation: {
+    ka: 'ქონების მდებარეობა',
+    en: 'Property Location',
+    ru: 'Расположение объекта'
+  },
+  searchConversations: {
+    ka: 'საუბრების ძიება',
+    en: 'Search Conversations',
+    ru: 'Поиск по беседам'
+  },
+  typeMessage: {
+    ka: 'შეტყობინების ჩაწერა',
+    en: 'Type a message',
+    ru: 'Введите сообщение'
+  },
+
   today: { ka: 'დღეს', en: 'Today', ru: 'Сегодня' },
   tomorrow: { ka: 'ხვალ', en: 'Tomorrow', ru: 'Завтра' },
   oneWeek: { ka: '1 კვირა', en: '1 week', ru: '1 неделя' },
