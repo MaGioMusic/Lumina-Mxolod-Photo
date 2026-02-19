@@ -6,13 +6,19 @@
 
 ### By Role
 - **Developer:** [[00-Knowledge-Hub]] → [[i18n]] → [[01-Architecture]]
-- **Manager:** [[00-Knowledge-Hub]] → [[03-Tasks]] → [[02-Decisions]]
+- **Manager:** [[00-Knowledge-Hub]] → [[MOC-Completion-Guide]] → [[Current-Sprint]]
 - **Researcher:** [[04-Research]] → [[i18n-audit-2026-02-19]]
 
 ### By Topic
+- **Completion:** [[MOC-Completion-Guide]] → [[Master-Backlog]] → [[Current-Sprint]]
 - **i18n:** [[i18n]] → [[2026-02-19-i18n-batch-1]] → [[Decision-001-kimi-for-i18n]]
 - **Map System:** [[MapView]] ↔ [[PropertiesGoogleMap]]
 - **Components:** [[01-Architecture]] → Components/
+
+### By Goal
+- **Launch Readiness:** [[MOC-Completion-Guide]] — What's left?
+- **This Week:** [[Current-Sprint]] — What we're doing now
+- **All Tasks:** [[Master-Backlog]] — Everything that needs doing
 
 ## 🔗 Key Connections
 
