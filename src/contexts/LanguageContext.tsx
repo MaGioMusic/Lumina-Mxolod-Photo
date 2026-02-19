@@ -3360,17 +3360,7 @@ const translations: Translations = {
     ru: 'Приблизьте, чтобы увидеть все объекты'
   },
 
-  // Auth & Login keys
-  email: {
-    ka: 'Email',
-    en: 'Email',
-    ru: 'Email'
-  },
-  password: {
-    ka: 'პაროლი',
-    en: 'Password',
-    ru: 'Пароль'
-  },
+  // Auth & Login keys (NEW)
   enterYourEmail: {
     ka: 'შეიყვანეთ თქვენი Email',
     en: 'Enter your email',
@@ -3385,16 +3375,6 @@ const translations: Translations = {
     ka: 'საცდელი ანგარიშები:',
     en: 'Demo Accounts:',
     ru: 'Демо-аккаунты:'
-  },
-  signingIn: {
-    ka: 'შესვლა...',
-    en: 'Signing in...',
-    ru: 'Вход...'
-  },
-  signUp: {
-    ka: 'რეგისტრაცია',
-    en: 'Sign Up',
-    ru: 'Регистрация'
   },
   orContinueWith: {
     ka: 'ან გააგრძელეთ',
