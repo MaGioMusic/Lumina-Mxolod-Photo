@@ -1,0 +1,8 @@
+{
+  "publicProperty": {
+    "uploadModal": {
+      "googleMapsApiKeyNotConfigured": "Google Maps API key is not configured. Please use a text address for now.",
+      "enterLocation": "Enter location"
+    }
+  }
+}

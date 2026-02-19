@@ -1,0 +1,8 @@
+{
+  "publicProperty": {
+    "uploadModal": {
+      "googleMapsApiKeyNotConfigured": "Google Maps API key არ არის კონფიგურირებული. დროებით გამოიყენე ტექსტური მისამართი.",
+      "enterLocation": "შეიყვანეთ მდებარეობა"
+    }
+  }
+}

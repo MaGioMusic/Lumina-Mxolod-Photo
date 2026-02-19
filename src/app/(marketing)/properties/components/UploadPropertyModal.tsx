@@ -271,7 +271,7 @@ export default function UploadPropertyModal({ isOpen, onClose }: UploadPropertyM
               ) : (
                 <div className="rounded-lg border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 p-3 space-y-2">
                   <p className="text-xs text-amber-700 dark:text-amber-300">
-                    Google Maps API key არ არის კონფიგურირებული. დროებით გამოიყენე ტექსტური მისამართი.
+                    {t('publicProperty.uploadModal.googleMapsApiKeyNotConfigured')}
                   </p>
                   <input
                     type="text"
@@ -283,7 +283,7 @@ export default function UploadPropertyModal({ isOpen, onClose }: UploadPropertyM
                       })
                     }
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-400 dark:bg-gray-700 dark:text-white"
-                    placeholder={t('enterLocation') || 'Enter location'}
+                    placeholder={t('publicProperty.uploadModal.enterLocation')}
                   />
                 </div>
               )}

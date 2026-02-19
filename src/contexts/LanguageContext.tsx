@@ -3,6 +3,9 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { logger, sanitizeForLogging } from '@/lib/logger';
 import { z } from 'zod';
+import enMessages from '../../messages/en.json';
+import kaMessages from '../../messages/ka.json';
+import ruMessages from '../../messages/ru.json';
 
 // Language schema for validation
 const LanguageSchema = z.enum(['ka', 'en', 'ru']);
@@ -3367,6 +3370,33 @@ const translations: Translations = {
   // Filter Panel keys deduped above; removed duplicated definitions here
 };
 
+type MessageDictionary = Record<string, unknown>;
+
+function flattenMessages(node: unknown, prefix = '', output: Record<string, string> = {}): Record<string, string> {
+  if (typeof node === 'string') {
+    if (prefix) output[prefix] = node;
+    return output;
+  }
+
+  if (!node || typeof node !== 'object' || Array.isArray(node)) {
+    return output;
+  }
+
+  const entries = Object.entries(node as MessageDictionary);
+  for (const [key, value] of entries) {
+    const nextPrefix = prefix ? `${prefix}.${key}` : key;
+    flattenMessages(value, nextPrefix, output);
+  }
+
+  return output;
+}
+
+const messageTranslations: Record<Language, Record<string, string>> = {
+  ka: flattenMessages(kaMessages),
+  en: flattenMessages(enMessages),
+  ru: flattenMessages(ruMessages),
+};
+
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
@@ -3467,6 +3497,11 @@ export function LanguageProvider({ children, initialLanguage }: LanguageProvider
   const t = useCallback(
     (key: string): string => {
       try {
+        const localeMessage = messageTranslations[language][key] ?? messageTranslations.en[key];
+        if (localeMessage) {
+          return localeMessage;
+        }
+
         const translation = translations[key];
         if (!translation) {
           logger.warn(`Translation key "${key}" not found`);

@@ -1,0 +1,8 @@
+{
+  "publicProperty": {
+    "uploadModal": {
+      "googleMapsApiKeyNotConfigured": "Google Maps API key не настроен. Временно используйте текстовый адрес.",
+      "enterLocation": "Введите местоположение"
+    }
+  }
+}
