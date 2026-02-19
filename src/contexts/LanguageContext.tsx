@@ -3343,6 +3343,75 @@ const translations: Translations = {
     ru: 'Агент'
   },
 
+  // Map tooltip keys
+  objectsInZone: {
+    ka: 'ობიექტი ამ ზონაში',
+    en: 'Objects in this zone',
+    ru: 'Объекты в этой зоне'
+  },
+  moreObjects: {
+    ka: 'და კიდევ {count} ობიექტი...',
+    en: 'And {count} more objects...',
+    ru: 'И еще {count} объектов...'
+  },
+  zoomToSeeAll: {
+    ka: 'ზუმის გაზრდით დაინახავთ ყველა ობიექტს',
+    en: 'Zoom in to see all objects',
+    ru: 'Приблизьте, чтобы увидеть все объекты'
+  },
+
+  // Auth & Login keys
+  email: {
+    ka: 'Email',
+    en: 'Email',
+    ru: 'Email'
+  },
+  password: {
+    ka: 'პაროლი',
+    en: 'Password',
+    ru: 'Пароль'
+  },
+  enterYourEmail: {
+    ka: 'შეიყვანეთ თქვენი Email',
+    en: 'Enter your email',
+    ru: 'Введите ваш email'
+  },
+  enterYourPassword: {
+    ka: 'შეიყვანეთ თქვენი პაროლი',
+    en: 'Enter your password',
+    ru: 'Введите ваш пароль'
+  },
+  demoAccounts: {
+    ka: 'საცდელი ანგარიშები:',
+    en: 'Demo Accounts:',
+    ru: 'Демо-аккаунты:'
+  },
+  signingIn: {
+    ka: 'შესვლა...',
+    en: 'Signing in...',
+    ru: 'Вход...'
+  },
+  signUp: {
+    ka: 'რეგისტრაცია',
+    en: 'Sign Up',
+    ru: 'Регистрация'
+  },
+  orContinueWith: {
+    ka: 'ან გააგრძელეთ',
+    en: 'Or continue with',
+    ru: 'Или продолжите с'
+  },
+  googleLoginFailed: {
+    ka: 'Google-ით შესვლა ვერ მოხერხდა. სცადეთ თავიდან.',
+    en: 'Google login failed. Please try again.',
+    ru: 'Вход через Google не удался. Попробуйте снова.'
+  },
+  facebookLoginFailed: {
+    ka: 'Facebook-ით შესვლა ვერ მოხერხდა. სცადეთ თავიდან.',
+    en: 'Facebook login failed. Please try again.',
+    ru: 'Вход через Facebook не удался. Попробуйте снова.'
+  },
+
   // i18n audit missing keys (2026-02-17)
   added: { ka: 'დამატებულია', en: 'Added', ru: 'Добавлено' },
   all: { ka: 'ყველა', en: 'All', ru: 'Все' },
