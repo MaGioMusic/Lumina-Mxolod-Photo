@@ -1781,7 +1781,7 @@ const translations: Translations = {
     ru: 'Быстрые ссылки'
   },
   services: {
-    ka: 'მომსახურებები',
+    ka: 'სერვისები',
     en: 'Services',
     ru: 'Услуги'
   },
@@ -3197,6 +3197,35 @@ const translations: Translations = {
     ka: 'მოგვწერეთ',
     en: 'Email Us',
     ru: 'Напишите нам'
+  },
+
+  // Footer missing keys
+  tbilisiGeorgia: {
+    ka: 'თბილისი, საქართველო',
+    en: 'Tbilisi, Georgia',
+    ru: 'Тбилиси, Грузия'
+  },
+
+  // Header missing keys
+  agentChat: {
+    ka: 'აგენტის ჩატი',
+    en: 'Agent Chat',
+    ru: 'Чат агента'
+  },
+  switchToMapView: {
+    ka: 'რუკის ხედზე გადართვა',
+    en: 'Switch to Map View',
+    ru: 'Переключиться на карту'
+  },
+  switchToGridView: {
+    ka: 'ბადის ხედზე გადართვა',
+    en: 'Switch to Grid View',
+    ru: 'Переключиться на сетку'
+  },
+  agent: {
+    ka: 'აგენტი',
+    en: 'Agent',
+    ru: 'Агент'
   },
 
   // i18n audit missing keys (2026-02-17)

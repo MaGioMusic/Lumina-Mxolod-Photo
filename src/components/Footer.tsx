@@ -88,7 +88,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <MapPin className="w-4 h-4 text-primary-500 flex-shrink-0" />
-                <span className="text-gray-600 dark:text-gray-400">თბილისი, საქართველო</span>
+                <span className="text-gray-600 dark:text-gray-400">{t('tbilisiGeorgia')}</span>
               </div>
             </div>
           </div>
@@ -116,7 +116,7 @@ export default function Footer() {
           {/* Services */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-              სერვისები
+              {t('services')}
             </h3>
             <div className="space-y-2">
               {services.map((service) => (
