@@ -3438,6 +3438,16 @@ const translations: Translations = {
   fillRequiredFields: { ka: 'გთხოვთ შეავსოთ ყველა სავალდებულო ველი', en: 'Please fill in all required fields', ru: 'Пожалуйста, заполните все обязательные поля' },
   validEmailAddress: { ka: 'გთხოვთ შეიყვანოთ სწორი ელფოსტის მისამართი', en: 'Please enter a valid email address', ru: 'Пожалуйста, введите корректный email' },
   
+  // InquiryModal translations
+  yourName: { ka: 'თქვენი სახელი', en: 'Your Name', ru: 'Ваше имя' },
+  enterYourName: { ka: 'შეიყვანეთ თქვენი სახელი', en: 'Enter your name', ru: 'Введите ваше имя' },
+  enterYourPhone: { ka: 'შეიყვანეთ თქვენი ტელეფონი', en: 'Enter your phone', ru: 'Введите ваш телефон' },
+  enterYourMessage: { ka: 'შეიყვანეთ შეტყობინება (არასავალდებულო)', en: 'Enter your message (optional)', ru: 'Введите сообщение (необязательно)' },
+  sendInquiry: { ka: 'შეკითხვის გაგზავნა', en: 'Send Inquiry', ru: 'Отправить запрос' },
+  inquirySent: { ka: 'შეკითხვა წარმატებით გაიგზავნა!', en: 'Inquiry sent successfully!', ru: 'Запрос успешно отправлен!' },
+  errorSubmitting: { ka: 'შეცდომა გაგზავნისას. გთხოვთ სცადოთ თავიდან.', en: 'Error submitting inquiry. Please try again.', ru: 'Ошибка отправки запроса. Попробуйте еще раз.' },
+  property: { ka: 'ქონება', en: 'Property', ru: 'Недвижимость' },
+
   // PropertySubmitModal translations
   pleaseEnterTitle: { ka: 'გთხოვთ შეიყვანეთ სათაური', en: 'Please enter a title', ru: 'Пожалуйста, введите название' },
   pleaseEnterLocation: { ka: 'გთხოვთ შეიყვანეთ მდებარეობა', en: 'Please enter a location', ru: 'Пожалуйста, введите расположение' },

@@ -30,3 +30,13 @@ export async function POST(request: NextRequest) {
     return errorResponse(error);
   }
 }
+
+// GET /api/inquiries — List inquiries (placeholder)
+export async function GET(request: NextRequest) {
+  try {
+    // TODO: Add auth check and getInquiries repo function
+    return jsonResponse({ message: 'GET endpoint placeholder — implement auth and repo function' }, { status: 200 });
+  } catch (error) {
+    return errorResponse(error);
+  }
+}
