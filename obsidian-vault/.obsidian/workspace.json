@@ -178,9 +178,11 @@
   },
   "active": "aa511af50384ab4e",
   "lastOpenFiles": [
+    "03-Tasks/PR-Cleanup.md",
+    "03-Tasks/Lead-Capture-Active.md",
+    "03-Tasks/Lead-Capture-Implementation.md",
     "01-Architecture/Components/PropertySubmitModal.md",
     "03-Tasks/PR-Status.md",
-    "03-Tasks/Lead-Capture-Active.md",
     "04-Research/Cursor-PR-Analysis.md",
     "01-Architecture/Components/PropertiesGoogleMap.md",
     "01-Architecture/Components/MobileFilterDrawer.md",
@@ -197,7 +199,6 @@
     "README.md",
     "03-Tasks/2026-02-19-i18n-phase-4-auth.md",
     "03-Tasks/Next-Steps.md",
-    "03-Tasks/Lead-Capture-Implementation.md",
     "02-Decisions/00-Decision-Log.md",
     "01-Architecture/i18n.md",
     "01-Architecture/00-Overview.md",
@@ -206,7 +207,6 @@
     "Untitled.canvas",
     "03-Tasks/2026-02-19-i18n-batch-1.md",
     "04-Research/User-Journey-Mapping.md",
-    "Oraculus-Preferences.md",
     "05-Meetings/Daily",
     "01-Architecture/Components"
   ]
