@@ -579,3 +579,29 @@ model VerificationToken {
   @@unique([identifier, token])
   @@map("verification_tokens")
 }
+
+// Lead capture for inquiries
+enum LeadStatus {
+  NEW
+  CONTACTED
+  VIEWING_SCHEDULED
+  NEGOTIATING
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+model Lead {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  message     String
+  propertyId  String?  
+  agentId     String?
+  status      LeadStatus @default(NEW)
+  source      String   // 'contact_page', 'property_detail', etc.
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("leads")
+}
