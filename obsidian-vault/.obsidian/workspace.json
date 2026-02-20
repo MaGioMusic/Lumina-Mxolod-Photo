@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "d9f7d6a2a5175117",
+        "id": "a7e7a2849395e470",
         "type": "tabs",
         "children": [
           {
-            "id": "bff715e976c8664e",
+            "id": "aa511af50384ab4e",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "01-Architecture/Components/LoginModal.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "LoginModal"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
             }
           }
         ]
@@ -94,7 +90,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "01-Architecture/Components/LoginModal.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +99,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for LoginModal"
+              "title": "Backlinks"
             }
           },
           {
@@ -113,12 +108,11 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "01-Architecture/Components/LoginModal.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from LoginModal"
+              "title": "Outgoing links"
             }
           },
           {
@@ -156,13 +150,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "01-Architecture/Components/LoginModal.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of LoginModal"
+              "title": "Outline"
             }
           }
         ]
@@ -183,33 +176,37 @@
       "bases:Create new base": false
     }
   },
-  "active": "bff715e976c8664e",
+  "active": "aa511af50384ab4e",
   "lastOpenFiles": [
+    "Untitled.base",
+    "README.md",
+    "05-Meetings.md",
+    "MOC.md",
+    "{{link-1}}.md",
+    "00-Knowledge-Hub.md",
+    "00-Index.md",
+    "Untitled 1.canvas",
+    "Untitled.canvas",
+    "01-Architecture/i18n.md",
     "Quick-Context.md",
-    "03-Tasks/2026-02-19-i18n-batch-1.md",
+    "99-Templates/Task-Template.md",
+    "05-Meetings/Daily/2026-02-19.md",
     "03-Tasks/Next-Steps.md",
+    "03-Tasks/Lead-Capture-Implementation.md",
+    "03-Tasks/2026-02-19-i18n-batch-1.md",
+    "01-Architecture/00-Overview.md",
+    "01-Architecture/Components/PropertiesGoogleMap.md",
+    "01-Architecture/Components/MobileFilterDrawer.md",
+    "01-Architecture/Components/LoginModal.md",
+    "02-Decisions/00-Decision-Log.md",
+    "01-Architecture/Components/MapView.md",
+    "04-Research/User-Journey-Mapping.md",
     "Oraculus-Preferences.md",
     "03-Tasks/Blockers.md",
     "02-Decisions/Decisions.md",
     "MOC-Completion-Guide.md",
-    "MOC.md",
-    "00-Knowledge-Hub.md",
     "03-Tasks/Current-Sprint.md",
-    "03-Tasks/Master-Backlog.md",
-    "README.md",
-    "00-Index.md",
-    "05-Meetings/Daily/2026-02-19.md",
-    "03-Tasks/2026-02-19-i18n-phase-4-auth.md",
-    "02-Decisions/00-Decision-Log.md",
-    "01-Architecture/Components/SignUpModal.md",
-    "01-Architecture/Components/PropertiesGoogleMap.md",
-    "01-Architecture/Components/MapView.md",
-    "01-Architecture/Components/LoginModal.md",
-    "99-Templates/Task-Template.md",
-    "01-Architecture/00-Overview.md",
-    "01-Architecture/Components/MobileFilterDrawer.md",
     "05-Meetings/Daily",
-    "01-Architecture/i18n.md",
     "01-Architecture/Components"
   ]
 }
