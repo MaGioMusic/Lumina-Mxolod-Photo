@@ -25,10 +25,14 @@ Enable users to submit inquiries and agents to receive/manage leads
 - [x] `GET /api/inquiries` — List (placeholder added) ✅
 - [x] Validation and error handling ✅ Build passes
 
-### Phase 2: Frontend Forms (30 min)
-- [ ] Update contact page form
-- [ ] Add to property detail page
+### Phase 2: Frontend Forms (30 min) — 🟡 IN PROGRESS
+- [ ] Update contact page form — checking current implementation
+- [ ] Add inquiry button to property detail page
+- [ ] Create inquiry modal/component
 - [ ] i18n all strings
+
+**Status:** Starting frontend implementation
+**Started:** 2026-02-20 15:54
 
 ### Phase 3: Email Notifications (30 min)
 - [ ] Agent notification on new inquiry

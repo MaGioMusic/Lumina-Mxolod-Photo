@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useFavorites, FavoriteProperty } from '@/contexts/FavoritesContext';
-import { Bed, Bath, Maximize2, Heart, GitCompare } from 'lucide-react';
+import { Bed, Bath, Maximize2, Heart, GitCompare, Mail } from 'lucide-react';
+import InquiryModal from '@/components/InquiryModal';
 import PropertyImageCarousel from './PropertyImageCarousel';
 import { getPropertyImages } from '@/lib/samplePropertyImages';
 import { useCompare } from '@/contexts/CompareContext';
@@ -59,6 +60,7 @@ export default function PropertyCard({
   const router = useRouter();
   const [isHovered, setIsHovered] = useState(false);
   const [heartClick, setHeartClick] = useState(false);
+  const [isInquiryOpen, setIsInquiryOpen] = useState(false);
   const propertyId = slug ?? id;
   
   // Generate multiple images for carousel if not provided
@@ -210,6 +212,24 @@ export default function PropertyCard({
             </button>
           </div>
 
+          {/* Inquiry button - always visible */}
+          <div className="absolute bottom-2 right-2 z-20">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsInquiryOpen(true);
+              }}
+              className="w-8 h-8 rounded-full bg-primary-600 hover:bg-primary-700 
+                text-white transition-all duration-200 
+                flex items-center justify-center shadow-md hover:shadow-lg
+                hover:scale-105"
+              aria-label={t('contactAgent') || 'Contact Agent'}
+              title={t('contactAgent') || 'Contact Agent'}
+            >
+              <Mail size={14} />
+            </button>
+          </div>
+
           {/* New Property Badge */}
           {isNew && (
             <div className="absolute bottom-2 left-2 z-30">
@@ -285,9 +305,21 @@ export default function PropertyCard({
     </div>
   );
 
-  return isNew ? (
-    <GlowingShadow className="w-full" contentClassName="w-full">
-      {cardInner}
-    </GlowingShadow>
-  ) : cardInner;
+  return (
+    <>
+      {isNew ? (
+        <GlowingShadow className="w-full" contentClassName="w-full">
+          {cardInner}
+        </GlowingShadow>
+      ) : cardInner}
+      
+      <InquiryModal
+        isOpen={isInquiryOpen}
+        onClose={() => setIsInquiryOpen(false)}
+        propertyId={propertyId}
+        propertyTitle={title || address}
+        propertyPrice={price}
+      />
+    </>
+  );
 } 
