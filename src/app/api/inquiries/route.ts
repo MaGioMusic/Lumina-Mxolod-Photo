@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import { createInquiry } from '@/lib/repo';
+import { createInquiry, getInquiries, updateInquiryStatus } from '@/lib/repo';
 import { errorResponse, jsonResponse, getOptionalUser } from '../utils';
 
 const bodySchema = z.object({
@@ -31,11 +31,22 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET /api/inquiries — List inquiries (placeholder)
+// GET /api/inquiries — List inquiries (agent/admin only)
 export async function GET(request: NextRequest) {
   try {
-    // TODO: Add auth check and getInquiries repo function
-    return jsonResponse({ message: 'GET endpoint placeholder — implement auth and repo function' }, { status: 200 });
+    const session = await auth();
+    
+    if (!session?.user) {
+      return jsonResponse({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Only agents and admins can view inquiries
+    if (session.user.role !== 'agent' && session.user.role !== 'admin') {
+      return jsonResponse({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const inquiries = await getInquiries();
+    return jsonResponse(inquiries);
   } catch (error) {
     return errorResponse(error);
   }

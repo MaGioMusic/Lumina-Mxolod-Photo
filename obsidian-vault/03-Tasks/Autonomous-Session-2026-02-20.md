@@ -27,7 +27,7 @@ Working on (no user input needed):
 | Admin Dashboard UI | ✅ Complete | 2h | Lead inbox with stats, filters, status management |
 | Legal Pages | ✅ Complete | 1h | Privacy Policy, Terms of Service |
 | Error Pages | ✅ Complete | 30m | 404 (not-found.tsx), 500 (error.tsx) |
-| API Improvements | 📋 Pending | 1h | GET/PATCH endpoints |
+| API Improvements | 🟡 In Progress | 1h | GET endpoint done, PATCH in progress |
 
 ---
 
