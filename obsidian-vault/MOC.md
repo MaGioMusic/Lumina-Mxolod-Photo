@@ -19,6 +19,10 @@
 - **Launch Readiness:** [[MOC-Completion-Guide]] — What's left?
 - **This Week:** [[Current-Sprint]] — What we're doing now
 - **All Tasks:** [[Master-Backlog]] — Everything that needs doing
+- **Quick Status:** [[Quick-Context]] — 30-second briefing
+- **Blockers:** [[Blockers]] — What's stopping us
+- **Decisions:** [[Decisions]] — Why we chose what
+- **Agent Guide:** [[Oraculus-Preferences]] — How I work
 
 ## 🔗 Key Connections
 

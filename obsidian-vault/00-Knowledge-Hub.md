@@ -15,9 +15,13 @@
 
 ### Current Sprint
 → [[Current-Sprint]] — This week's tasks
+→ [[Quick-Context]] — 30-second status
+→ [[Blockers]] — What's stopping us
 
 ### Completion Guide
 → [[MOC-Completion-Guide]] — Roadmap to launch
+→ [[Decisions]] — Why we chose what
+→ [[Oraculus-Preferences]] — How I work best
 
 ## 🔗 External Links
 - **GitHub:** https://github.com/MaGioMusic/Lumina-Mxolod-Photo
