@@ -1,48 +1,35 @@
-'use client';
-
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Home, Search, ArrowLeft } from 'lucide-react';
+import { Home, ArrowLeft } from 'lucide-react';
 
 export default function NotFoundPage() {
   return (
-    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-12">
-      <div className="max-w-lg w-full text-center">
-        <div className="mb-8">
-          <span className="text-8xl font-bold text-[#F08336]/20 dark:text-[#F08336]/10">404</span>
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="text-center max-w-md">
+        <div className="text-9xl font-bold text-gray-200 dark:text-gray-800 mb-4">
+          404
         </div>
-        
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
           Page Not Found
         </h1>
-        
-        <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
-          Sorry, we couldn&apos;t find the page you&apos;re looking for. It might have been moved, deleted, or never existed.
+        <p className="text-gray-600 dark:text-gray-400 mb-8">
+          Sorry, we couldn&apos;t find the page you&apos;re looking for. It might have been moved or deleted.
         </p>
-        
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href="/">
-            <Button className="bg-[#F08336] hover:bg-[#e0743a] text-white w-full sm:w-auto">
-              <Home className="w-4 h-4 mr-2" />
-              Back to Home
-            </Button>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
+          >
+            <Home className="w-5 h-5" />
+            Go Home
           </Link>
-          
-          <Link href="/properties">
-            <Button variant="outline" className="w-full sm:w-auto">
-              <Search className="w-4 h-4 mr-2" />
-              Browse Properties
-            </Button>
-          </Link>
+          <button
+            onClick={() => window.history.back()}
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium rounded-lg transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Go Back
+          </button>
         </div>
-        
-        <button
-          onClick={() => window.history.back()}
-          className="mt-6 inline-flex items-center text-sm text-gray-500 hover:text-[#F08336] transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4 mr-1" />
-          Go Back
-        </button>
       </div>
     </div>
   );
