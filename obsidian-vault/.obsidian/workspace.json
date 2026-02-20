@@ -11,10 +11,14 @@
             "id": "aa511af50384ab4e",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "type": "markdown",
+              "state": {
+                "file": "01-Architecture/Components/PropertySubmitModal.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "PropertySubmitModal"
             }
           }
         ]
@@ -90,6 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "01-Architecture/Components/PropertySubmitModal.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -99,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks"
+              "title": "Backlinks for PropertySubmitModal"
             }
           },
           {
@@ -108,11 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "01-Architecture/Components/PropertySubmitModal.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links"
+              "title": "Outgoing links from PropertySubmitModal"
             }
           },
           {
@@ -150,12 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "01-Architecture/Components/PropertySubmitModal.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
+              "title": "Outline of PropertySubmitModal"
             }
           }
         ]
@@ -178,17 +185,11 @@
   },
   "active": "aa511af50384ab4e",
   "lastOpenFiles": [
-    "03-Tasks/Lead-Capture-PR.md",
-    "03-Tasks/PR-Cleanup.md",
-    "03-Tasks/Lead-Capture-Active.md",
-    "03-Tasks/Lead-Capture-Implementation.md",
-    "01-Architecture/Components/PropertySubmitModal.md",
-    "03-Tasks/PR-Status.md",
-    "04-Research/Cursor-PR-Analysis.md",
     "01-Architecture/Components/PropertiesGoogleMap.md",
     "01-Architecture/Components/MobileFilterDrawer.md",
     "01-Architecture/Components/MapView.md",
     "01-Architecture/Components/LoginModal.md",
+    "01-Architecture/Components/PropertySubmitModal.md",
     "05-Meetings/Daily/2026-02-19.md",
     "99-Templates/Task-Template.md",
     "{{link-1}}.md",
@@ -200,6 +201,7 @@
     "README.md",
     "03-Tasks/2026-02-19-i18n-phase-4-auth.md",
     "03-Tasks/Next-Steps.md",
+    "03-Tasks/Lead-Capture-Implementation.md",
     "02-Decisions/00-Decision-Log.md",
     "01-Architecture/i18n.md",
     "01-Architecture/00-Overview.md",
@@ -207,6 +209,11 @@
     "Untitled 1.canvas",
     "Untitled.canvas",
     "03-Tasks/2026-02-19-i18n-batch-1.md",
+    "04-Research/User-Journey-Mapping.md",
+    "Oraculus-Preferences.md",
+    "03-Tasks/Blockers.md",
+    "02-Decisions/Decisions.md",
+    "MOC-Completion-Guide.md",
     "05-Meetings/Daily",
     "01-Architecture/Components"
   ]

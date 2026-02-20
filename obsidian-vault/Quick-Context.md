@@ -12,30 +12,10 @@
   - Status: Build passes, needs push and PR
   - Strings: 30+ translated (ka/en/ru)
 
-### ✅ Just Done
-- **PR #29 Merged** — PropertySubmitModal i18n complete!
-- **Total i18n:** 105+ strings (95% Phase 1)
-- **Lead Capture API** — POST exists, GET placeholder added
-
-### ✅ Just Completed
-**Lead Capture Frontend** — PropertyCard inquiry button
-**PR Cleanup** — Closed ALL Cursor PRs (#19, #20, #21)
-**NEW PR #30** — Lead Capture Frontend ready for review
-**Result:** Clean slate, feature ready
-- Started: 16:19
-- Completed: 16:30
-- Status: ✅ DONE — Build passes
-- Features:
-  - Inquiry button on all property cards
-  - InquiryModal component created
-  - Form with name, email, phone, message
-  - Connected to /api/inquiries
-  - i18n ready
-
 ### Next Up
-1. Email notifications — Agent alerts
-2. Admin dashboard — Lead inbox
-3. Cursor PR #19 review (bug fix)
+1. **Push commit and create PR**
+2. **Cursor PR review** (#19, #20, #21)
+3. **Lead capture API** implementation
 
 ## 📊 Progress Update
 
