@@ -4,6 +4,8 @@ import { propertyTypeSchema, transactionTypeSchema } from '@/types/models';
 import { listProperties, PropertyListParams } from '@/lib/repo/properties';
 import { PropertyType, TransactionType } from '@prisma/client';
 import { getMockProperties } from '@/lib/mockProperties';
+import { prisma } from '@/lib/prisma';
+import { requireUser, errorResponse, jsonResponse } from '../utils';
 
 const querySchema = z.object({
   page: z.coerce.number().int().min(1).optional(),
@@ -153,5 +155,54 @@ export async function GET(request: NextRequest) {
       },
       { status: 500 },
     );
+  }
+}
+
+// POST /api/properties — Create new property (agent/admin only)
+const createPropertySchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string().optional(),
+  price: z.number().positive('Price must be positive'),
+  currency: z.string().default('GEL'),
+  location: z.string().min(1, 'Location is required'),
+  district: z.string().optional(),
+  city: z.string().default('Tbilisi'),
+  country: z.string().default('Georgia'),
+  propertyType: propertyTypeSchema,
+  transactionType: transactionTypeSchema,
+  bedrooms: z.number().int().min(0).optional(),
+  bathrooms: z.number().int().min(0).optional(),
+  area: z.number().positive().optional(),
+  floor: z.number().int().optional(),
+  totalFloors: z.number().int().optional(),
+  constructionYear: z.number().int().optional(),
+  condition: z.string().optional(),
+  furnished: z.string().optional(),
+  amenities: z.array(z.string()).default([]),
+  imageUrls: z.array(z.string().url()).default([]),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
+});
+
+export async function POST(request: NextRequest) {
+  try {
+    // Require agent or admin role
+    const user = await requireUser(request, ['agent', 'admin']);
+
+    const body = await request.json();
+    const payload = createPropertySchema.parse(body);
+
+    // Create property in database
+    const property = await prisma.property.create({
+      data: {
+        ...payload,
+        agentId: user.id,
+        status: 'active',
+      },
+    });
+
+    return jsonResponse(property, { status: 201 });
+  } catch (error) {
+    return errorResponse(error);
   }
 }

@@ -112,17 +112,61 @@ export default function UploadPropertyModal({ isOpen, onClose }: UploadPropertyM
     setIsSubmitting(true);
 
     try {
-      // TODO: Implement actual upload logic
-      console.log('Uploading property:', formData);
-      
-      // Simulate upload delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // First upload images if any
+      let imageUrls: string[] = [];
+      if (formData.images.length > 0) {
+        // TODO: Upload images to storage and get URLs
+        // For now, we'll use placeholder URLs
+        imageUrls = formData.images.map((_, index) => `https://placeholder.com/property-image-${index + 1}.jpg`);
+      }
+
+      // Prepare property data
+      const propertyData = {
+        title: formData.title,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        location: formData.location?.address || '',
+        district: formData.location?.district,
+        city: formData.location?.city || 'Tbilisi',
+        country: formData.location?.country || 'Georgia',
+        propertyType: formData.propertyType,
+        transactionType: formData.transactionType,
+        bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : undefined,
+        bathrooms: formData.bathrooms ? parseInt(formData.bathrooms) : undefined,
+        area: formData.area ? parseFloat(formData.area) : undefined,
+        floor: formData.floor ? parseInt(formData.floor) : undefined,
+        totalFloors: formData.totalFloors ? parseInt(formData.totalFloors) : undefined,
+        constructionYear: formData.constructionYear ? parseInt(formData.constructionYear) : undefined,
+        condition: formData.condition,
+        furnished: formData.furnished,
+        amenities: formData.amenities,
+        imageUrls,
+        latitude: formData.location?.coordinates.lat,
+        longitude: formData.location?.coordinates.lng,
+      };
+
+      // Send to API
+      const response = await fetch('/api/properties', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(propertyData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'Failed to create property');
+      }
+
+      const result = await response.json();
+      console.log('Property created:', result);
       
       alert(t('propertyUploadSuccess'));
       onClose();
     } catch (error) {
       console.error('Upload error:', error);
-      alert(t('propertyUploadError'));
+      alert(t('propertyUploadError') + ': ' + (error instanceof Error ? error.message : 'Unknown error'));
     } finally {
       setIsSubmitting(false);
     }

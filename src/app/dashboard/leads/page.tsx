@@ -104,12 +104,25 @@ export default function LeadsDashboard() {
       return;
     }
 
-    // TODO: Replace with actual API call
-    // fetch('/api/inquiries').then(res => res.json()).then(data => setInquiries(data))
-    setTimeout(() => {
-      setInquiries(MOCK_INQUIRIES);
-      setIsLoading(false);
-    }, 1000);
+    // Fetch real inquiries from API
+    const fetchInquiries = async () => {
+      try {
+        const response = await fetch('/api/inquiries');
+        if (!response.ok) {
+          throw new Error('Failed to fetch inquiries');
+        }
+        const data = await response.json();
+        setInquiries(data);
+      } catch (error) {
+        console.error('Error fetching inquiries:', error);
+        // Fall back to empty array on error
+        setInquiries([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInquiries();
   }, [status, router]);
 
   const filteredInquiries = inquiries.filter(inquiry => {
@@ -123,10 +136,27 @@ export default function LeadsDashboard() {
   });
 
   const handleStatusUpdate = async (inquiryId: string, newStatus: Inquiry['status']) => {
-    // TODO: API call to update status
-    setInquiries(prev => prev.map(inq => 
-      inq.id === inquiryId ? { ...inq, status: newStatus } : inq
-    ));
+    try {
+      const response = await fetch(`/api/inquiries/${inquiryId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update status');
+      }
+
+      // Update local state after successful API call
+      setInquiries(prev => prev.map(inq => 
+        inq.id === inquiryId ? { ...inq, status: newStatus } : inq
+      ));
+    } catch (error) {
+      console.error('Error updating status:', error);
+      alert('Failed to update status. Please try again.');
+    }
   };
 
   const stats = {
