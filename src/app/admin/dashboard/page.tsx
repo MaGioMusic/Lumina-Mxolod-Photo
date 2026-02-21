@@ -1,18 +1,13 @@
-import { Metadata } from 'next';
+'use client';
+
 import { useLanguage } from '@/contexts/LanguageContext';
 import { 
   Users, 
   Building2, 
   Mail, 
   TrendingUp,
-  DollarSign,
   Eye
 } from 'lucide-react';
-
-export const metadata: Metadata = {
-  title: 'Dashboard | Admin Panel',
-  description: 'Admin dashboard overview',
-};
 
 // Mock data - replace with actual API calls
 const stats = [
@@ -23,25 +18,24 @@ const stats = [
 ];
 
 const recentActivities = [
-  { action: 'New property listed', user: 'John Doe', time: '2 minutes ago' },
-  { action: 'User registered', user: 'Jane Smith', time: '5 minutes ago' },
-  { action: 'Inquiry received', user: 'Mike Johnson', time: '10 minutes ago' },
-  { action: 'Property updated', user: 'Sarah Williams', time: '15 minutes ago' },
+  { actionKey: 'newPropertyListed', fallback: 'New property listed', user: 'John Doe', timeKey: 'twoMinutesAgo', timeFallback: '2 minutes ago' },
+  { actionKey: 'userRegistered', fallback: 'User registered', user: 'Jane Smith', timeKey: 'fiveMinutesAgo', timeFallback: '5 minutes ago' },
+  { actionKey: 'inquiryReceived', fallback: 'Inquiry received', user: 'Mike Johnson', timeKey: 'tenMinutesAgo', timeFallback: '10 minutes ago' },
+  { actionKey: 'propertyUpdated', fallback: 'Property updated', user: 'Sarah Williams', timeKey: 'fifteenMinutesAgo', timeFallback: '15 minutes ago' },
 ];
 
 export default function AdminDashboardPage() {
-  // Note: This would use useLanguage() hook in client component
-  // For server component, we'd need to pass translations as props
-  
+  const { t } = useLanguage();
+
   return (
     <div>
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Dashboard
+          {t('dashboard') || 'Dashboard'}
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-1">
-          Overview of your real estate platform
+          {t('adminDashboardOverview') || 'Overview of your real estate platform'}
         </p>
       </div>
 
@@ -56,7 +50,7 @@ export default function AdminDashboardPage() {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{t(stat.label) || stat.label}</p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
                     {stat.value}
                   </p>
@@ -69,7 +63,7 @@ export default function AdminDashboardPage() {
                 <span className="text-green-600 dark:text-green-400 font-medium">
                   {stat.change}
                 </span>
-                <span className="text-gray-500 dark:text-gray-400 ml-2">vs last month</span>
+                <span className="text-gray-500 dark:text-gray-400 ml-2">{t('vsLastMonth') || 'vs last month'}</span>
               </div>
             </div>
           );
@@ -82,7 +76,7 @@ export default function AdminDashboardPage() {
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Recent Activity
+              {t('recentActivity') || 'Recent Activity'}
             </h2>
           </div>
           <div className="p-6">
@@ -95,10 +89,10 @@ export default function AdminDashboardPage() {
                   <div className="w-2 h-2 bg-primary-600 rounded-full mt-2" />
                   <div className="flex-1">
                     <p className="text-gray-900 dark:text-white font-medium">
-                      {activity.action}
+                      {t(activity.actionKey) || activity.fallback}
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      by {activity.user} • {activity.time}
+                      {t('by') || 'by'} {activity.user} • {t(activity.timeKey) || activity.timeFallback}
                     </p>
                   </div>
                 </div>
@@ -111,7 +105,7 @@ export default function AdminDashboardPage() {
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Quick Actions
+              {t('quickActions') || 'Quick Actions'}
             </h2>
           </div>
           <div className="p-6">
@@ -121,28 +115,28 @@ export default function AdminDashboardPage() {
                 className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-center"
               >
                 <Users className="w-8 h-8 text-primary-600 dark:text-primary-400 mx-auto mb-2" />
-                <span className="text-gray-900 dark:text-white font-medium">Manage Users</span>
+                <span className="text-gray-900 dark:text-white font-medium">{t('manageUsers') || 'Manage Users'}</span>
               </a>
               <a
                 href="/admin/properties"
                 className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-center"
               >
                 <Building2 className="w-8 h-8 text-primary-600 dark:text-primary-400 mx-auto mb-2" />
-                <span className="text-gray-900 dark:text-white font-medium">Manage Properties</span>
+                <span className="text-gray-900 dark:text-white font-medium">{t('manageProperties') || 'Manage Properties'}</span>
               </a>
               <a
                 href="/dashboard/leads"
                 className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-center"
               >
                 <Mail className="w-8 h-8 text-primary-600 dark:text-primary-400 mx-auto mb-2" />
-                <span className="text-gray-900 dark:text-white font-medium">View Leads</span>
+                <span className="text-gray-900 dark:text-white font-medium">{t('viewLeads') || 'View Leads'}</span>
               </a>
               <a
                 href="/admin/settings"
                 className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-center"
               >
                 <TrendingUp className="w-8 h-8 text-primary-600 dark:text-primary-400 mx-auto mb-2" />
-                <span className="text-gray-900 dark:text-white font-medium">Analytics</span>
+                <span className="text-gray-900 dark:text-white font-medium">{t('analytics') || 'Analytics'}</span>
               </a>
             </div>
           </div>
