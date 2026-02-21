@@ -440,7 +440,7 @@ export default function PropertyDetailsMap({ selectedPropertyId, filters, search
       if (isDev) console.log('Filtered properties:', filtered.length, 'out of', baseFiltered.length);
       setVisibleProperties(filtered);
     }
-  }, [mapBounds, baseFiltered]);
+  }, [mapBounds, baseFiltered, isDev]);
 
   const handleMapBoundsChange = useCallback((bounds: MapBounds) => {
     const last = lastBoundsRef.current;
@@ -455,7 +455,7 @@ export default function PropertyDetailsMap({ selectedPropertyId, filters, search
     lastBoundsRef.current = bounds;
     if (isDev) console.log('Map bounds changed:', bounds);
     setMapBounds(bounds);
-  }, []);
+  }, [isDev]);
 
   const handlePropertyHover = (propertyId: number | null) => {
     setHoveredProperty(propertyId);

@@ -31,3 +31,11 @@ export async function createInquiry(input: CreateInquiryInput): Promise<Inquiry>
 
   return mapInquiry(record);
 }
+
+export async function getInquiries(): Promise<Inquiry[]> {
+  const records = await prisma.inquiry.findMany({
+    orderBy: { createdAt: 'desc' },
+  });
+
+  return records.map(mapInquiry);
+}

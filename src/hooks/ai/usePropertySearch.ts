@@ -391,6 +391,7 @@ export const usePropertySearch = ({ isChatOpen }: PropertySearchHookOptions) => 
       runPropertySearch,
       searchResults,
       setFilterSummary,
+      buildResultsPreview,
       isDemoMode,
     ],
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 interface CompareContextValue {
   ids: number[];
@@ -73,9 +73,9 @@ export function CompareProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const isSelected = (id: number) => ids.includes(id);
+  const isSelected = useCallback((id: number) => ids.includes(id), [ids]);
 
-  const add = (id: number) => {
+  const add = useCallback((id: number) => {
     if (ids.includes(id)) return;
     if (ids.length >= MAX_COMPARE) {
       console.warn('Compare: max 4 items reached');
@@ -84,24 +84,24 @@ export function CompareProvider({ children }: { children: React.ReactNode }) {
     const next = [...ids, id];
     setIds(next);
     console.log('analytics:event', 'compare_add', { id });
-  };
+  }, [ids]);
 
-  const remove = (id: number) => {
+  const remove = useCallback((id: number) => {
     const next = ids.filter((x) => x !== id);
     setIds(next);
     console.log('analytics:event', 'compare_remove', { id });
-  };
+  }, [ids]);
 
-  const toggle = (id: number) => {
+  const toggle = useCallback((id: number) => {
     if (ids.includes(id)) remove(id); else add(id);
-  };
+  }, [add, ids, remove]);
 
-  const clear = () => {
+  const clear = useCallback(() => {
     setIds([]);
     console.log('analytics:event', 'compare_clear');
-  };
+  }, []);
 
-  const value = useMemo<CompareContextValue>(() => ({ ids, isSelected, add, remove, toggle, clear, max: MAX_COMPARE }), [ids]);
+  const value = useMemo<CompareContextValue>(() => ({ ids, isSelected, add, remove, toggle, clear, max: MAX_COMPARE }), [ids, isSelected, add, remove, toggle, clear]);
 
   return (
     <CompareContext.Provider value={value}>

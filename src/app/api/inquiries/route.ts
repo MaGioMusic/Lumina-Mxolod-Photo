@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import { createInquiry } from '@/lib/repo';
-import { errorResponse, jsonResponse, getOptionalUser } from '../utils';
+import { createInquiry, getInquiries } from '@/lib/repo';
+import { errorResponse, jsonResponse, requireUser, getOptionalUser } from '../utils';
 
 const bodySchema = z.object({
   propertyId: z.string().uuid(),
@@ -31,11 +31,12 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET /api/inquiries — List inquiries (placeholder)
+// GET /api/inquiries — List inquiries (agent/admin only)
 export async function GET(request: NextRequest) {
   try {
-    // TODO: Add auth check and getInquiries repo function
-    return jsonResponse({ message: 'GET endpoint placeholder — implement auth and repo function' }, { status: 200 });
+    await requireUser(request, ['agent', 'admin']);
+    const inquiries = await getInquiries();
+    return jsonResponse(inquiries);
   } catch (error) {
     return errorResponse(error);
   }

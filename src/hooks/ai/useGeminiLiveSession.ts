@@ -894,7 +894,7 @@ export function useGeminiLiveSession({
       await closeAll();
       setConnectionState('error');
     }
-  }, [closeAll, enabled, handleAudioOut, onResponseText, onTranscript]);
+  }, [closeAll, enabled, handleAudioOut, onError, onResponseText, onTranscript, stopPlaybackNow, toolHandler]);
 
   const startText = useCallback(async () => {
     if (wsRef.current) return;
@@ -1376,7 +1376,7 @@ export function useGeminiLiveSession({
       await closeAll();
       setConnectionState('error');
     }
-  }, [closeAll, onResponseText, onTranscript, toolHandler]);
+  }, [closeAll, handleAudioOut, onError, onResponseText, onTranscript, stopPlaybackNow, toolHandler]);
 
   const sendText = useCallback(
     async (text: string) => {

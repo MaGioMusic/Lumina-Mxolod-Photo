@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "a7e7a2849395e470",
+        "id": "380d5e270a64c03d",
         "type": "tabs",
         "children": [
           {
-            "id": "aa511af50384ab4e",
+            "id": "997878c2900e3ed2",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "01-Architecture/Components/PropertySubmitModal.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "PropertySubmitModal"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
             }
           }
         ]
@@ -94,7 +90,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "01-Architecture/Components/PropertySubmitModal.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +99,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for PropertySubmitModal"
+              "title": "Backlinks"
             }
           },
           {
@@ -113,12 +108,11 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "01-Architecture/Components/PropertySubmitModal.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from PropertySubmitModal"
+              "title": "Outgoing links"
             }
           },
           {
@@ -156,13 +150,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "01-Architecture/Components/PropertySubmitModal.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of PropertySubmitModal"
+              "title": "Outline"
             }
           }
         ]
@@ -183,37 +176,38 @@
       "bases:Create new base": false
     }
   },
-  "active": "aa511af50384ab4e",
+  "active": "997878c2900e3ed2",
   "lastOpenFiles": [
+    "03-Tasks/Lead-Capture-PR.md",
+    "03-Tasks/2026-02-19-i18n-phase-4-auth.md",
+    "03-Tasks/2026-02-19-i18n-batch-1.md",
+    "01-Architecture/Components/PropertySubmitModal.md",
     "01-Architecture/Components/PropertiesGoogleMap.md",
     "01-Architecture/Components/MobileFilterDrawer.md",
     "01-Architecture/Components/MapView.md",
     "01-Architecture/Components/LoginModal.md",
-    "01-Architecture/Components/PropertySubmitModal.md",
-    "05-Meetings/Daily/2026-02-19.md",
-    "99-Templates/Task-Template.md",
-    "{{link-1}}.md",
-    "00-Index.md",
+    "02-Decisions/00-Decision-Log.md",
+    "01-Architecture.md",
+    "03-Tasks.md",
     "00-Knowledge-Hub.md",
-    "05-Meetings.md",
-    "MOC.md",
-    "Quick-Context.md",
-    "README.md",
-    "03-Tasks/2026-02-19-i18n-phase-4-auth.md",
+    "00-Index.md",
+    "{{link-1}}.md",
+    "99-Templates/Task-Template.md",
+    "05-Meetings/Daily/2026-02-20-Final.md",
+    "05-Meetings/Daily/2026-02-19.md",
+    "05-Meetings/04-Research/User-Journey-Mapping.md",
+    "05-Meetings/04-Research/Cursor-PR-Analysis.md",
+    "05-Meetings/04-Research/Complete-Site-Audit.md",
+    "03-Tasks/PR-Status.md",
+    "03-Tasks/PR-Cleanup.md",
     "03-Tasks/Next-Steps.md",
     "03-Tasks/Lead-Capture-Implementation.md",
-    "02-Decisions/00-Decision-Log.md",
-    "01-Architecture/i18n.md",
-    "01-Architecture/00-Overview.md",
+    "03-Tasks/Lead-Capture-Active.md",
+    "03-Tasks/Autonomous-Session-2026-02-20.md",
     "Untitled.base",
+    "Untitled 1.base",
     "Untitled 1.canvas",
     "Untitled.canvas",
-    "03-Tasks/2026-02-19-i18n-batch-1.md",
-    "04-Research/User-Journey-Mapping.md",
-    "Oraculus-Preferences.md",
-    "03-Tasks/Blockers.md",
-    "02-Decisions/Decisions.md",
-    "MOC-Completion-Guide.md",
     "05-Meetings/Daily",
     "01-Architecture/Components"
   ]
