@@ -127,10 +127,27 @@ export default function ProtectedRoute({
 
   // Check permission access
   const hasPermissionAccess = () => {
-    if (requiredPermission) {
-      return true; // TODO: Implement proper permission checking
-    }
-    return true;
+    if (!requiredPermission || !user) return true;
+    
+    // Define permission hierarchy
+    const permissionHierarchy: Record<string, string[]> = {
+      'property:read': ['user', 'client', 'investor', 'agent', 'admin'],
+      'property:create': ['agent', 'admin'],
+      'property:update': ['agent', 'admin'],
+      'property:delete': ['agent', 'admin'],
+      'user:read': ['agent', 'admin'],
+      'user:update': ['admin'],
+      'user:delete': ['admin'],
+      'analytics:read': ['agent', 'admin'],
+      'billing:read': ['admin'],
+      'billing:manage': ['admin'],
+      'system:settings': ['admin'],
+    };
+    
+    const key = `${requiredPermission.resource}:${requiredPermission.action}`;
+    const allowedRoles = permissionHierarchy[key] || ['admin'];
+    
+    return allowedRoles.includes(user.role);
   };
 
   // Show error page if access denied and showError is true
