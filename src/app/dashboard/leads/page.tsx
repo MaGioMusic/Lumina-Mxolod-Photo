@@ -50,6 +50,42 @@ const statusLabels = {
   CLOSED_LOST: 'Closed (Lost)'
 };
 
+const MOCK_INQUIRIES: Inquiry[] = [
+  {
+    id: '1',
+    name: 'გიორგი მაისურაძე',
+    email: 'giorgi@example.com',
+    phone: '+995 599 123 456',
+    message: 'ინტერესდება ბინით ვაკეში. გთხოვთ დამიკავშირდეთ.',
+    propertyId: 'prop-123',
+    propertyTitle: 'თანამედროვე 2-ოთახიანი ვაკეში',
+    status: 'NEW',
+    createdAt: '2026-02-20T10:30:00Z',
+    assignedTo: 'agent-1'
+  },
+  {
+    id: '2',
+    name: 'Sophie Laurent',
+    email: 'sophie@example.com',
+    phone: '+33 6 12 34 56 78',
+    message: 'Interested in the villa with pool. When can I schedule a viewing?',
+    propertyId: 'prop-456',
+    propertyTitle: 'Luxury Villa with Pool',
+    status: 'CONTACTED',
+    createdAt: '2026-02-19T15:20:00Z',
+    assignedTo: 'agent-1'
+  },
+  {
+    id: '3',
+    name: 'Иван Петров',
+    email: 'ivan@example.ru',
+    message: 'Ищу квартиру для инвестиций. Рассмотрю варианты.',
+    status: 'VIEWING_SCHEDULED',
+    createdAt: '2026-02-18T09:00:00Z',
+    assignedTo: 'agent-2'
+  }
+];
+
 export default function LeadsDashboard() {
   const { t } = useLanguage();
   const { data: session, status } = useSession();
@@ -61,41 +97,6 @@ export default function LeadsDashboard() {
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
 
   // Mock data for now - will be replaced with API call
-  const mockInquiries: Inquiry[] = [
-    {
-      id: '1',
-      name: 'გიორგი მაისურაძე',
-      email: 'giorgi@example.com',
-      phone: '+995 599 123 456',
-      message: 'ინტერესდება ბინით ვაკეში. გთხოვთ დამიკავშირდეთ.',
-      propertyId: 'prop-123',
-      propertyTitle: 'თანამედროვე 2-ოთახიანი ვაკეში',
-      status: 'NEW',
-      createdAt: '2026-02-20T10:30:00Z',
-      assignedTo: 'agent-1'
-    },
-    {
-      id: '2',
-      name: 'Sophie Laurent',
-      email: 'sophie@example.com',
-      phone: '+33 6 12 34 56 78',
-      message: 'Interested in the villa with pool. When can I schedule a viewing?',
-      propertyId: 'prop-456',
-      propertyTitle: 'Luxury Villa with Pool',
-      status: 'CONTACTED',
-      createdAt: '2026-02-19T15:20:00Z',
-      assignedTo: 'agent-1'
-    },
-    {
-      id: '3',
-      name: 'Иван Петров',
-      email: 'ivan@example.ru',
-      message: 'Ищу квартиру для инвестиций. Рассмотрю варианты.',
-      status: 'VIEWING_SCHEDULED',
-      createdAt: '2026-02-18T09:00:00Z',
-      assignedTo: 'agent-2'
-    }
-  ];
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -106,7 +107,7 @@ export default function LeadsDashboard() {
     // TODO: Replace with actual API call
     // fetch('/api/inquiries').then(res => res.json()).then(data => setInquiries(data))
     setTimeout(() => {
-      setInquiries(mockInquiries);
+      setInquiries(MOCK_INQUIRIES);
       setIsLoading(false);
     }, 1000);
   }, [status, router]);
