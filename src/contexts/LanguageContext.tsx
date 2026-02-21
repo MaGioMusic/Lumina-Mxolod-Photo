@@ -1163,6 +1163,101 @@ const translations: Translations = {
     en: 'Analytics',
     ru: 'Аналитика'
   },
+  adminDashboardOverview: {
+    ka: 'შენი უძრავი ქონების პლატფორმის მიმოხილვა',
+    en: 'Overview of your real estate platform',
+    ru: 'Обзор вашей платформы недвижимости'
+  },
+  totalUsers: {
+    ka: 'სულ მომხმარებლები',
+    en: 'Total Users',
+    ru: 'Всего пользователей'
+  },
+  totalInquiries: {
+    ka: 'სულ მოთხოვნები',
+    en: 'Total Inquiries',
+    ru: 'Всего запросов'
+  },
+  totalViews: {
+    ka: 'სულ ნახვები',
+    en: 'Total Views',
+    ru: 'Всего просмотров'
+  },
+  vsLastMonth: {
+    ka: 'წინა თვესთან შედარებით',
+    en: 'vs last month',
+    ru: 'по сравнению с прошлым месяцем'
+  },
+  recentActivity: {
+    ka: 'ბოლო აქტივობა',
+    en: 'Recent Activity',
+    ru: 'Недавняя активность'
+  },
+  quickActions: {
+    ka: 'სწრაფი ქმედებები',
+    en: 'Quick Actions',
+    ru: 'Быстрые действия'
+  },
+  manageUsers: {
+    ka: 'მომხმარებლების მართვა',
+    en: 'Manage Users',
+    ru: 'Управление пользователями'
+  },
+  manageProperties: {
+    ka: 'ქონებების მართვა',
+    en: 'Manage Properties',
+    ru: 'Управление объектами'
+  },
+  viewLeads: {
+    ka: 'ლიდების ნახვა',
+    en: 'View Leads',
+    ru: 'Просмотр лидов'
+  },
+  newPropertyListed: {
+    ka: 'ახალი ქონება დაემატა',
+    en: 'New property listed',
+    ru: 'Добавлен новый объект'
+  },
+  userRegistered: {
+    ka: 'მომხმარებელი დარეგისტრირდა',
+    en: 'User registered',
+    ru: 'Пользователь зарегистрирован'
+  },
+  inquiryReceived: {
+    ka: 'მოთხოვნა მიღებულია',
+    en: 'Inquiry received',
+    ru: 'Получен запрос'
+  },
+  propertyUpdated: {
+    ka: 'ქონება განახლდა',
+    en: 'Property updated',
+    ru: 'Объект обновлён'
+  },
+  twoMinutesAgo: {
+    ka: '2 წუთის წინ',
+    en: '2 minutes ago',
+    ru: '2 минуты назад'
+  },
+  fiveMinutesAgo: {
+    ka: '5 წუთის წინ',
+    en: '5 minutes ago',
+    ru: '5 минут назад'
+  },
+  tenMinutesAgo: {
+    ka: '10 წუთის წინ',
+    en: '10 minutes ago',
+    ru: '10 минут назад'
+  },
+  fifteenMinutesAgo: {
+    ka: '15 წუთის წინ',
+    en: '15 minutes ago',
+    ru: '15 минут назад'
+  },
+  by: {
+    ka: 'ავტორი',
+    en: 'by',
+    ru: 'от'
+  },
   
   // Menu items
   login: {
