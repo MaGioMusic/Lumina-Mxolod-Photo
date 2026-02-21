@@ -48,15 +48,15 @@ Working on (no user input needed):
 
 ### 🎯 Launch Blockers Status (FINAL)
 
-| Blocker | Before | After |
-|---------|--------|-------|
-| Email Notifications | ⏳ | ⏳ Still needs Outlook credentials |
-| Admin Dashboard | 🔴 Missing | ✅ **DONE** |
-| Legal Pages | 🔴 Missing | ✅ **DONE** |
-| Privacy Policy | 🔴 Missing | ✅ **DONE** |
-| Terms of Service | 🔴 Missing | ✅ **DONE** |
-| Error Pages | 🔴 Missing | ✅ **DONE** |
-| API Improvements | 🟡 Partial | ✅ **DONE** |
+| Blocker             | Before     | After                             |
+| ------------------- | ---------- | --------------------------------- |
+| Email Notifications | ⏳          | ⏳ Still needs Outlook credentials |
+| Admin Dashboard     | 🔴 Missing | ✅ **DONE**                        |
+| Legal Pages         | 🔴 Missing | ✅ **DONE**                        |
+| Privacy Policy      | 🔴 Missing | ✅ **DONE**                        |
+| Terms of Service    | 🔴 Missing | ✅ **DONE**                        |
+| Error Pages         | 🔴 Missing | ✅ **DONE**                        |
+| API Improvements    | 🟡 Partial | ✅ **DONE**                        |
 
 **Launch Readiness: 85%** 🎉
 
