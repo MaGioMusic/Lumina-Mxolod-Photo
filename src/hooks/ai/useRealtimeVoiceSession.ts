@@ -746,6 +746,7 @@ export const useRealtimeVoiceSession = ({
     isListening,
     isModeB,
     isVoiceEnabled,
+    onTranscript,
     requestModelResponse,
     stopVoice,
     useClientVad,
