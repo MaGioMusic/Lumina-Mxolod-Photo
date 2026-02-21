@@ -4,9 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { errorResponse, jsonResponse, requireUser } from '../../utils';
 
 const updateSchema = z.object({
-  status: z.enum(['NEW', 'CONTACTED', 'VIEWING_SCHEDULED', 'NEGOTIATING', 'CLOSED_WON', 'CLOSED_LOST']).optional(),
-  notes: z.string().optional(),
-  assignedTo: z.string().optional(),
+  status: z.enum(['new', 'in_progress', 'responded', 'closed']).optional(),
 });
 
 // PATCH /api/inquiries/[id] — Update inquiry (agent/admin only)
@@ -33,10 +31,7 @@ export async function PATCH(
     // Update inquiry
     const updatedInquiry = await prisma.inquiry.update({
       where: { id },
-      data: {
-        ...payload,
-        updatedAt: new Date(),
-      },
+      data: payload,
     });
 
     return jsonResponse(updatedInquiry);
@@ -92,7 +87,7 @@ export async function GET(
           select: {
             id: true,
             title: true,
-            address: true,
+            location: true,
           },
         },
         user: {
