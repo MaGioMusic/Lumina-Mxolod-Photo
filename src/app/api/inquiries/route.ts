@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import { createInquiry, getInquiries, updateInquiryStatus } from '@/lib/repo';
-import { errorResponse, jsonResponse, getOptionalUser } from '../utils';
+import { createInquiry, getInquiries } from '@/lib/repo';
+import { errorResponse, jsonResponse, requireUser, getOptionalUser } from '../utils';
 
 const bodySchema = z.object({
   propertyId: z.string().uuid(),
@@ -34,17 +34,7 @@ export async function POST(request: NextRequest) {
 // GET /api/inquiries — List inquiries (agent/admin only)
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    
-    if (!session?.user) {
-      return jsonResponse({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Only agents and admins can view inquiries
-    if (session.user.role !== 'agent' && session.user.role !== 'admin') {
-      return jsonResponse({ error: 'Forbidden' }, { status: 403 });
-    }
-
+    await requireUser(request, ['agent', 'admin']);
     const inquiries = await getInquiries();
     return jsonResponse(inquiries);
   } catch (error) {
