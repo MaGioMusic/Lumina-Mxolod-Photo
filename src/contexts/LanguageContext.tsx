@@ -1259,6 +1259,143 @@ const translations: Translations = {
     ru: 'от'
   },
   
+  // PhotoPipeline
+  photoPipeline: {
+    ka: 'ფოტოების მართვა',
+    en: 'Photo Pipeline',
+    ru: 'Управление фото'
+  },
+  photoPipelineDesc: {
+    ka: 'ატვირთეთ და დაალაგეთ უძრავი ქონების ფოტოები',
+    en: 'Upload and organize property photos',
+    ru: 'Загружайте и организовывайте фото недвижимости'
+  },
+  dropPhotosHere: {
+    ka: 'ჩააგდეთ ფოტოები აქ ან დააჭირეთ ატვირთვისთვის',
+    en: 'Drop photos here or click to upload',
+    ru: 'Перетащите фото сюда или нажмите для загрузки'
+  },
+  maxFileSize: {
+    ka: 'მაქსიმუმ 10MB ფაილზე, მაქსიმუმ 40 ფოტო',
+    en: 'Max 10MB per file, up to 40 photos',
+    ru: 'Макс. 10МБ на файл, до 40 фото'
+  },
+  selectAll: {
+    ka: 'ყველას არჩევა',
+    en: 'Select all',
+    ru: 'Выбрать все'
+  },
+  assignRoom: {
+    ka: 'ოთახის მინიჭება',
+    en: 'Assign room',
+    ru: 'Назначить комнату'
+  },
+  markAllEnhanced: {
+    ka: 'ყველას AI-გაუმჯობესებულად მონიშვნა',
+    en: 'Mark all enhanced',
+    ru: 'Отметить все улучшенными'
+  },
+  autoSort: {
+    ka: 'ავტო-დალაგება',
+    en: 'Auto-sort',
+    ru: 'Авто-сортировка'
+  },
+  confirmAutoSort: {
+    ka: 'ავტო-დალაგება წაშლის ხელით მინიჭებულს?',
+    en: 'Auto-sort will overwrite manual assignments',
+    ru: 'Авто-сортировка перезапишет ручные назначения'
+  },
+  confirmAutoSortDesc: {
+    ka: 'ხელით მინიჭებული ოთახები წაიშლება. გაგრძელება?',
+    en: 'Your manual room assignments will be lost. Continue?',
+    ru: 'Ваши ручные назначения комнат будут потеряны. Продолжить?'
+  },
+  autoSortComplete: {
+    ka: 'ფოტოები დაალაგდა ფაილის სახელის მიხედვით',
+    en: 'Photos auto-sorted by filename',
+    ru: 'Фото отсортированы по имени файла'
+  },
+  confirmDelete: {
+    ka: 'წავშალო ფოტოები?',
+    en: 'Delete photos?',
+    ru: 'Удалить фото?'
+  },
+  confirmDeleteDesc: {
+    ka: 'ეს ქმედება შეუქცევადია (Undo-ს გარდა)',
+    en: 'This action cannot be undone (except via Undo)',
+    ru: 'Это действие нельзя отменить (кроме как через Отмену)'
+  },
+  confirmRemove: {
+    ka: 'ამოვშალო ეს ფოტო?',
+    en: 'Remove this photo?',
+    ru: 'Удалить это фото?'
+  },
+  photosDeleted: {
+    ka: 'ფოტოები წაიშალა',
+    en: 'Photos deleted',
+    ru: 'Фото удалены'
+  },
+  photoRemoved: {
+    ka: 'ფოტო ამოშალეს',
+    en: 'Photo removed',
+    ru: 'Фото удалено'
+  },
+  selectPhotosFirst: {
+    ka: 'ჯერ აირჩიეთ ფოტოები',
+    en: 'Select photos first',
+    ru: 'Сначала выберите фото'
+  },
+  selectAtLeastOne: {
+    ka: 'აირჩიეთ მინიმუმ ერთი ფოტო',
+    en: 'Select at least one photo',
+    ru: 'Выберите хотя бы одно фото'
+  },
+  invalidUrls: {
+    ka: 'ფოტოებს აქვთ არასწორი URL',
+    en: 'Photos have invalid URLs',
+    ru: 'У фото неверные URL'
+  },
+  draftSaved: {
+    ka: 'დრაფტი შენახულია',
+    en: 'Draft saved',
+    ru: 'Черновик сохранен'
+  },
+  saveFailed: {
+    ka: 'შენახვა ვერ მოხერხდა',
+    en: 'Save failed',
+    ru: 'Сохранение не удалось'
+  },
+  uploadFailed: {
+    ka: 'ატვირთვა ვერ მოხერხდა',
+    en: 'Upload failed',
+    ru: 'Загрузка не удалась'
+  },
+  photosAdded: {
+    ka: 'ფოტოები დაემატა',
+    en: 'Photos added',
+    ru: 'Фото добавлены'
+  },
+  maxPhotosReached: {
+    ka: 'მაქსიმუმ 40 ფოტო',
+    en: 'Maximum 40 photos',
+    ru: 'Максимум 40 фото'
+  },
+  actionUndone: {
+    ka: 'ქმედება გაუქმდა',
+    en: 'Action undone',
+    ru: 'Действие отменено'
+  },
+  saveDraft: {
+    ka: 'დრაფტის შენახვა',
+    en: 'Save draft',
+    ru: 'Сохранить черновик'
+  },
+  allMarkedEnhanced: {
+    ka: 'ყველა მონიშნულია AI-გაუმჯობესებულად',
+    en: 'All marked as enhanced',
+    ru: 'Все отмечены как улучшенные'
+  },
+  
   // Menu items
   login: {
     ka: 'შესვლა',
