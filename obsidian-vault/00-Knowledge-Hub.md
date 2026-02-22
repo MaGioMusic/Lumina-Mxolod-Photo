@@ -14,7 +14,14 @@
 - [[06-Engineering]] — Technical docs from `/docs`
 
 ### Current Sprint
-→ [[Sprint-2026-02-19-i18n-cleanup|i18n Cleanup Sprint]]
+→ [[Current-Sprint]] — This week's tasks
+→ [[Quick-Context]] — 30-second status
+→ [[Blockers]] — What's stopping us
+
+### Completion Guide
+→ [[MOC-Completion-Guide]] — Roadmap to launch
+→ [[Decisions]] — Why we chose what
+→ [[Oraculus-Preferences]] — How I work best
 
 ## 🔗 External Links
 - **GitHub:** https://github.com/MaGioMusic/Lumina-Mxolod-Photo
@@ -22,16 +29,26 @@
 - **Production:** (add URL)
 
 ## 📊 Quick Stats
-- **i18n:** 43 strings cleaned ✅
-- **PRs Merged:** 4
-- **Components Updated:** 6
+- **i18n:** 75 strings cleaned ✅
+- **PRs Merged:** 6
+- **Components Updated:** 8
 - **Last Deploy:** 2026-02-19
+
+## 🎯 Launch Progress
+- Phase 1 (i18n): 80% ✅
+- Phase 2 (Core): Not started ⏳
+- Phase 3 (Polish): Not started ⏳
+
+**See:** [[MOC-Completion-Guide]] for full roadmap
 
 ## 🎯 Active Workstreams
 1. ✅ i18n User-facing flows (Phase 1-2 complete)
 2. ✅ Map Logic (Phase 3 complete)
-3. ⏳ Auth & Lead Flow (Phase 4 in progress)
-4. 📋 Performance Optimization (planned)
+3. ✅ Auth Flows (Login/SignUp) — Phase 4a complete
+4. ⏳ Lead Capture & Property Upload — Phase 4b in progress
+5. 📋 Payment Integration — Phase 2 (planned)
+
+**Full backlog:** [[Master-Backlog]]
 
 ---
 *Vault initialized: 2026-02-19*
