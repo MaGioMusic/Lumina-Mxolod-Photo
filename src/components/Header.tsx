@@ -39,6 +39,26 @@ export default function Header() {
   const [currentView, setCurrentView] = useState<'grid' | 'map'>('grid');
   const [isScrolled, setIsScrolled] = useState(false);
 
+  // Sync view state from URL on mount and listen for changes
+  useEffect(() => {
+    // Initial sync from URL
+    const url = new URL(window.location.href);
+    const viewParam = url.searchParams.get('view');
+    if (viewParam === 'map' || viewParam === 'grid') {
+      setCurrentView(viewParam);
+    }
+
+    // Listen for view changes from other components
+    const handleViewChange = (event: CustomEvent) => {
+      const newView = event.detail;
+      if (newView === 'map' || newView === 'grid') {
+        setCurrentView(newView);
+      }
+    };
+    window.addEventListener('viewChange', handleViewChange as EventListener);
+    return () => window.removeEventListener('viewChange', handleViewChange as EventListener);
+  }, []);
+
   const router = useRouter();
   const pathname = usePathname();
   
