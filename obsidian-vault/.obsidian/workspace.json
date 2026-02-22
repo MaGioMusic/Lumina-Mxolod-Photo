@@ -4,17 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "380d5e270a64c03d",
+        "id": "d9f7d6a2a5175117",
         "type": "tabs",
         "children": [
           {
-            "id": "997878c2900e3ed2",
+            "id": "bff715e976c8664e",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "type": "markdown",
+              "state": {
+                "file": "02-Decisions/00-Decision-Log.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "00-Decision-Log"
             }
           }
         ]
@@ -74,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 300
   },
   "right": {
     "id": "f8db007f17af9c12",
@@ -90,6 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "02-Decisions/00-Decision-Log.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -99,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks"
+              "title": "Backlinks for 00-Decision-Log"
             }
           },
           {
@@ -108,11 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "02-Decisions/00-Decision-Log.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links"
+              "title": "Outgoing links from 00-Decision-Log"
             }
           },
           {
@@ -150,12 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "02-Decisions/00-Decision-Log.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
+              "title": "Outline of 00-Decision-Log"
             }
           }
         ]
@@ -176,39 +183,32 @@
       "bases:Create new base": false
     }
   },
-  "active": "997878c2900e3ed2",
+  "active": "bff715e976c8664e",
   "lastOpenFiles": [
-    "03-Tasks/Lead-Capture-PR.md",
+    "Oraculus-Preferences.md",
+    "Quick-Context.md",
+    "03-Tasks/Blockers.md",
+    "02-Decisions/Decisions.md",
+    "MOC-Completion-Guide.md",
+    "MOC.md",
+    "00-Knowledge-Hub.md",
+    "03-Tasks/Current-Sprint.md",
+    "03-Tasks/Master-Backlog.md",
+    "README.md",
+    "00-Index.md",
+    "05-Meetings/Daily/2026-02-19.md",
     "03-Tasks/2026-02-19-i18n-phase-4-auth.md",
     "03-Tasks/2026-02-19-i18n-batch-1.md",
-    "01-Architecture/Components/PropertySubmitModal.md",
+    "02-Decisions/00-Decision-Log.md",
+    "01-Architecture/Components/SignUpModal.md",
     "01-Architecture/Components/PropertiesGoogleMap.md",
-    "01-Architecture/Components/MobileFilterDrawer.md",
     "01-Architecture/Components/MapView.md",
     "01-Architecture/Components/LoginModal.md",
-    "02-Decisions/00-Decision-Log.md",
-    "01-Architecture.md",
-    "03-Tasks.md",
-    "00-Knowledge-Hub.md",
-    "00-Index.md",
-    "{{link-1}}.md",
     "99-Templates/Task-Template.md",
-    "05-Meetings/Daily/2026-02-20-Final.md",
-    "05-Meetings/Daily/2026-02-19.md",
-    "05-Meetings/04-Research/User-Journey-Mapping.md",
-    "05-Meetings/04-Research/Cursor-PR-Analysis.md",
-    "05-Meetings/04-Research/Complete-Site-Audit.md",
-    "03-Tasks/PR-Status.md",
-    "03-Tasks/PR-Cleanup.md",
-    "03-Tasks/Next-Steps.md",
-    "03-Tasks/Lead-Capture-Implementation.md",
-    "03-Tasks/Lead-Capture-Active.md",
-    "03-Tasks/Autonomous-Session-2026-02-20.md",
-    "Untitled.base",
-    "Untitled 1.base",
-    "Untitled 1.canvas",
-    "Untitled.canvas",
+    "01-Architecture/00-Overview.md",
+    "01-Architecture/Components/MobileFilterDrawer.md",
     "05-Meetings/Daily",
+    "01-Architecture/i18n.md",
     "01-Architecture/Components"
   ]
 }

@@ -3155,6 +3155,11 @@ const translations: Translations = {
     en: 'Go Back',
     ru: 'Назад'
   },
+  uploadProperty: {
+    ka: 'ქონების ატვირთვა',
+    en: 'Upload Property',
+    ru: 'Загрузить объект'
+  },
   uploadPropertyPhotos: {
     ka: 'ატვირთეთ ქონების ფოტოები და დოკუმენტები',
     en: 'Upload property photos and documents',
@@ -3210,10 +3215,20 @@ const translations: Translations = {
     en: 'Bedroom',
     ru: 'Спальня'
   },
+  bedrooms: {
+    ka: 'საძინებელი',
+    en: 'Bedrooms',
+    ru: 'Спальни'
+  },
   bathroom: {
     ka: 'სააბაზანო',
     en: 'Bathroom',
     ru: 'Ванная'
+  },
+  bathrooms: {
+    ka: 'სააბაზანო',
+    en: 'Bathrooms',
+    ru: 'Ванные'
   },
   monthlyMetrics: {
     ka: 'ყოველთვიური მაჩვენებლები',
@@ -3244,6 +3259,11 @@ const translations: Translations = {
     ka: 'საუბრების ძიება',
     en: 'Search Conversations',
     ru: 'Поиск по беседам'
+  },
+  typeMessage: {
+    ka: 'შეტყობინების ჩაწერა',
+    en: 'Type a message',
+    ru: 'Введите сообщение'
   },
 
   today: { ka: 'დღეს', en: 'Today', ru: 'Сегодня' },
